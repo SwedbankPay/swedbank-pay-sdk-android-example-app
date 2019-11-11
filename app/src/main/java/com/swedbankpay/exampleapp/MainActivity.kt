@@ -22,7 +22,8 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
         private fun buildPaymentConfiguration() =
             Configuration.Builder("https://payex-merchant-samples.appspot.com/")
                 .requestDecorator(object : RequestDecorator() {
-                    override fun decorateAnyRequest(userHeaders: UserHeaders, method: String, url: String, body: String?) {
+
+                    override suspend fun decorateAnyRequest(userHeaders: UserHeaders, method: String, url: String, body: String?) {
                         userHeaders
                             .add("x-payex-sample-apikey", "c339f53d-8a36-4ea9-9695-75048e592cc0")
                             .add("x-payex-sample-access-token", "token123")
