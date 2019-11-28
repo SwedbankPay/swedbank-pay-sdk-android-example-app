@@ -22,6 +22,8 @@ import kotlinx.android.synthetic.main.cart_header_cell.view.*
 import kotlinx.android.synthetic.main.cart_item_cell.view.*
 import kotlinx.android.synthetic.main.settings_cell.view.*
 import kotlinx.android.synthetic.main.settings_option_label.view.*
+import java.util.*
+import kotlin.collections.ArrayList
 
 class CartAndSettingsAdapter(
     val lifecycleOwner: LifecycleOwner,
@@ -79,6 +81,11 @@ class CartAndSettingsAdapter(
                 object : ViewHolder(itemView) {
                     private var item: ShopItem? = null
 
+                    private val priceFormatterObserver = Observer<(Int) -> String> {
+                        this.itemView.item_price.text = item?.price?.let(it)
+                    }
+                    private var priceFormatter: LiveData<(Int) -> String>? = null
+
                     init {
                         itemView.apply {
                             item_name.typeface = ResourcesCompat.getFont(
@@ -108,12 +115,17 @@ class CartAndSettingsAdapter(
                                 ColorStateList.valueOf(item.imageBackground)
                             item_image.setImageDrawable(item.image)
                             item_name.text = item.name
-                            item_price.text = adapter.viewModel.formatPrice(item.price)
+                            priceFormatter?.removeObserver(priceFormatterObserver)
+                            priceFormatter = adapter.viewModel.itemPriceFormatter.apply {
+                                observe(adapter.lifecycleOwner, priceFormatterObserver)
+                            }
                         }
                     }
 
                     override fun onRecycled() {
                         item = null
+                        priceFormatter?.removeObserver(priceFormatterObserver)
+                        priceFormatter = null
                     }
                 }
         },
@@ -121,10 +133,15 @@ class CartAndSettingsAdapter(
         FOOTER(R.layout.cart_footer_cell) {
             override fun createViewHolder(adapter: CartAndSettingsAdapter, itemView: View) =
                 object : ViewHolder(itemView) {
-                    private val priceObserver = Observer<Int> {
-                        this.itemView.total_price.text = it?.let(adapter.viewModel::formatPrice)
+                    private val shippingPriceObserver = Observer<String> {
+                        this.itemView.shipping_price.text = it
                     }
-                    private var price: LiveData<Int>? = null
+                    private var shippingPrice: LiveData<String>? = null
+
+                    private val priceObserver = Observer<String> {
+                        this.itemView.total_price.text = it
+                    }
+                    private var price: LiveData<String>? = null
 
                     init {
                         itemView.check_out_button.setOnClickListener {
@@ -135,15 +152,20 @@ class CartAndSettingsAdapter(
                     override fun bind(adapter: CartAndSettingsAdapter, position: Int) {
                         val viewModel = adapter.viewModel
                         this.itemView.apply {
-                            shipping_price.text = viewModel.formatPrice(viewModel.shippingPrice)
+                            shippingPrice?.removeObserver(shippingPriceObserver)
+                            shippingPrice = viewModel.formattedShippingPrice.apply {
+                                observe(adapter.lifecycleOwner, shippingPriceObserver)
+                            }
                             price?.removeObserver(priceObserver)
-                            price = viewModel.totalPrice.apply {
+                            price = viewModel.formattedTotalPrice.apply {
                                 observe(adapter.lifecycleOwner, priceObserver)
                             }
                         }
                     }
 
                     override fun onRecycled() {
+                        shippingPrice?.removeObserver(shippingPriceObserver)
+                        shippingPrice = null
                         price?.removeObserver(priceObserver)
                         price = null
                     }
@@ -175,6 +197,17 @@ class CartAndSettingsAdapter(
                         user_country_title.typeface = boldFont
 
                         val vm = adapter.viewModel
+
+                        val nok = Currency.getInstance("NOK")
+                        val sek = Currency.getInstance("SEK")
+                        initSettingWidget(adapter, currency_nok, R.string.currency_nok,
+                            vm.currency, nok,
+                            View.OnClickListener { vm.currency.value = nok }
+                        )
+                        initSettingWidget(adapter, currency_sek, R.string.currency_sek,
+                            vm.currency, sek,
+                            View.OnClickListener { vm.currency.value = sek }
+                        )
 
                         initSettingWidget(adapter, user_anonymous, R.string.anonymous,
                             vm.isUserAnonymous, true,

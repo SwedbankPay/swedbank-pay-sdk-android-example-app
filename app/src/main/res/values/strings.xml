@@ -15,6 +15,9 @@
     <string name="check_out">Check out</string>
     <string name="open_settings">Open settings</string>
     <string name="close_settings">Close settings</string>
+    <string name="currency">Currency</string>
+    <string name="currency_nok">NOK</string>
+    <string name="currency_sek">SEK</string>
     <string name="user_type">User type</string>
     <string name="anonymous">Anonymous</string>
     <string name="identified">Identified</string>
@@ -31,5 +34,9 @@
 
     <string name="error_problem_id_format">Problem ID: %s</string>
 
-    <!--string name="swedbankpaysdk_callback_url_scheme">swedbankexample</string-->
+    <!--
+     Each app must have a unique callback url scheme.
+     Override this resource with your own unique string.
+     -->
+    <string name="swedbankpaysdk_callback_url_scheme">swedbankexample</string>
 </resources>

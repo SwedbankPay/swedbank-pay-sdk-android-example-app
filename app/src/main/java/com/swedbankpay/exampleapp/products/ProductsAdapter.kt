@@ -12,6 +12,7 @@ import androidx.annotation.StringRes
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
 import com.swedbankpay.exampleapp.R
@@ -69,6 +70,11 @@ class ProductsAdapter(
                 private var buttonState =
                     AddRemoveButtonState.ADD
 
+                private val priceFormatterObserver = Observer<(Int) -> String> {
+                    this.itemView.item_price.text = item?.price?.let(it)
+                }
+                private var priceFormatter: LiveData<(Int) -> String>? = null
+
                 init {
                     val context = itemView.context
                     itemView.apply {
@@ -96,7 +102,7 @@ class ProductsAdapter(
                         item_background.imageTintList = ColorStateList.valueOf(item.imageBackground)
                         item_image.setImageDrawable(item.image)
                         item_name.text = item.name
-                        item_price.text = adapter.viewModel.formatPrice(item.price)
+
                         setButtonState(when (item.inCart.value) {
                             true -> AddRemoveButtonState.REMOVE
                             else -> AddRemoveButtonState.ADD
@@ -106,11 +112,18 @@ class ProductsAdapter(
                     this.item?.inCart?.removeObserver(inCartObserver)
                     this.item = item
                     item.inCart.observe(adapter.lifecycleOwner, inCartObserver)
+
+                    priceFormatter?.removeObserver(priceFormatterObserver)
+                    priceFormatter = adapter.viewModel.itemPriceFormatter.apply {
+                        observe(adapter.lifecycleOwner, priceFormatterObserver)
+                    }
                 }
 
                 override fun onRecycled() {
                     item?.inCart?.removeObserver(inCartObserver)
                     item = null
+                    priceFormatter?.removeObserver(priceFormatterObserver)
+                    priceFormatter = null
                 }
 
                 private fun setButtonState(state: AddRemoveButtonState, force: Boolean) {

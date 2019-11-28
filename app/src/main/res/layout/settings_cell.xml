@@ -29,12 +29,41 @@
 
         <TextView
             style="@style/tiny_white_text"
-            android:id="@+id/user_type_title"
+            android:id="@+id/currency_title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             app:layout_constraintStart_toEndOf="@id/open_settings"
             app:layout_constraintEnd_toStartOf="@id/close_settings"
             app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:gravity="center_horizontal"
+            android:text="@string/currency"/>
+        <LinearLayout
+            android:id="@+id/currency_area"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            app:layout_constraintStart_toStartOf="@id/currency_title"
+            app:layout_constraintEnd_toEndOf="@id/currency_title"
+            app:layout_constraintTop_toBottomOf="@id/currency_title"
+            android:layout_marginTop="4dp"
+            android:orientation="horizontal"
+            android:baselineAligned="false">
+            <include android:id="@+id/currency_nok"
+                layout="@layout/settings_option_label"/>
+            <include android:id="@+id/currency_sek"
+                layout="@layout/settings_option_label"/>
+        </LinearLayout>
+
+        <TextView
+            style="@style/tiny_white_text"
+            android:id="@+id/user_type_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toEndOf="@id/open_settings"
+            app:layout_constraintEnd_toStartOf="@id/close_settings"
+            app:layout_constraintTop_toBottomOf="@id/currency_area"
+            android:layout_marginTop="16dp"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
             android:gravity="center_horizontal"
@@ -86,7 +115,7 @@
             android:id="@+id/expanded_state_widgets"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:constraint_referenced_ids="close_settings,user_type_title,user_type_area,user_country_title,user_country_area"
+            app:constraint_referenced_ids="close_settings,currency_title,currency_area,user_type_title,user_type_area,user_country_title,user_country_area"
             />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>

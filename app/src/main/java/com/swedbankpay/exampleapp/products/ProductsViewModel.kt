@@ -14,11 +14,9 @@ import java.util.*
 val FragmentActivity.productsViewModel get() = ViewModelProviders.of(this)[ProductsViewModel::class.java]
 
 class ProductsViewModel(app: Application) : AndroidViewModel(app) {
-    private val currency = Currency.getInstance("SEK")
-    private val languageCode = "sv-SE"
+    private val languageCode = "en-US"
 
-    private val currencyFormat = DecimalFormat("#,##0 ¤¤").apply {
-        currency = this@ProductsViewModel.currency
+    private val currencyFormat get() = DecimalFormat("#,##0 ¤¤").apply {
         minimumFractionDigits = 0
     }
 
@@ -29,6 +27,8 @@ class ProductsViewModel(app: Application) : AndroidViewModel(app) {
     val onCheckOutPressed: LiveData<Unit?> get() = _onCheckOutPressed
 
     private val basketId = UUID.randomUUID().toString()
+
+    val currency = MutableLiveData(Currency.getInstance("NOK"))
 
     val products = ShopItem.demoItems(app)
 
@@ -41,10 +41,29 @@ class ProductsViewModel(app: Application) : AndroidViewModel(app) {
         }
     }
 
-    val shippingPrice = 120_00
 
-    val totalPrice = Transformations.map(productsInCart) {
+    private val shippingPrice = 120_00
+    val formattedShippingPrice = Transformations.map(currency) {
+        formatPrice(shippingPrice, it)
+    }
+
+    private val totalPrice = Transformations.map(productsInCart) {
         it.sumBy(ShopItem::price) + shippingPrice
+    }
+    val formattedTotalPrice = MediatorLiveData<String>().apply {
+        val observer = Observer<Any> {
+            value = totalPrice.value?.let { price ->
+                currency.value?.let { currency ->
+                    formatPrice(price, currency)
+                }
+            }
+        }
+        addSource(currency, observer)
+        addSource(totalPrice, observer)
+    }
+
+    val itemPriceFormatter = Transformations.map(currency) {
+        { price: Int -> formatPrice(price, it) }
     }
 
     val optionsExpanded = MutableLiveData<Boolean>().apply { value = false }
@@ -77,7 +96,7 @@ class ProductsViewModel(app: Application) : AndroidViewModel(app) {
     private val paymentFragmentMerchantData = Transformations.map(productsInCart) { items ->
         mapOf(
             "basketId" to basketId,
-            "currency" to currency.currencyCode,
+            "currency" to currency.value!!.currencyCode,
             "languageCode" to languageCode,
             "items" to items.map {
                 mapOf(
@@ -86,7 +105,14 @@ class ProductsViewModel(app: Application) : AndroidViewModel(app) {
                     "price" to it.price,
                     "vat" to it.price / 5
                 )
-            }
+            }.plus(
+                mapOf(
+                    "itemId" to "Shipping",
+                    "quantity" to 1,
+                    "price" to shippingPrice,
+                    "vat" to shippingPrice / 5
+                )
+            )
         )
     }
 
@@ -101,7 +127,10 @@ class ProductsViewModel(app: Application) : AndroidViewModel(app) {
         addSource(paymentFragmentMerchantData, observer)
     }
 
-    fun formatPrice(price: Int) = currencyFormat.format(BigDecimal(price).movePointLeft(2))
+    private fun formatPrice(price: Int, currency: Currency) = currencyFormat.run {
+        this.currency = currency// this@ProductsViewModel.currency.value
+        format(BigDecimal(price).movePointLeft(2))
+    }
 
     fun onCloseCartPressed() = fireEvent(_onCloseCardPressed)
 
