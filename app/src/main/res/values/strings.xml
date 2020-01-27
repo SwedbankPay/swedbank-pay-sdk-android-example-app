@@ -39,4 +39,5 @@
      Override this resource with your own unique string.
      -->
     <string name="swedbankpaysdk_callback_url_scheme">swedbankexample</string>
+    <string name="swedbankpaysdk_callback_host">payex-merchant-samples.appspot.com</string>
 </resources>
