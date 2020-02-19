@@ -5,8 +5,7 @@ import android.os.Bundle
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.*
 import androidx.lifecycle.Observer
-import com.swedbankpay.mobilesdk.Consumer
-import com.swedbankpay.mobilesdk.PaymentFragment
+import com.swedbankpay.mobilesdk.*
 import java.math.BigDecimal
 import java.text.DecimalFormat
 import java.util.*
@@ -14,8 +13,6 @@ import java.util.*
 val FragmentActivity.productsViewModel get() = ViewModelProviders.of(this)[ProductsViewModel::class.java]
 
 class ProductsViewModel(app: Application) : AndroidViewModel(app) {
-    private val languageCode = "en-US"
-
     private val currencyFormat get() = DecimalFormat("#,##0 ¤¤").apply {
         minimumFractionDigits = 0
     }
@@ -76,55 +73,95 @@ class ProductsViewModel(app: Application) : AndroidViewModel(app) {
     private val paymentFragmentConsumer = MediatorLiveData<Consumer>().apply {
         val observer = Observer<Any> {
             value = if (isUserAnonymous.value == true) {
-                Consumer.ANONYMOUS
+                null
             } else {
-                Consumer.Identified(checkNotNull(userCountry.value).code)
+                val country = checkNotNull(userCountry.value)
+                Consumer(
+                    language = country.language,
+                    shippingAddressRestrictedToCountryCodes = listOf(country.code)
+                )
             }
         }
         addSource(isUserAnonymous, observer)
         addSource(userCountry, observer)
     }
 
-    // Here we create the "merchantData" expected by our backend.
-    // This is only a very simple example; your actual implementation
-    // will be specific to your ecommerce system.
-    //
-    // The SDK itself imposes no other limitations for this value,
-    // expect that is must be convertible to JSON (using gson).
-    // Here we use Maps, but custom classes can make for more
-    // maintainable code.
-    private val paymentFragmentMerchantData = Transformations.map(productsInCart) { items ->
-        mapOf(
-            "basketId" to basketId,
-            "currency" to currency.value!!.currencyCode,
-            "languageCode" to languageCode,
-            "items" to items.map {
-                mapOf(
-                    "itemId" to it.name,
-                    "quantity" to 1,
-                    "price" to it.price,
-                    "vat" to it.price / 5
-                )
-            }.plus(
-                mapOf(
-                    "itemId" to "Shipping",
-                    "quantity" to 1,
-                    "price" to shippingPrice,
-                    "vat" to shippingPrice / 5
-                )
+    private val paymentFragmentPaymentOrder = Transformations.map(productsInCart) { items ->
+        val orderItems = items.map {
+            OrderItem(
+                reference = it.orderItemReference,
+                name = it.name,
+                type = ItemType.PRODUCT,
+                `class` = "Shoe",
+                quantity = 1,
+                quantityUnit = "pair",
+                unitPrice = it.price.toLong(),
+                vatPercent = 2500,
+                amount = it.price.toLong(),
+                vatAmount = (it.price / 5).toLong()
             )
+        }.plus(OrderItem(
+            reference = "shipping",
+            name = "Shipping",
+            type = ItemType.SHIPPING_FEE,
+            `class` = "Shipping",
+            quantity = 1,
+            quantityUnit = "pc",
+            unitPrice = shippingPrice.toLong(),
+            vatPercent = 2500,
+            amount = shippingPrice.toLong(),
+            vatAmount = (shippingPrice / 5).toLong()
+        ))
+
+        var amount = 0L
+        var vatAmount = 0L
+        for (orderItem in orderItems) {
+            amount += orderItem.amount
+            vatAmount += orderItem.vatAmount
+        }
+
+        PaymentOrder(
+            currency = checkNotNull(currency.value),
+            amount = amount,
+            vatAmount = vatAmount,
+            description = basketId,
+            // Each payment needs a set of URLs, most importantly the paymentUrl.
+            // The SDK can generate suitable URLs for you, provided you
+            // have set proper values for the swedbankpaysdk_callback_url_scheme
+            // and swedbankpaysdk_callback_host string resources.
+            urls = PaymentOrderUrls(getApplication()),
+            payeeInfo = PayeeInfo(
+                // It is unwise to expose your merchant id in a shipping app.
+                // It is better to have the backend fill in your merchant id here;
+                // the example backend does this. In the interest of having
+                // the Android SDK API mirror the Swedbank Pay API,
+                // payeeId is still made a required parameter, but it also defaults
+                // to the empty string to facilitate this common pattern.
+                payeeId = "not-the-real-merchant-id",
+                // PayeeReference must be unique to this payment order.
+                // In a real application you would get it from your backend.
+                // If you don't need the payeeReference in your app,
+                // you can also generate it in your backend. The example backend
+                // does this. PayeeReference is still a required field, so we
+                // must set it to a valid value. The empty string is fine;
+                // indeed, similarly to payeeId above, it defaults to the empty string.
+                payeeReference = ""
+            ),
+            orderItems = orderItems
         )
     }
 
     val paymentFragmentArguments = MediatorLiveData<Bundle>().apply {
         val observer = Observer<Any> {
-            value = PaymentFragment.ArgumentsBuilder()
-                .consumer(checkNotNull(paymentFragmentConsumer.value))
-                .merchantData(paymentFragmentMerchantData.value)
-                .build()
+            value = paymentFragmentPaymentOrder.value?.let {
+                PaymentFragment.ArgumentsBuilder()
+                    .consumer(paymentFragmentConsumer.value)
+                    .paymentOrder(it)
+                    .build()
+            }
         }
         addSource(paymentFragmentConsumer, observer)
-        addSource(paymentFragmentMerchantData, observer)
+        addSource(paymentFragmentPaymentOrder, observer)
     }
 
     private fun formatPrice(price: Int, currency: Currency) = currencyFormat.run {
@@ -149,7 +186,7 @@ class ProductsViewModel(app: Application) : AndroidViewModel(app) {
     }
 
     // These are not defined in the SDK for easier extensibility.
-    enum class UserCountry(val code: String) {
-        NORWAY("NO"), SWEDEN("SE")
+    enum class UserCountry(val code: String, val language: Language) {
+        NORWAY("NO", Language.NORWEGIAN), SWEDEN("SE", Language.SWEDISH)
     }
 }
