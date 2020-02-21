@@ -195,6 +195,7 @@ class CartAndSettingsAdapter(
                         )
                         user_type_title.typeface = boldFont
                         user_country_title.typeface = boldFont
+                        browser_title.typeface = boldFont
 
                         val vm = adapter.viewModel
 
@@ -207,6 +208,15 @@ class CartAndSettingsAdapter(
                         initSettingWidget(adapter, currency_sek, R.string.currency_sek,
                             vm.currency, sek,
                             View.OnClickListener { vm.currency.value = sek }
+                        )
+
+                        initSettingWidget(adapter, browser_no, R.string.browser_no,
+                            vm.useBrowser, false,
+                            View.OnClickListener { vm.useBrowser.value = false }
+                        )
+                        initSettingWidget(adapter, browser_yes, R.string.browser_yes,
+                            vm.useBrowser, true,
+                            View.OnClickListener { vm.useBrowser.value = true }
                         )
 
                         initSettingWidget(adapter, user_anonymous, R.string.anonymous,
