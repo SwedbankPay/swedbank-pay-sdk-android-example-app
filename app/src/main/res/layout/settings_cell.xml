@@ -140,11 +140,64 @@
                 layout="@layout/settings_option_label"/>
         </LinearLayout>
 
+        <TextView
+            style="@style/tiny_white_text"
+            android:id="@+id/disable_payment_menu_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="@id/user_type_title"
+            app:layout_constraintEnd_toEndOf="@id/user_type_title"
+            app:layout_constraintTop_toBottomOf="@id/user_country_area"
+            android:layout_marginTop="16dp"
+            android:gravity="center_horizontal"
+            android:text="@string/disable_payment_menu"/>
+        <LinearLayout
+            android:id="@+id/disable_payment_menu_area"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            app:layout_constraintStart_toStartOf="@id/user_type_title"
+            app:layout_constraintEnd_toEndOf="@id/user_type_title"
+            app:layout_constraintTop_toBottomOf="@id/disable_payment_menu_title"
+            android:layout_marginTop="4dp"
+            android:orientation="horizontal"
+            android:baselineAligned="false">
+            <include android:id="@+id/disable_payment_menu_no"
+                layout="@layout/settings_option_label"/>
+            <include android:id="@+id/disable_payment_menu_yes"
+                layout="@layout/settings_option_label"/>
+        </LinearLayout>
+
+        <TextView
+            style="@style/tiny_white_text"
+            android:id="@+id/instruments"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="@id/user_type_title"
+            app:layout_constraintEnd_toEndOf="@id/user_type_title"
+            app:layout_constraintTop_toBottomOf="@id/disable_payment_menu_area"
+            android:layout_marginTop="16dp"
+            android:gravity="center_horizontal"
+            android:text="@string/instruments"/>
+        <EditText
+            style="@style/tiny_white_text"
+            android:id="@+id/instruments_input"
+            android:layout_width="0dp"
+            android:singleLine="true"
+            android:layout_height="wrap_content"
+            android:backgroundTint="#666666"
+            app:layout_constraintStart_toStartOf="@id/user_type_title"
+            app:layout_constraintEnd_toEndOf="@id/user_type_title"
+            app:layout_constraintTop_toBottomOf="@id/instruments"
+            android:layout_marginTop="16dp"
+            android:gravity="center_horizontal"
+            android:textColorHint="#999999"
+            android:hint="@string/instruments_hint"/>
+
         <androidx.constraintlayout.widget.Group
             android:id="@+id/expanded_state_widgets"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:constraint_referenced_ids="close_settings,currency_title,currency_area,browser_title,browser_area,user_type_title,user_type_area,user_country_title,user_country_area"
+            app:constraint_referenced_ids="close_settings,currency_title,currency_area,browser_title,browser_area,user_type_title,user_type_area,user_country_title,user_country_area,disable_payment_menu_title,disable_payment_menu_area,instruments,instruments_input"
             />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>

@@ -27,6 +27,11 @@
     <string name="browser">Use Browser</string>
     <string name="browser_yes">YES</string>
     <string name="browser_no">NO</string>
+    <string name="disable_payment_menu">Disable Payment Menu</string>
+    <string name="disable_payment_menu_yes">Disable</string>
+    <string name="disable_payment_menu_no">Don\'t disable</string>
+    <string name="instruments">Restricted instruments</string>
+    <string name="instruments_hint">Instruments separated with comma</string>
 
     <string name="success_dialog_title">Payment successul!</string>
 
