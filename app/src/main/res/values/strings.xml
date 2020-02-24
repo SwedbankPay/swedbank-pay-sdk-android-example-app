@@ -24,6 +24,9 @@
     <string name="country">Country</string>
     <string name="norway">Norway</string>
     <string name="sweden">Sweden</string>
+    <string name="browser">Use Browser</string>
+    <string name="browser_yes">YES</string>
+    <string name="browser_no">NO</string>
 
     <string name="success_dialog_title">Payment successul!</string>
 

@@ -64,6 +64,7 @@ class ProductsViewModel(app: Application) : AndroidViewModel(app) {
     }
 
     val optionsExpanded = MutableLiveData<Boolean>().apply { value = false }
+    val useBrowser = MutableLiveData(false)
 
     val isUserAnonymous = MutableLiveData<Boolean>().apply { value = true }
     val userCountry = MutableLiveData<UserCountry>().apply { value =
@@ -157,9 +158,11 @@ class ProductsViewModel(app: Application) : AndroidViewModel(app) {
                 PaymentFragment.ArgumentsBuilder()
                     .consumer(paymentFragmentConsumer.value)
                     .paymentOrder(it)
+                    .useBrowser(useBrowser.value ?: false)
                     .build()
             }
         }
+        addSource(useBrowser, observer)
         addSource(paymentFragmentConsumer, observer)
         addSource(paymentFragmentPaymentOrder, observer)
     }
