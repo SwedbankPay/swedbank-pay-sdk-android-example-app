@@ -27,6 +27,14 @@ class ProductsViewModel(app: Application) : AndroidViewModel(app) {
 
     val currency = MutableLiveData(Currency.getInstance("NOK"))
 
+    val disablePaymentsMenu = MutableLiveData(false)
+    val restrictedInstrumentsInput = MutableLiveData<String?>(null)
+    private val restrictedInstrumentsList: LiveData<List<String>?> = Transformations.map(restrictedInstrumentsInput) {
+        it?.replace(" ", "")
+            ?.split(",")
+            ?.filter(String::isNotBlank)
+    }
+
     val products = ShopItem.demoItems(app)
 
     val productsInCart: LiveData<List<ShopItem>> = MediatorLiveData<List<ShopItem>>().apply {
@@ -87,7 +95,24 @@ class ProductsViewModel(app: Application) : AndroidViewModel(app) {
         addSource(userCountry, observer)
     }
 
-    private val paymentFragmentPaymentOrder = Transformations.map(productsInCart) { items ->
+    private val paymentFragmentPaymentOrder = MediatorLiveData<PaymentOrder>().apply {
+
+        val productsObserver = Observer<List<ShopItem>> {
+            value = createPaymentOrder(it)
+        }
+        val restrictionsObserver = Observer<List<String>?> {
+            value = value?.copy(restrictedToInstruments = it)
+        }
+        val toggleObserver = Observer<Boolean> {
+            value = value?.copy(disablePaymentMenu = it)
+        }
+        
+        addSource(productsInCart, productsObserver)
+        addSource(restrictedInstrumentsList, restrictionsObserver)
+        addSource(disablePaymentsMenu, toggleObserver)
+    }
+    
+    private fun createPaymentOrder(items: List<ShopItem>): PaymentOrder { 
         val orderItems = items.map {
             OrderItem(
                 reference = it.orderItemReference,
@@ -121,8 +146,10 @@ class ProductsViewModel(app: Application) : AndroidViewModel(app) {
             vatAmount += orderItem.vatAmount
         }
 
-        PaymentOrder(
+        return PaymentOrder(
             currency = checkNotNull(currency.value),
+            disablePaymentMenu = checkNotNull(disablePaymentsMenu.value),
+            restrictedToInstruments = restrictedInstrumentsList.value,
             amount = amount,
             vatAmount = vatAmount,
             description = basketId,

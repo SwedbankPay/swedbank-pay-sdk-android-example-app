@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.annotation.LayoutRes
 import androidx.annotation.StringRes
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.widget.doAfterTextChanged
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
@@ -236,6 +237,20 @@ class CartAndSettingsAdapter(
                             vm.userCountry, ProductsViewModel.UserCountry.SWEDEN,
                             View.OnClickListener { vm.userCountry.value = ProductsViewModel.UserCountry.SWEDEN }
                         )
+
+                        initSettingWidget(adapter, disable_payment_menu_no, R.string.disable_payment_menu_no,
+                            vm.disablePaymentsMenu, false,
+                            View.OnClickListener { vm.disablePaymentsMenu.value = false }
+                        )
+                        initSettingWidget(adapter, disable_payment_menu_yes, R.string.disable_payment_menu_yes,
+                            vm.disablePaymentsMenu, true,
+                            View.OnClickListener { vm.disablePaymentsMenu.value = true }
+                        )
+
+                        instruments_input.setText(vm.restrictedInstrumentsInput.value)
+                        instruments_input.doAfterTextChanged {  
+                            vm.restrictedInstrumentsInput.value = it?.toString()
+                        }
                     }
                 }
 
