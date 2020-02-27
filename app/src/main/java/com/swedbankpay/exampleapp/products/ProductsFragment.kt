@@ -1,5 +1,6 @@
 package com.swedbankpay.exampleapp.products
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
@@ -7,6 +8,7 @@ import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.swedbankpay.exampleapp.R
+import kotlinx.android.synthetic.main.dialog_price_cell.view.*
 import kotlinx.android.synthetic.main.fragment_products.view.*
 
 class ProductsFragment : Fragment(R.layout.fragment_products) {
@@ -25,6 +27,31 @@ class ProductsFragment : Fragment(R.layout.fragment_products) {
         viewModel.onCheckOutPressed.observe(this, Observer {
             if (it != null) {
                 navigateToPayment()
+            }
+        })
+        viewModel.onAdjustPricePressed.observe(this, Observer {
+            it ?: return@Observer
+            activity?.let {
+                val inflater = it.layoutInflater;
+                val builder = AlertDialog.Builder(it)
+                val view = inflater.inflate(R.layout.dialog_price_cell, null)
+                builder.setView(view)
+                builder.apply { 
+                    setPositiveButton("Set price") { dialog, id ->
+                        val input:String = view.input_decimal.text.toString().ifEmpty { "0" }
+                        var price:Double = input.toDouble()
+                        price *= 100
+                        viewModel.adjustedPrice.value = price.toInt()
+                        dialog.dismiss()
+                    }
+                    setNegativeButton("Reset") { dialog, id ->
+                        viewModel.adjustedPrice.value = null
+                        dialog.dismiss()
+                    }
+                    setTitle("Set total price (Including VAT)")
+                    
+                }
+                builder.create().show()
             }
         })
     }

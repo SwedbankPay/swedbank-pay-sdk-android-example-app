@@ -1,5 +1,6 @@
 package com.swedbankpay.exampleapp.cartsettings
 
+import android.app.AlertDialog
 import android.content.res.ColorStateList
 import android.transition.TransitionManager
 import android.view.LayoutInflater
@@ -147,6 +148,9 @@ class CartAndSettingsAdapter(
                     init {
                         itemView.check_out_button.setOnClickListener {
                             adapter.viewModel.onCheckOutPressed()
+                        }
+                        itemView.total_title.setOnClickListener {
+                            adapter.viewModel.askForPrice()
                         }
                     }
 

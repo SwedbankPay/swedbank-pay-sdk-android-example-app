@@ -11,7 +11,7 @@
     <string name="add_to_cart_description">Add to shopping basket</string>
     <string name="remove_from_cart_description">Remove from shopping basket</string>
     <string name="shipping">Shipping</string>
-    <string name="total">Total</string>
+    <string name="total">Total (Click to change)</string>
     <string name="check_out">Check out</string>
     <string name="open_settings">Open settings</string>
     <string name="close_settings">Close settings</string>
