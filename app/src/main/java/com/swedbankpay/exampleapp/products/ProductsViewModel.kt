@@ -22,6 +22,9 @@ class ProductsViewModel(app: Application) : AndroidViewModel(app) {
 
     private val _onCheckOutPressed = MutableLiveData<Unit?>()
     val onCheckOutPressed: LiveData<Unit?> get() = _onCheckOutPressed
+    
+    private val _onAdjustPricePressed = MutableLiveData<Unit?>()
+    val onAdjustPricePressed: LiveData<Unit?> get() = _onAdjustPricePressed
 
     private val basketId = UUID.randomUUID().toString()
 
@@ -46,15 +49,26 @@ class ProductsViewModel(app: Application) : AndroidViewModel(app) {
         }
     }
 
+    val adjustedPrice = MutableLiveData<Int?>(null)
 
     private val shippingPrice = 120_00
     val formattedShippingPrice = Transformations.map(currency) {
         formatPrice(shippingPrice, it)
     }
-
-    private val totalPrice = Transformations.map(productsInCart) {
-        it.sumBy(ShopItem::price) + shippingPrice
+    
+    private val totalPrice = MediatorLiveData<Int>().apply {
+        val observer = Observer<Any?> {
+            value = if(adjustedPrice.value != null) {
+                adjustedPrice.value
+            }
+            else {
+                shippingPrice + (productsInCart.value?.sumBy(ShopItem::price) ?: 0)
+            }
+        }
+        addSource(adjustedPrice, observer)
+        addSource(productsInCart, observer)
     }
+
     val formattedTotalPrice = MediatorLiveData<String>().apply {
         val observer = Observer<Any> {
             value = totalPrice.value?.let { price ->
@@ -106,14 +120,18 @@ class ProductsViewModel(app: Application) : AndroidViewModel(app) {
         val toggleObserver = Observer<Boolean> {
             value = value?.copy(disablePaymentMenu = it)
         }
+        val adjustedObserver = Observer<Int?> {
+            value = createPaymentOrder(productsInCart.value ?: emptyList())
+        }
         
         addSource(productsInCart, productsObserver)
         addSource(restrictedInstrumentsList, restrictionsObserver)
         addSource(disablePaymentsMenu, toggleObserver)
+        addSource(adjustedPrice, adjustedObserver)
     }
     
     private fun createPaymentOrder(items: List<ShopItem>): PaymentOrder { 
-        val orderItems = items.map {
+        var orderItems = items.map {
             OrderItem(
                 reference = it.orderItemReference,
                 name = it.name,
@@ -144,6 +162,24 @@ class ProductsViewModel(app: Application) : AndroidViewModel(app) {
         for (orderItem in orderItems) {
             amount += orderItem.amount
             vatAmount += orderItem.vatAmount
+        }
+        adjustedPrice.value?.let {
+
+            orderItems = listOf(OrderItem(
+                reference = "shipping",
+                name = "Shipping",
+                type = ItemType.SHIPPING_FEE,
+                `class` = "Shipping",
+                quantity = 1,
+                quantityUnit = "pc",
+                unitPrice = it.toLong(),
+                vatPercent = 2500,
+                amount = it.toLong(),
+                vatAmount = (it / 5).toLong()
+            )) 
+            
+            amount = it.toLong()
+            vatAmount = (amount / 5)
         }
 
         return PaymentOrder(
@@ -203,6 +239,8 @@ class ProductsViewModel(app: Application) : AndroidViewModel(app) {
 
     fun onCheckOutPressed() = fireEvent(_onCheckOutPressed)
 
+    fun askForPrice() = fireEvent(_onAdjustPricePressed)
+
     fun clearCart() {
         for (product in products) {
             product.inCart.value = false
@@ -214,6 +252,7 @@ class ProductsViewModel(app: Application) : AndroidViewModel(app) {
         event.value = Unit
         event.value = null
     }
+
 
     // These are not defined in the SDK for easier extensibility.
     enum class UserCountry(val code: String, val language: Language) {
