@@ -1,6 +1,5 @@
 package com.swedbankpay.exampleapp.cartsettings
 
-import android.app.AlertDialog
 import android.content.res.ColorStateList
 import android.transition.TransitionManager
 import android.view.LayoutInflater
@@ -12,12 +11,13 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.core.widget.doAfterTextChanged
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.swedbankpay.exampleapp.products.ProductsViewModel
 import com.swedbankpay.exampleapp.R
+import com.swedbankpay.exampleapp.products.ProductsViewModel
 import com.swedbankpay.exampleapp.products.ShopItem
 import kotlinx.android.synthetic.main.cart_footer_cell.view.*
 import kotlinx.android.synthetic.main.cart_header_cell.view.*
@@ -255,7 +255,26 @@ class CartAndSettingsAdapter(
                         instruments_input.doAfterTextChanged {  
                             vm.restrictedInstrumentsInput.value = it?.toString()
                         }
+
+                        initSettingWidget(adapter, use_bogus_hosturl_no, R.string.use_bogus_hosturl_no,
+                            vm.useBogusHostUrl, false
+                        )
+                        initSettingWidget(adapter, use_bogus_hosturl_yes, R.string.use_bogus_hosturl_yes,
+                            vm.useBogusHostUrl, true
+                        )
                     }
+                }
+
+                private fun <T> initSettingWidget(
+                    adapter: CartAndSettingsAdapter,
+                    widget: View,
+                    @StringRes labelId: Int,
+                    setting: MutableLiveData<T>,
+                    settingValue: T
+                ) {
+                    initSettingWidget(adapter, widget, labelId, setting, settingValue, View.OnClickListener {
+                        setting.value = settingValue
+                    })
                 }
 
                 private fun <T> initSettingWidget(

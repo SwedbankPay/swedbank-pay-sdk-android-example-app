@@ -85,13 +85,12 @@ class ProductsViewModel(app: Application) : AndroidViewModel(app) {
         { price: Int -> formatPrice(price, it) }
     }
 
-    val optionsExpanded = MutableLiveData<Boolean>().apply { value = false }
+    val optionsExpanded = MutableLiveData(false)
     val useBrowser = MutableLiveData(false)
+    val useBogusHostUrl = MutableLiveData(false)
 
-    val isUserAnonymous = MutableLiveData<Boolean>().apply { value = true }
-    val userCountry = MutableLiveData<UserCountry>().apply { value =
-        UserCountry.NORWAY
-    }
+    val isUserAnonymous = MutableLiveData(true)
+    val userCountry = MutableLiveData(UserCountry.NORWAY)
 
     private val paymentFragmentConsumer = MediatorLiveData<Consumer>().apply {
         val observer = Observer<Any> {
@@ -123,11 +122,34 @@ class ProductsViewModel(app: Application) : AndroidViewModel(app) {
         val adjustedObserver = Observer<Int?> {
             value = createPaymentOrder(productsInCart.value ?: emptyList())
         }
+        val countryObserver = Observer<UserCountry> {
+            value = value?.copy(language = checkNotNull(it.language))
+        }
+        val useBogusHostUrlObserver = Observer<Boolean> {
+            value = value?.copy(urls = buildPaymentOrderUrls())
+        }
         
         addSource(productsInCart, productsObserver)
         addSource(restrictedInstrumentsList, restrictionsObserver)
         addSource(disablePaymentsMenu, toggleObserver)
         addSource(adjustedPrice, adjustedObserver)
+        addSource(userCountry, countryObserver)
+        addSource(useBogusHostUrl, useBogusHostUrlObserver)
+    }
+
+    private fun buildPaymentOrderUrls() = if (useBogusHostUrl.value == true) {
+        PaymentOrderUrls(
+            context = getApplication(),
+            hostUrl = "https://bogus-hosturl-for-testing.swedbankpay.com/",
+            callbackUrl = null,
+            termsOfServiceUrl = null
+        )
+    } else {
+        // Each payment needs a set of URLs, most importantly the paymentUrl.
+        // The SDK can generate suitable URLs for you, provided you
+        // have set proper values for the swedbankpaysdk_callback_url_scheme
+        // and swedbankpaysdk_callback_host string resources.
+        PaymentOrderUrls(getApplication())
     }
     
     private fun createPaymentOrder(items: List<ShopItem>): PaymentOrder { 
@@ -189,11 +211,8 @@ class ProductsViewModel(app: Application) : AndroidViewModel(app) {
             amount = amount,
             vatAmount = vatAmount,
             description = basketId,
-            // Each payment needs a set of URLs, most importantly the paymentUrl.
-            // The SDK can generate suitable URLs for you, provided you
-            // have set proper values for the swedbankpaysdk_callback_url_scheme
-            // and swedbankpaysdk_callback_host string resources.
-            urls = PaymentOrderUrls(getApplication()),
+            language = checkNotNull(userCountry.value).language,
+            urls = buildPaymentOrderUrls(),
             payeeInfo = PayeeInfo(
                 // It is unwise to expose your merchant id in a shipping app.
                 // It is better to have the backend fill in your merchant id here;

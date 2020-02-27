@@ -32,6 +32,9 @@
     <string name="disable_payment_menu_no">Don\'t disable</string>
     <string name="instruments">Restricted instruments</string>
     <string name="instruments_hint">Instruments separated with comma</string>
+    <string name="use_bogus_hosturl">Test wrong page url for paymentmenu</string>
+    <string name="use_bogus_hosturl_yes">Enable</string>
+    <string name="use_bogus_hosturl_no">Disable</string>
 
     <string name="success_dialog_title">Payment successul!</string>
 
