@@ -85,33 +85,60 @@ class ProductsViewModel(app: Application) : AndroidViewModel(app) {
         { price: Int -> formatPrice(price, it) }
     }
 
+
+    val consumerOptionsExpanded = MutableLiveData(false)
     val optionsExpanded = MutableLiveData(false)
+
     val useBrowser = MutableLiveData(false)
     val useBogusHostUrl = MutableLiveData(false)
 
-    val isUserAnonymous = MutableLiveData(true)
+    val consumerType = MutableLiveData(ConsumerType.ANONYMOUS)
+    val consumerPrefillEmail = MutableLiveData("")
+    val consumerPrefillMsisdn = MutableLiveData("")
+    val consumerPrefillProfileRef = MutableLiveData("")
+
     val userCountry = MutableLiveData(UserCountry.NORWAY)
 
     private val paymentFragmentConsumer = MediatorLiveData<Consumer>().apply {
         val observer = Observer<Any> {
-            value = if (isUserAnonymous.value == true) {
-                null
-            } else {
+            value = if (consumerType.value == ConsumerType.CHECKIN) {
                 val country = checkNotNull(userCountry.value)
                 Consumer(
                     language = country.language,
                     shippingAddressRestrictedToCountryCodes = listOf(country.code)
                 )
+            } else {
+                null
             }
         }
-        addSource(isUserAnonymous, observer)
+        addSource(consumerType, observer)
         addSource(userCountry, observer)
+    }
+
+    private val paymentFragmentPayerPrefill = MediatorLiveData<PaymentOrderPayer>().apply {
+        val observer = Observer<Any> {
+            value = if (consumerType.value == ConsumerType.PREFILL) {
+                PaymentOrderPayer(
+                    consumerProfileRef = consumerPrefillProfileRef.value?.takeUnless(String::isEmpty),
+                    email = consumerPrefillEmail.value?.takeUnless(String::isEmpty),
+                    msisdn = consumerPrefillMsisdn.value?.takeUnless(String::isEmpty)
+                )
+            } else {
+                null
+            }
+        }
+        addSource(consumerPrefillProfileRef, observer)
+        addSource(consumerPrefillEmail, observer)
+        addSource(consumerPrefillMsisdn, observer)
     }
 
     private val paymentFragmentPaymentOrder = MediatorLiveData<PaymentOrder>().apply {
 
         val productsObserver = Observer<List<ShopItem>> {
             value = createPaymentOrder(it)
+        }
+        val payerPrefillObserver = Observer<PaymentOrderPayer?> {
+            value = value?.copy(payer = it)
         }
         val restrictionsObserver = Observer<List<String>?> {
             value = value?.copy(restrictedToInstruments = it)
@@ -130,6 +157,7 @@ class ProductsViewModel(app: Application) : AndroidViewModel(app) {
         }
         
         addSource(productsInCart, productsObserver)
+        addSource(paymentFragmentPayerPrefill, payerPrefillObserver)
         addSource(restrictedInstrumentsList, restrictionsObserver)
         addSource(disablePaymentsMenu, toggleObserver)
         addSource(adjustedPrice, adjustedObserver)
@@ -230,6 +258,7 @@ class ProductsViewModel(app: Application) : AndroidViewModel(app) {
                 // indeed, similarly to payeeId above, it defaults to the empty string.
                 payeeReference = ""
             ),
+            payer = paymentFragmentPayerPrefill.value,
             orderItems = orderItems
         )
     }
@@ -276,5 +305,9 @@ class ProductsViewModel(app: Application) : AndroidViewModel(app) {
     // These are not defined in the SDK for easier extensibility.
     enum class UserCountry(val code: String, val language: Language) {
         NORWAY("NO", Language.NORWEGIAN), SWEDEN("SE", Language.SWEDISH)
+    }
+
+    enum class ConsumerType {
+        ANONYMOUS, CHECKIN, PREFILL
     }
 }

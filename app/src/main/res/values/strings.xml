@@ -19,7 +19,7 @@
     <string name="currency_nok">NOK</string>
     <string name="currency_sek">SEK</string>
     <string name="user_type">User type</string>
-    <string name="anonymous">Anonymous</string>
+
     <string name="identified">Identified</string>
     <string name="country">Country</string>
     <string name="norway">Norway</string>
@@ -35,6 +35,15 @@
     <string name="use_bogus_hosturl">Test wrong page url for paymentmenu</string>
     <string name="use_bogus_hosturl_yes">Enable</string>
     <string name="use_bogus_hosturl_no">Disable</string>
+
+    <string name="consumer">Consumer</string>
+    <string name="close_consumer">Close Consumer Settings</string>
+    <string name="anonymous">Anonymous</string>
+    <string name="checkin">Checkin</string>
+    <string name="prefilled">Prefilled</string>
+    <string name="consumer_email">email</string>
+    <string name="consumer_msisdn">phone number</string>
+    <string name="consumer_profileref">consumerProfileRef</string>
 
     <string name="success_dialog_title">Payment successul!</string>
 

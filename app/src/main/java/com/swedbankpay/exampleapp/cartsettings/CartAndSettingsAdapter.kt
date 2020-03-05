@@ -5,6 +5,7 @@ import android.transition.TransitionManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.annotation.LayoutRes
 import androidx.annotation.StringRes
 import androidx.core.content.res.ResourcesCompat
@@ -22,6 +23,7 @@ import com.swedbankpay.exampleapp.products.ShopItem
 import kotlinx.android.synthetic.main.cart_footer_cell.view.*
 import kotlinx.android.synthetic.main.cart_header_cell.view.*
 import kotlinx.android.synthetic.main.cart_item_cell.view.*
+import kotlinx.android.synthetic.main.consumer_options_cell.view.*
 import kotlinx.android.synthetic.main.settings_cell.view.*
 import kotlinx.android.synthetic.main.settings_option_label.view.*
 import java.util.*
@@ -34,10 +36,11 @@ class CartAndSettingsAdapter(
     init {
         viewModel.productsInCart.observe(lifecycleOwner, Observer {
             submitList(
-                ArrayList<Cell>(it.size + 3).apply {
+                ArrayList<Cell>(it.size + 4).apply {
                     add(Cell.Header)
                     it.mapTo(this, Cell::Item)
                     add(Cell.Footer)
+                    add(Cell.Consumer)
                     add(Cell.Settings)
                 }
             )
@@ -57,6 +60,7 @@ class CartAndSettingsAdapter(
         object Header : Cell(ViewType.HEADER)
         class Item(val shopItem: ShopItem) : Cell(ViewType.ITEM)
         object Footer : Cell(ViewType.FOOTER)
+        object Consumer : Cell(ViewType.CONSUMER)
         object Settings : Cell(ViewType.SETTINGS)
     }
 
@@ -177,6 +181,69 @@ class CartAndSettingsAdapter(
                 }
         },
 
+        CONSUMER(R.layout.consumer_options_cell) {
+            override fun createViewHolder(
+                adapter: CartAndSettingsAdapter,
+                itemView: View
+            ) = object : ViewHolder(itemView) {
+                init {
+                    val vm = adapter.viewModel
+
+                    vm.consumerOptionsExpanded.observe(adapter.lifecycleOwner, Observer {
+                        setExpandedState(it == true)
+                    })
+
+                    itemView.open_consumer.setOnClickListener {
+                        vm.consumerOptionsExpanded.value = true
+                    }
+                    itemView.close_consumer.setOnClickListener {
+                        vm.consumerOptionsExpanded.value = false
+                    }
+
+                    initSettingWidget(
+                        adapter, itemView.consumer_anon, R.string.anonymous,
+                        vm.consumerType, ProductsViewModel.ConsumerType.ANONYMOUS
+                    )
+                    initSettingWidget(
+                        adapter, itemView.consumer_checkin, R.string.checkin,
+                        vm.consumerType, ProductsViewModel.ConsumerType.CHECKIN
+                    )
+                    initSettingWidget(
+                        adapter, itemView.consumer_prefill, R.string.prefilled,
+                        vm.consumerType, ProductsViewModel.ConsumerType.PREFILL
+                    )
+
+                    bindTextView(itemView.consumer_email, vm.consumerPrefillEmail)
+                    bindTextView(itemView.consumer_msisdn, vm.consumerPrefillMsisdn)
+                    bindTextView(itemView.consumer_profileref, vm.consumerPrefillProfileRef)
+
+                    val onFocusListener = View.OnFocusChangeListener { _, hasFocus ->
+                        if (hasFocus) {
+                            vm.consumerType.value = ProductsViewModel.ConsumerType.PREFILL
+                        }
+                    }
+                    itemView.consumer_email.onFocusChangeListener = onFocusListener
+                    itemView.consumer_msisdn.onFocusChangeListener = onFocusListener
+                    itemView.consumer_profileref.onFocusChangeListener = onFocusListener
+                }
+
+                private fun setExpandedState(expanded: Boolean) {
+                    this.itemView.apply {
+                        (parent as? ViewGroup)?.let(TransitionManager::beginDelayedTransition)
+                        layoutParams = layoutParams.apply {
+                            width = if (expanded) {
+                                ViewGroup.LayoutParams.MATCH_PARENT
+                            } else {
+                                ViewGroup.LayoutParams.WRAP_CONTENT
+                            }
+                        }
+                        consumer_expanded_state_widgets.visibility =
+                            if (expanded) View.VISIBLE else View.GONE
+                    }
+                }
+            }
+        },
+
         SETTINGS(R.layout.settings_cell) {
             override fun createViewHolder(
                 adapter: CartAndSettingsAdapter,
@@ -198,7 +265,6 @@ class CartAndSettingsAdapter(
                             context,
                             R.font.ibm_plex_mono_bold
                         )
-                        user_type_title.typeface = boldFont
                         user_country_title.typeface = boldFont
                         browser_title.typeface = boldFont
 
@@ -222,15 +288,6 @@ class CartAndSettingsAdapter(
                         initSettingWidget(adapter, browser_yes, R.string.browser_yes,
                             vm.useBrowser, true,
                             View.OnClickListener { vm.useBrowser.value = true }
-                        )
-
-                        initSettingWidget(adapter, user_anonymous, R.string.anonymous,
-                            vm.isUserAnonymous, true,
-                            View.OnClickListener { vm.isUserAnonymous.value = true }
-                        )
-                        initSettingWidget(adapter, user_identified, R.string.identified,
-                            vm.isUserAnonymous, false,
-                            View.OnClickListener { vm.isUserAnonymous.value = false }
                         )
 
                         initSettingWidget(adapter, country_norway, R.string.norway,
@@ -265,39 +322,6 @@ class CartAndSettingsAdapter(
                     }
                 }
 
-                private fun <T> initSettingWidget(
-                    adapter: CartAndSettingsAdapter,
-                    widget: View,
-                    @StringRes labelId: Int,
-                    setting: MutableLiveData<T>,
-                    settingValue: T
-                ) {
-                    initSettingWidget(adapter, widget, labelId, setting, settingValue, View.OnClickListener {
-                        setting.value = settingValue
-                    })
-                }
-
-                private fun <T> initSettingWidget(
-                    adapter: CartAndSettingsAdapter,
-                    widget: View,
-                    @StringRes labelId: Int,
-                    setting: LiveData<T>,
-                    settingValue: T,
-                    onClick: View.OnClickListener
-                ) {
-                    widget.text_view.setText(labelId)
-                    widget.setOnClickListener(onClick)
-                    setting.observe(adapter.lifecycleOwner, Observer {
-                        val checked = it == settingValue
-                        widget.text_view.typeface = ResourcesCompat.getFont(
-                            widget.context,
-                            if (checked) R.font.ibm_plex_mono_bold else R.font.ibm_plex_mono_regular
-                        )
-                        widget.underline.visibility =
-                            if (checked) View.VISIBLE else View.GONE
-                    })
-                }
-
                 private fun setExpandedState(expanded: Boolean) {
                     this.itemView.apply {
                         (parent as? ViewGroup)?.let(TransitionManager::beginDelayedTransition)
@@ -321,6 +345,47 @@ class CartAndSettingsAdapter(
         )
 
         protected abstract fun createViewHolder(adapter: CartAndSettingsAdapter, itemView: View): ViewHolder
+
+        protected fun <T> initSettingWidget(
+            adapter: CartAndSettingsAdapter,
+            widget: View,
+            @StringRes labelId: Int,
+            setting: MutableLiveData<T>,
+            settingValue: T
+        ) {
+            initSettingWidget<T>(adapter, widget, labelId, setting, settingValue, View.OnClickListener {
+                setting.value = settingValue
+            })
+        }
+
+        protected fun <T> initSettingWidget(
+            adapter: CartAndSettingsAdapter,
+            widget: View,
+            @StringRes labelId: Int,
+            setting: LiveData<T>,
+            settingValue: T,
+            onClick: View.OnClickListener
+        ) {
+            widget.text_view.setText(labelId)
+            widget.setOnClickListener(onClick)
+            setting.observe(adapter.lifecycleOwner, Observer {
+                val checked = it == settingValue
+                widget.text_view.typeface = ResourcesCompat.getFont(
+                    widget.context,
+                    if (checked) R.font.ibm_plex_mono_bold else R.font.ibm_plex_mono_regular
+                )
+                widget.underline.visibility =
+                    if (checked) View.VISIBLE else View.GONE
+            })
+        }
+
+        protected fun bindTextView(
+            widget: TextView,
+            setting: MutableLiveData<String>
+        ) {
+            widget.text = setting.value
+            widget.doAfterTextChanged { setting.value = it?.toString() }
+        }
     }
 
     private object DiffCallback : DiffUtil.ItemCallback<Cell>() {
@@ -328,6 +393,7 @@ class CartAndSettingsAdapter(
             Cell.Header -> newItem is Cell.Header
             is Cell.Item -> newItem is Cell.Item && oldItem.shopItem.name == newItem.shopItem.name
             Cell.Footer -> newItem is Cell.Footer
+            Cell.Consumer -> newItem is Cell.Consumer
             Cell.Settings -> newItem is Cell.Settings
         }
 
@@ -335,6 +401,7 @@ class CartAndSettingsAdapter(
             Cell.Header -> newItem is Cell.Header
             is Cell.Item -> newItem is Cell.Item && oldItem.shopItem == newItem.shopItem
             Cell.Footer -> newItem is Cell.Footer
+            Cell.Consumer -> newItem is Cell.Consumer
             Cell.Settings -> newItem is Cell.Settings
         }
     }

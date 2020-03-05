@@ -39,6 +39,12 @@ class CartAndSettingsItemDecoration(context: Context) : RecyclerView.ItemDecorat
                 bottom = 0
             }
 
+            CartAndSettingsAdapter.ViewType.CONSUMER -> view.resources.apply {
+                side = getDimensionPixelOffset(R.dimen.settings_side_margin)
+                top = getDimensionPixelOffset(R.dimen.settings_top_margin)
+                bottom = 0
+            }
+
             CartAndSettingsAdapter.ViewType.SETTINGS -> view.resources.apply {
                 side = getDimensionPixelOffset(R.dimen.settings_side_margin)
                 top = getDimensionPixelOffset(R.dimen.settings_top_margin)
@@ -72,7 +78,7 @@ class CartAndSettingsItemDecoration(context: Context) : RecyclerView.ItemDecorat
                 CartAndSettingsAdapter.ViewType.HEADER -> headerViewHolder = viewHolder
                 CartAndSettingsAdapter.ViewType.ITEM -> itemViewHolder = viewHolder
                 CartAndSettingsAdapter.ViewType.FOOTER -> footerViewHolder = viewHolder
-                CartAndSettingsAdapter.ViewType.SETTINGS -> Unit
+                else -> Unit
             }
         }
         val anyViewHolder = headerViewHolder ?: itemViewHolder ?: footerViewHolder
