@@ -5,6 +5,8 @@ import android.os.Bundle
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.*
 import androidx.lifecycle.Observer
+import com.swedbankpay.exampleapp.payment.Environment
+import com.swedbankpay.exampleapp.payment.MyPaymentFragment
 import com.swedbankpay.mobilesdk.*
 import java.math.BigDecimal
 import java.text.DecimalFormat
@@ -89,6 +91,7 @@ class ProductsViewModel(app: Application) : AndroidViewModel(app) {
     val consumerOptionsExpanded = MutableLiveData(false)
     val optionsExpanded = MutableLiveData(false)
 
+    val environment = MutableLiveData(Environment.STAGE)
     val useBrowser = MutableLiveData(false)
     val useBogusHostUrl = MutableLiveData(false)
 
@@ -271,11 +274,15 @@ class ProductsViewModel(app: Application) : AndroidViewModel(app) {
                     .paymentOrder(it)
                     .useBrowser(useBrowser.value ?: false)
                     .build()
+                    .apply {
+                        putInt(MyPaymentFragment.ARG_ENVIRONMENT, checkNotNull(environment.value).ordinal)
+                    }
             }
         }
         addSource(useBrowser, observer)
         addSource(paymentFragmentConsumer, observer)
         addSource(paymentFragmentPaymentOrder, observer)
+        addSource(environment, observer)
     }
 
     private fun formatPrice(price: Int, currency: Currency) = currencyFormat.run {

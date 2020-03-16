@@ -8,6 +8,9 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.annotation.LayoutRes
 import androidx.annotation.StringRes
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.constraintlayout.widget.ConstraintSet
+import androidx.constraintlayout.widget.Constraints
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.widget.doAfterTextChanged
 import androidx.lifecycle.LifecycleOwner
@@ -18,12 +21,14 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.swedbankpay.exampleapp.R
+import com.swedbankpay.exampleapp.payment.Environment
 import com.swedbankpay.exampleapp.products.ProductsViewModel
 import com.swedbankpay.exampleapp.products.ShopItem
 import kotlinx.android.synthetic.main.cart_footer_cell.view.*
 import kotlinx.android.synthetic.main.cart_header_cell.view.*
 import kotlinx.android.synthetic.main.cart_item_cell.view.*
 import kotlinx.android.synthetic.main.consumer_options_cell.view.*
+import kotlinx.android.synthetic.main.environment_cell.view.*
 import kotlinx.android.synthetic.main.settings_cell.view.*
 import kotlinx.android.synthetic.main.settings_option_label.view.*
 import java.util.*
@@ -36,7 +41,8 @@ class CartAndSettingsAdapter(
     init {
         viewModel.productsInCart.observe(lifecycleOwner, Observer {
             submitList(
-                ArrayList<Cell>(it.size + 4).apply {
+                ArrayList<Cell>(it.size + 5).apply {
+                    add(Cell.Environment)
                     add(Cell.Header)
                     it.mapTo(this, Cell::Item)
                     add(Cell.Footer)
@@ -57,6 +63,7 @@ class CartAndSettingsAdapter(
     override fun onViewRecycled(holder: ViewHolder) = holder.onRecycled()
 
     sealed class Cell(internal val viewType: ViewType) {
+        object Environment : Cell(ViewType.ENVIRONMENT)
         object Header : Cell(ViewType.HEADER)
         class Item(val shopItem: ShopItem) : Cell(ViewType.ITEM)
         object Footer : Cell(ViewType.FOOTER)
@@ -71,6 +78,20 @@ class CartAndSettingsAdapter(
     }
 
     enum class ViewType(@LayoutRes val layout: Int) {
+
+        ENVIRONMENT(R.layout.environment_cell) {
+            override fun createViewHolder(adapter: CartAndSettingsAdapter, itemView: View) =
+                object : ViewHolder(itemView) {
+                    init {
+                        val vm = adapter.viewModel
+                        initSettingWidget(adapter, itemView.env_stage, R.string.env_stage,
+                            vm.environment, Environment.STAGE)
+                        initSettingWidget(adapter, itemView.env_ext_integration, R.string.env_ext_integration,
+                            vm.environment, Environment.EXTERNAL_INTEGRATION)
+                    }
+                }
+        },
+
         HEADER(R.layout.cart_header_cell) {
             override fun createViewHolder(adapter: CartAndSettingsAdapter, itemView: View) =
                 object : ViewHolder(itemView) {
@@ -390,6 +411,7 @@ class CartAndSettingsAdapter(
 
     private object DiffCallback : DiffUtil.ItemCallback<Cell>() {
         override fun areItemsTheSame(oldItem: Cell, newItem: Cell) = when (oldItem) {
+            Cell.Environment -> newItem is Cell.Environment
             Cell.Header -> newItem is Cell.Header
             is Cell.Item -> newItem is Cell.Item && oldItem.shopItem.name == newItem.shopItem.name
             Cell.Footer -> newItem is Cell.Footer
@@ -398,6 +420,7 @@ class CartAndSettingsAdapter(
         }
 
         override fun areContentsTheSame(oldItem: Cell, newItem: Cell) = when (oldItem) {
+            Cell.Environment -> newItem is Cell.Environment
             Cell.Header -> newItem is Cell.Header
             is Cell.Item -> newItem is Cell.Item && oldItem.shopItem == newItem.shopItem
             Cell.Footer -> newItem is Cell.Footer

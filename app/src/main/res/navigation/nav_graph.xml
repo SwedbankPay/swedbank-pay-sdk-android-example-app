@@ -16,7 +16,7 @@
     </fragment>
     <fragment
         android:id="@+id/paymentFragment"
-        android:name="com.swedbankpay.mobilesdk.PaymentFragment"
+        android:name="com.swedbankpay.exampleapp.payment.MyPaymentFragment"
         android:label="PaymentFragment" />
     <dialog
         android:id="@+id/successFragment"

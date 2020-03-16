@@ -33,22 +33,28 @@ class CartAndSettingsItemDecoration(context: Context) : RecyclerView.ItemDecorat
 
         val viewHolder = parent.getChildViewHolder(view) as CartAndSettingsAdapter.ViewHolder
         when (viewHolder.viewType) {
+            CartAndSettingsAdapter.ViewType.ENVIRONMENT -> view.resources.apply {
+                side = getDimensionPixelOffset(R.dimen.settings_side_margin)
+                top = getDimensionPixelOffset(R.dimen.cart_top_margin)
+                bottom = 0
+            }
+
             CartAndSettingsAdapter.ViewType.HEADER -> view.resources.apply {
                 side = getDimensionPixelOffset(R.dimen.cart_side_margin)
-                top = getDimensionPixelOffset(R.dimen.cart_top_margin)
+                top = getDimensionPixelOffset(R.dimen.cart_separation)
                 bottom = 0
             }
 
             CartAndSettingsAdapter.ViewType.CONSUMER -> view.resources.apply {
                 side = getDimensionPixelOffset(R.dimen.settings_side_margin)
-                top = getDimensionPixelOffset(R.dimen.settings_top_margin)
+                top = getDimensionPixelOffset(R.dimen.cart_separation)
                 bottom = 0
             }
 
             CartAndSettingsAdapter.ViewType.SETTINGS -> view.resources.apply {
                 side = getDimensionPixelOffset(R.dimen.settings_side_margin)
-                top = getDimensionPixelOffset(R.dimen.settings_top_margin)
-                bottom = getDimensionPixelOffset(R.dimen.settings_bottom_margin)
+                top = getDimensionPixelOffset(R.dimen.cart_separation)
+                bottom = getDimensionPixelOffset(R.dimen.cart_bottom_margin)
             }
 
             else -> {

@@ -11,30 +11,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 private const val ALERT_TAG = "com.swedbankpay.exampleapp.alert"
 
 class MainActivity : AppCompatActivity(R.layout.activity_main) {
-    companion object {
-        private var isSetup = false
-        private fun setupApp() {
-            if (!isSetup) {
-                isSetup = true
-                PaymentFragment.defaultConfiguration = buildPaymentConfiguration()
-            }
-        }
-        private fun buildPaymentConfiguration() =
-            Configuration.Builder("https://payex-merchant-samples.appspot.com/")
-                .requestDecorator(object : RequestDecorator() {
-
-                    override suspend fun decorateAnyRequest(userHeaders: UserHeaders, method: String, url: String, body: String?) {
-                        userHeaders
-                            .add("x-payex-sample-apikey", "c339f53d-8a36-4ea9-9695-75048e592cc0")
-                            .add("x-payex-sample-access-token", "token123")
-                    }
-                })
-                .build()
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
-        setupApp()
-
         super.onCreate(savedInstanceState)
         savedInstanceState?.let(mainViewModel::resumeFromSavedState)
         observePaymentProcess()
