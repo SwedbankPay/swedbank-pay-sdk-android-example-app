@@ -1,6 +1,7 @@
 package com.swedbankpay.exampleapp.products
 
 import android.app.Application
+import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.*
@@ -155,7 +156,7 @@ class ProductsViewModel(app: Application) : AndroidViewModel(app) {
         val countryObserver = Observer<UserCountry> {
             value = value?.copy(language = checkNotNull(it.language))
         }
-        val useBogusHostUrlObserver = Observer<Boolean> {
+        val paymentUrlsObserver = Observer<Any> {
             value = value?.copy(urls = buildPaymentOrderUrls())
         }
         
@@ -165,22 +166,47 @@ class ProductsViewModel(app: Application) : AndroidViewModel(app) {
         addSource(disablePaymentsMenu, toggleObserver)
         addSource(adjustedPrice, adjustedObserver)
         addSource(userCountry, countryObserver)
-        addSource(useBogusHostUrl, useBogusHostUrlObserver)
+        addSource(useBogusHostUrl, paymentUrlsObserver)
+        addSource(environment, paymentUrlsObserver)
     }
 
-    private fun buildPaymentOrderUrls() = if (useBogusHostUrl.value == true) {
-        PaymentOrderUrls(
-            context = getApplication(),
-            hostUrl = "https://bogus-hosturl-for-testing.swedbankpay.com/",
-            callbackUrl = null,
-            termsOfServiceUrl = null
-        )
-    } else {
-        // Each payment needs a set of URLs, most importantly the paymentUrl.
-        // The SDK can generate suitable URLs for you, provided you
-        // have set proper values for the swedbankpaysdk_callback_url_scheme
-        // and swedbankpaysdk_callback_host string resources.
-        PaymentOrderUrls(getApplication())
+    private fun buildPaymentOrderUrls(): PaymentOrderUrls {
+        val context: Context = getApplication()
+        val backendUrl = checkNotNull(environment.value).backendUrl
+        return if (useBogusHostUrl.value == true) {
+            PaymentOrderUrls(
+                context = context,
+                hostUrl = "https://bogus-hosturl-for-testing.swedbankpay.com/",
+                backendUrl = backendUrl,
+                callbackUrl = null,
+                termsOfServiceUrl = null
+            )
+        } else {
+            // Each payment needs a set of URLs, most importantly the paymentUrl.
+            // If your backend is similar to the example backend,
+            // then the SDK can generate the URLs for you.
+            // The completeUrl and cancelUrl are only significant to the
+            // extent that they do not collide with each other or the paymentUrl.
+            //
+            // The paymentUrl, however, should fulfill two criteria:
+            //  - It should be unique in a very local sense: There should not be
+            //    two payments from the same app on the same device that share the paymentUrl.
+            //  - When opened in a browser, it must redirect to an intent url
+            //    (https://developer.chrome.com/multidevice/android/intents)
+            //    that sends a com.swedbankpay.mobilesdk.VIEW_PAYMENTORDER
+            //    intent with the exact same url to this app. A http 301 redirect
+            //    is recommended.
+            //
+            // The com.swedbankpay.mobilesdk.VIEW_PAYMENTORDER intent is received by
+            // the SDK, which will forward it to the PaymentFragment,
+            // which in turn will act as if there had been a navigation to the
+            // paymentUrl as normal.
+            //
+            // The example backend supplies a suitable paymentUrl
+            // at sdk-callback/android-intent?package={packageId}&id={localPaymentId}
+            // See PaymentOrderUrls source for details.
+            PaymentOrderUrls(context, backendUrl)
+        }
     }
     
     private fun createPaymentOrder(items: List<ShopItem>): PaymentOrder { 

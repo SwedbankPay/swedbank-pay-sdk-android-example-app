@@ -56,11 +56,4 @@
     <string name="error_terminal_failure">There appears to be a configuration error in the payment service. Please try again later.</string>
 
     <string name="error_problem_id_format">Problem ID: %s</string>
-
-    <!--
-     Each app must have a unique callback url scheme.
-     Override this resource with your own unique string.
-     -->
-    <string name="swedbankpaysdk_callback_url_scheme">swedbankexample</string>
-    <string name="swedbankpaysdk_callback_host">payex-merchant-samples.appspot.com</string>
 </resources>
