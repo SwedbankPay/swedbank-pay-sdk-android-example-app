@@ -29,7 +29,7 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'androidx.core:core-ktx:1.1.0'
 
-    implementation 'com.swedbankpay.mobilesdk:mobilesdk:1.0.0-beta13'
+    implementation 'com.swedbankpay.mobilesdk:mobilesdk:1.0.0-beta14'
 
     // appcompat 1.1.0 has a bug which causes crashes with WebView
     // https://issuetracker.google.com/issues/141132133
