@@ -43,7 +43,7 @@ dependencies {
     implementation 'androidx.navigation:navigation-ui-ktx:2.1.0'
     implementation 'androidx.recyclerview:recyclerview:1.0.0'
 
-    implementation 'com.google.code.gson:gson:2.8.5'
+    implementation 'com.google.code.gson:gson:2.8.6'
 
     // Sdk uses okhttp 3.12.x for compatibility, but host app is free
     // to use a newer version.
