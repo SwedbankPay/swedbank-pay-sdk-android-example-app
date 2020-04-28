@@ -13,7 +13,7 @@ import java.math.BigDecimal
 import java.text.DecimalFormat
 import java.util.*
 
-val FragmentActivity.productsViewModel get() = ViewModelProviders.of(this)[ProductsViewModel::class.java]
+val FragmentActivity.productsViewModel get() = ViewModelProvider(this)[ProductsViewModel::class.java]
 
 class ProductsViewModel(app: Application) : AndroidViewModel(app) {
     private val currencyFormat get() = DecimalFormat("#,##0 ¤¤").apply {

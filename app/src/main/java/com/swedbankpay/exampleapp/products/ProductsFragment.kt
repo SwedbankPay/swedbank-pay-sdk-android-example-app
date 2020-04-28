@@ -37,14 +37,14 @@ class ProductsFragment : Fragment(R.layout.fragment_products) {
                 val view = inflater.inflate(R.layout.dialog_price_cell, null)
                 builder.setView(view)
                 builder.apply { 
-                    setPositiveButton("Set price") { dialog, id ->
+                    setPositiveButton("Set price") { dialog, _ ->
                         val input:String = view.input_decimal.text.toString().ifEmpty { "0" }
                         var price:Double = input.toDouble()
                         price *= 100
                         viewModel.adjustedPrice.value = price.toInt()
                         dialog.dismiss()
                     }
-                    setNegativeButton("Reset") { dialog, id ->
+                    setNegativeButton("Reset") { dialog, _ ->
                         viewModel.adjustedPrice.value = null
                         dialog.dismiss()
                     }
