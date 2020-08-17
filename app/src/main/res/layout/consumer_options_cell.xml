@@ -25,7 +25,7 @@
             android:src="@drawable/ic_close"
             android:tint="#FFFFFF"
             android:contentDescription="@string/close_consumer"/>
-        <include android:id="@+id/consumer_anon"
+        <include android:id="@+id/consumer_guest"
             layout="@layout/settings_option_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -38,7 +38,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/consumer_anon"/>
+            app:layout_constraintTop_toBottomOf="@id/consumer_guest"/>
         <include android:id="@+id/consumer_prefill"
             layout="@layout/settings_option_label"
             android:layout_width="wrap_content"
@@ -105,7 +105,7 @@
             android:id="@+id/consumer_expanded_state_widgets"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:constraint_referenced_ids="close_consumer,consumer_anon,consumer_checkin,consumer_prefill,consumer_email,consumer_msisdn,consumer_profileref"
+            app:constraint_referenced_ids="close_consumer,consumer_guest,consumer_checkin,consumer_prefill,consumer_email,consumer_msisdn,consumer_profileref"
             />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>

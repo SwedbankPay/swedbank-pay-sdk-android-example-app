@@ -38,7 +38,7 @@
 
     <string name="consumer">Consumer</string>
     <string name="close_consumer">Close Consumer Settings</string>
-    <string name="anonymous">Anonymous</string>
+    <string name="guest">Guest</string>
     <string name="checkin">Checkin</string>
     <string name="prefilled">Prefilled</string>
     <string name="consumer_email">email</string>

@@ -96,7 +96,7 @@ class ProductsViewModel(app: Application) : AndroidViewModel(app) {
     val useBrowser = MutableLiveData(false)
     val useBogusHostUrl = MutableLiveData(false)
 
-    val consumerType = MutableLiveData(ConsumerType.ANONYMOUS)
+    val consumerType = MutableLiveData(ConsumerType.GUEST)
     val consumerPrefillEmail = MutableLiveData("")
     val consumerPrefillMsisdn = MutableLiveData("")
     val consumerPrefillProfileRef = MutableLiveData("")
@@ -341,6 +341,6 @@ class ProductsViewModel(app: Application) : AndroidViewModel(app) {
     }
 
     enum class ConsumerType {
-        ANONYMOUS, CHECKIN, PREFILL
+        GUEST, CHECKIN, PREFILL
     }
 }

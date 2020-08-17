@@ -8,9 +8,6 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.annotation.LayoutRes
 import androidx.annotation.StringRes
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.constraintlayout.widget.ConstraintSet
-import androidx.constraintlayout.widget.Constraints
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.widget.doAfterTextChanged
 import androidx.lifecycle.LifecycleOwner
@@ -222,8 +219,8 @@ class CartAndSettingsAdapter(
                     }
 
                     initSettingWidget(
-                        adapter, itemView.consumer_anon, R.string.anonymous,
-                        vm.consumerType, ProductsViewModel.ConsumerType.ANONYMOUS
+                        adapter, itemView.consumer_guest, R.string.guest,
+                        vm.consumerType, ProductsViewModel.ConsumerType.GUEST
                     )
                     initSettingWidget(
                         adapter, itemView.consumer_checkin, R.string.checkin,
