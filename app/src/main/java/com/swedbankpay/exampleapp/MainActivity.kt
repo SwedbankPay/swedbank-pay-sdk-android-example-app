@@ -2,10 +2,10 @@ package com.swedbankpay.exampleapp
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Observer
 import androidx.navigation.fragment.NavHostFragment
-import com.swedbankpay.mobilesdk.*
 import com.swedbankpay.exampleapp.products.productsViewModel
+import com.swedbankpay.mobilesdk.PaymentViewModel
+import com.swedbankpay.mobilesdk.paymentViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 
 private const val ALERT_TAG = "com.swedbankpay.exampleapp.alert"
@@ -29,7 +29,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
         // PaymentFragment is visible, and as such it would not receive any callbacks.
         // If PaymentFragment would instead be shown as a child fragment
         // of ProductsFragment, then we could have this observation in ProductsFragment.
-        paymentViewModel.richState.observe(this, Observer {
+        paymentViewModel.richState.observe(this, {
             if (it.state == PaymentViewModel.State.FAILURE) {
                 mainViewModel.setErrorMessageFromState(it)
             }
@@ -48,7 +48,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
     }
 
     private fun observeErrorMessage() {
-        mainViewModel.currentErrorMessage.observe(this, Observer {
+        mainViewModel.currentErrorMessage.observe(this, {
             if (it != null) {
                 supportFragmentManager.apply {
                     if (findFragmentByTag(ALERT_TAG) == null) {

@@ -36,7 +36,7 @@ class CartAndSettingsAdapter(
     val viewModel: ProductsViewModel
 ) : ListAdapter<CartAndSettingsAdapter.Cell, CartAndSettingsAdapter.ViewHolder>(DiffCallback) {
     init {
-        viewModel.productsInCart.observe(lifecycleOwner, Observer {
+        viewModel.productsInCart.observe(lifecycleOwner, {
             submitList(
                 ArrayList<Cell>(it.size + 5).apply {
                     add(Cell.Environment)
@@ -207,7 +207,7 @@ class CartAndSettingsAdapter(
                 init {
                     val vm = adapter.viewModel
 
-                    vm.consumerOptionsExpanded.observe(adapter.lifecycleOwner, Observer {
+                    vm.consumerOptionsExpanded.observe(adapter.lifecycleOwner, {
                         setExpandedState(it == true)
                     })
 
@@ -269,7 +269,7 @@ class CartAndSettingsAdapter(
             ) = object : ViewHolder(itemView) {
                 init {
                     itemView.apply {
-                        adapter.viewModel.optionsExpanded.observe(adapter.lifecycleOwner, Observer {
+                        adapter.viewModel.optionsExpanded.observe(adapter.lifecycleOwner, {
                             setExpandedState(it == true)
                         })
 
@@ -292,38 +292,38 @@ class CartAndSettingsAdapter(
                         val sek = Currency.getInstance("SEK")
                         initSettingWidget(adapter, currency_nok, R.string.currency_nok,
                             vm.currency, nok,
-                            View.OnClickListener { vm.currency.value = nok }
+                            { vm.currency.value = nok }
                         )
                         initSettingWidget(adapter, currency_sek, R.string.currency_sek,
                             vm.currency, sek,
-                            View.OnClickListener { vm.currency.value = sek }
+                            { vm.currency.value = sek }
                         )
 
                         initSettingWidget(adapter, browser_no, R.string.browser_no,
                             vm.useBrowser, false,
-                            View.OnClickListener { vm.useBrowser.value = false }
+                            { vm.useBrowser.value = false }
                         )
                         initSettingWidget(adapter, browser_yes, R.string.browser_yes,
                             vm.useBrowser, true,
-                            View.OnClickListener { vm.useBrowser.value = true }
+                            { vm.useBrowser.value = true }
                         )
 
                         initSettingWidget(adapter, country_norway, R.string.norway,
                             vm.userCountry, ProductsViewModel.UserCountry.NORWAY,
-                            View.OnClickListener { vm.userCountry.value = ProductsViewModel.UserCountry.NORWAY }
+                            { vm.userCountry.value = ProductsViewModel.UserCountry.NORWAY }
                         )
                         initSettingWidget(adapter, country_sweden, R.string.sweden,
                             vm.userCountry, ProductsViewModel.UserCountry.SWEDEN,
-                            View.OnClickListener { vm.userCountry.value = ProductsViewModel.UserCountry.SWEDEN }
+                            { vm.userCountry.value = ProductsViewModel.UserCountry.SWEDEN }
                         )
 
                         initSettingWidget(adapter, disable_payment_menu_no, R.string.disable_payment_menu_no,
                             vm.disablePaymentsMenu, false,
-                            View.OnClickListener { vm.disablePaymentsMenu.value = false }
+                            { vm.disablePaymentsMenu.value = false }
                         )
                         initSettingWidget(adapter, disable_payment_menu_yes, R.string.disable_payment_menu_yes,
                             vm.disablePaymentsMenu, true,
-                            View.OnClickListener { vm.disablePaymentsMenu.value = true }
+                            { vm.disablePaymentsMenu.value = true }
                         )
 
                         instruments_input.setText(vm.restrictedInstrumentsInput.value)
@@ -371,7 +371,7 @@ class CartAndSettingsAdapter(
             setting: MutableLiveData<T>,
             settingValue: T
         ) {
-            initSettingWidget<T>(adapter, widget, labelId, setting, settingValue, View.OnClickListener {
+            initSettingWidget<T>(adapter, widget, labelId, setting, settingValue, {
                 setting.value = settingValue
             })
         }
@@ -386,7 +386,7 @@ class CartAndSettingsAdapter(
         ) {
             widget.text_view.setText(labelId)
             widget.setOnClickListener(onClick)
-            setting.observe(adapter.lifecycleOwner, Observer {
+            setting.observe(adapter.lifecycleOwner, {
                 val checked = it == settingValue
                 widget.text_view.typeface = ResourcesCompat.getFont(
                     widget.context,

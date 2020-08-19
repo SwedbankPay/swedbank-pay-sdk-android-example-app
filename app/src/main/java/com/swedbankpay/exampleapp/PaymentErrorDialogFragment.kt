@@ -4,12 +4,11 @@ import android.app.Dialog
 import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
-import androidx.lifecycle.Observer
 
 class PaymentErrorDialogFragment : DialogFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        requireActivity().mainViewModel.currentErrorMessage.observe(this, Observer {
+        requireActivity().mainViewModel.currentErrorMessage.observe(this, {
             if (it != null) {
                 (dialog as? AlertDialog)?.setMessage(it)
             }

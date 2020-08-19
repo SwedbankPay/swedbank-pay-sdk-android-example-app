@@ -20,11 +20,11 @@ class ProductsFragment : Fragment(R.layout.fragment_products) {
         // is destroyed and recreated.
         val viewModel = requireActivity().productsViewModel
 
-        viewModel.onCloseCartPressed.observe(this, Observer {
+        viewModel.onCloseCartPressed.observe(this, {
             if (it != null) childFragmentManager.popBackStack()
         })
 
-        viewModel.onCheckOutPressed.observe(this, Observer {
+        viewModel.onCheckOutPressed.observe(this, {
             if (it != null) {
                 navigateToPayment()
             }
@@ -32,7 +32,7 @@ class ProductsFragment : Fragment(R.layout.fragment_products) {
         viewModel.onAdjustPricePressed.observe(this, Observer {
             it ?: return@Observer
             activity?.let {
-                val inflater = it.layoutInflater;
+                val inflater = it.layoutInflater
                 val builder = AlertDialog.Builder(it)
                 val view = inflater.inflate(R.layout.dialog_price_cell, null)
                 builder.setView(view)
