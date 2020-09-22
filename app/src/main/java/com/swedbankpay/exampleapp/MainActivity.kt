@@ -38,7 +38,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
                     .navController
                     .apply {
                         popBackStack(R.id.productsFragment, false)
-                        if (it.state == PaymentViewModel.State.SUCCESS) {
+                        if (it.state == PaymentViewModel.State.COMPLETE) {
                             productsViewModel.clearCart()
                             navigate(R.id.action_productsFragment_to_successFragment)
                         }
