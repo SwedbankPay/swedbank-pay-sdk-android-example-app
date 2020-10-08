@@ -4,10 +4,10 @@ import android.app.Application
 import android.os.Bundle
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.*
-import com.swedbankpay.mobilesdk.SwedbankPayProblem
 import com.swedbankpay.mobilesdk.PaymentViewModel
 import com.swedbankpay.mobilesdk.Problem
-import com.swedbankpay.mobilesdk.UnknownProblem
+import com.swedbankpay.mobilesdk.merchantbackend.MerchantBackendProblem
+import com.swedbankpay.mobilesdk.merchantbackend.RequestProblemException
 
 private const val KEY_ERROR_MESSAGE = "KEY_ERROR_MESSAGE"
 
@@ -29,7 +29,8 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
         _currentErrorMessage.value =
             if (richState.state == PaymentViewModel.State.FAILURE) {
                 StringBuilder().apply {
-                    val problem = richState.problem
+                    val exception = richState.exception as? RequestProblemException
+                    val problem = exception?.problem as? MerchantBackendProblem
                     if (problem != null) {
                         append(getErrorDialogDescription(problem))
                         appendProblemId(problem.instance)
@@ -48,19 +49,13 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
         _currentErrorMessage.value = null
     }
 
-    private fun getErrorDialogDescription(problem: Problem) =
+    private fun getErrorDialogDescription(problem: MerchantBackendProblem) =
         getApplication<Application>().getString(
             when (problem) {
-                is Problem.Server -> R.string.error_server_problem
-                is Problem.Client -> R.string.error_client_problem
+                is MerchantBackendProblem.Server -> R.string.error_server_problem
+                is MerchantBackendProblem.Client -> R.string.error_client_problem
             }
         )
-
-    private val Problem.instance get() = when (this) {
-        is SwedbankPayProblem -> instance
-        is UnknownProblem -> instance
-        else -> null
-    }
 
     private fun StringBuilder.appendProblemId(problemId: String?) {
         problemId?.let {

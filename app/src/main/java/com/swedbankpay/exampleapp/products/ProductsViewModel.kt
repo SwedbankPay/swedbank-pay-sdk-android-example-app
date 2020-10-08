@@ -103,6 +103,8 @@ class ProductsViewModel(app: Application) : AndroidViewModel(app) {
 
     val userCountry = MutableLiveData(UserCountry.NORWAY)
 
+    val paymentInstrument = MutableLiveData<String>()
+
     private val paymentFragmentConsumer = MediatorLiveData<Consumer>().apply {
         val observer = Observer<Any> {
             value = if (consumerType.value == ConsumerType.CHECKIN) {
@@ -141,6 +143,9 @@ class ProductsViewModel(app: Application) : AndroidViewModel(app) {
         val productsObserver = Observer<List<ShopItem>> {
             value = createPaymentOrder(it)
         }
+        val currencyObserver = Observer<Currency> {
+            value = value?.copy(currency = it)
+        }
         val payerPrefillObserver = Observer<PaymentOrderPayer?> {
             value = value?.copy(payer = it)
         }
@@ -159,8 +164,12 @@ class ProductsViewModel(app: Application) : AndroidViewModel(app) {
         val paymentUrlsObserver = Observer<Any> {
             value = value?.copy(urls = buildPaymentOrderUrls())
         }
+        val instrumentObserver = Observer<String?> {
+            value = value?.copy(instrument = it)
+        }
         
         addSource(productsInCart, productsObserver)
+        addSource(currency, currencyObserver)
         addSource(paymentFragmentPayerPrefill, payerPrefillObserver)
         addSource(restrictedInstrumentsList, restrictionsObserver)
         addSource(disablePaymentsMenu, toggleObserver)
@@ -168,6 +177,7 @@ class ProductsViewModel(app: Application) : AndroidViewModel(app) {
         addSource(userCountry, countryObserver)
         addSource(useBogusHostUrl, paymentUrlsObserver)
         addSource(environment, paymentUrlsObserver)
+        addSource(paymentInstrument, instrumentObserver)
     }
 
     private fun buildPaymentOrderUrls(): PaymentOrderUrls {
@@ -269,6 +279,7 @@ class ProductsViewModel(app: Application) : AndroidViewModel(app) {
             vatAmount = vatAmount,
             description = basketId,
             language = checkNotNull(userCountry.value).language,
+            instrument = paymentInstrument.value,
             urls = buildPaymentOrderUrls(),
             payeeInfo = PayeeInfo(
                 // It is unwise to expose your merchant id in a shipping app.
@@ -296,6 +307,11 @@ class ProductsViewModel(app: Application) : AndroidViewModel(app) {
         val observer = Observer<Any> {
             value = paymentFragmentPaymentOrder.value?.let {
                 PaymentFragment.ArgumentsBuilder()
+                    .setEnabledDefaultUI(
+                        PaymentFragment.RETRY_PROMPT,
+                        PaymentFragment.INSTRUMENT_SPINNER,
+                        PaymentFragment.UPDATE_PAYMENTORDER_ERROR_DIALOG
+                    )
                     .consumer(paymentFragmentConsumer.value)
                     .paymentOrder(it)
                     .useBrowser(useBrowser.value ?: false)

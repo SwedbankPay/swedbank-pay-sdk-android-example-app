@@ -1,9 +1,9 @@
 package com.swedbankpay.exampleapp.payment
 
 import com.swedbankpay.mobilesdk.Configuration
-import com.swedbankpay.mobilesdk.MerchantBackendConfiguration
 import com.swedbankpay.mobilesdk.PaymentFragment
 import com.swedbankpay.mobilesdk.RequestDecorator
+import com.swedbankpay.mobilesdk.merchantbackend.MerchantBackendConfiguration
 
 class MyPaymentFragment : PaymentFragment() {
     companion object {

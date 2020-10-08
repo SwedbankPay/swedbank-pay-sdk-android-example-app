@@ -24,7 +24,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             android:src="@drawable/ic_close"
-            android:tint="#FFFFFF"
+            app:tint="#FFFFFF"
             android:contentDescription="@string/close_settings"/>
 
         <TextView
@@ -57,12 +57,35 @@
 
         <TextView
             style="@style/tiny_white_text"
-            android:id="@+id/browser_title"
+            android:id="@+id/instrument_mode_title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             app:layout_constraintStart_toEndOf="@id/open_settings"
             app:layout_constraintEnd_toStartOf="@id/close_settings"
             app:layout_constraintTop_toBottomOf="@id/currency_area"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:gravity="start"
+            android:text="@string/instrument_mode"/>
+        <Spinner
+            android:id="@+id/instrument_mode_spinner"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toEndOf="@id/open_settings"
+            app:layout_constraintEnd_toStartOf="@id/close_settings"
+            app:layout_constraintTop_toBottomOf="@id/instrument_mode_title"
+            android:layout_marginTop="4dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"/>
+
+        <TextView
+            style="@style/tiny_white_text"
+            android:id="@+id/browser_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toEndOf="@id/open_settings"
+            app:layout_constraintEnd_toStartOf="@id/close_settings"
+            app:layout_constraintTop_toBottomOf="@id/instrument_mode_spinner"
             android:layout_marginTop="16dp"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
@@ -195,7 +218,7 @@
             android:id="@+id/expanded_state_widgets"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:constraint_referenced_ids="close_settings,currency_title,currency_area,browser_title,browser_area,user_country_title,user_country_area,disable_payment_menu_title,disable_payment_menu_area,instruments,instruments_input,use_bogus_hosturl_title,use_bogus_hosturl_area"
+            app:constraint_referenced_ids="close_settings,currency_title,currency_area,browser_title,browser_area,user_country_title,user_country_area,disable_payment_menu_title,disable_payment_menu_area,instruments,instruments_input,use_bogus_hosturl_title,use_bogus_hosturl_area,instrument_mode_title,instrument_mode_spinner"
             />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>

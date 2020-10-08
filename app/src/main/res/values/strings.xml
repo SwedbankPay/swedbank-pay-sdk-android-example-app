@@ -19,6 +19,8 @@
     <string name="currency_nok">NOK</string>
     <string name="currency_sek">SEK</string>
     <string name="user_type">User type</string>
+    <string name="instrument_mode">Instrument Mode (tap to change)</string>
+    <string name="instrument_mode_disabled">Disabled</string>
 
     <string name="identified">Identified</string>
     <string name="country">Country</string>

@@ -1,13 +1,19 @@
 package com.swedbankpay.exampleapp.cartsettings
 
+import android.content.Context
 import android.content.res.ColorStateList
 import android.transition.TransitionManager
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.Spinner
 import android.widget.TextView
 import androidx.annotation.LayoutRes
 import androidx.annotation.StringRes
+import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.widget.doAfterTextChanged
 import androidx.lifecycle.LifecycleOwner
@@ -21,6 +27,7 @@ import com.swedbankpay.exampleapp.R
 import com.swedbankpay.exampleapp.payment.Environment
 import com.swedbankpay.exampleapp.products.ProductsViewModel
 import com.swedbankpay.exampleapp.products.ShopItem
+import com.swedbankpay.mobilesdk.PaymentInstruments
 import kotlinx.android.synthetic.main.cart_footer_cell.view.*
 import kotlinx.android.synthetic.main.cart_header_cell.view.*
 import kotlinx.android.synthetic.main.cart_item_cell.view.*
@@ -337,6 +344,8 @@ class CartAndSettingsAdapter(
                         initSettingWidget(adapter, use_bogus_hosturl_yes, R.string.use_bogus_hosturl_yes,
                             vm.useBogusHostUrl, true
                         )
+
+                        initInstrumentModeSpinner(adapter, instrument_mode_spinner)
                     }
                 }
 
@@ -352,6 +361,59 @@ class CartAndSettingsAdapter(
                         }
                         expanded_state_widgets.visibility =
                             if (expanded) View.VISIBLE else View.GONE
+                    }
+                }
+
+                private fun initInstrumentModeSpinner(adapter: CartAndSettingsAdapter, spinner: Spinner) {
+                    val spinnerAdapter = object : ArrayAdapter<String>(
+                        spinner.context,
+                        android.R.layout.simple_spinner_item,
+                        arrayOf(
+                            "Disabled",
+                            PaymentInstruments.CREDIT_CARD,
+                            PaymentInstruments.SWISH,
+                            PaymentInstruments.INVOICE
+                        )
+                    ) {
+                        override fun getView(
+                            position: Int,
+                            convertView: View?,
+                            parent: ViewGroup
+                        ): View {
+                            return super.getView(position, convertView, parent).also {
+                                (it as? TextView)?.apply {
+                                    setTextColor(ContextCompat.getColor(
+                                        parent.context, R.color.white_text
+                                    ))
+                                }
+                            }
+                        }
+                    }
+                    spinner.adapter = spinnerAdapter
+
+                    val instrumentLiveData = adapter.viewModel.paymentInstrument
+                    spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                        override fun onItemSelected(
+                            parent: AdapterView<*>,
+                            view: View?,
+                            position: Int,
+                            id: Long
+                        ) {
+                            val instrument = if (position == 0) {
+                                null
+                            } else {
+                                spinnerAdapter.getItem(position)
+                            }
+                            if (instrumentLiveData.value != instrument) {
+                                instrumentLiveData.value = instrument
+                            }
+                        }
+
+                        override fun onNothingSelected(parent: AdapterView<*>?) {}
+                    }
+                    instrumentLiveData.observe(adapter.lifecycleOwner) {
+                        val position = spinnerAdapter.getPosition(it).coerceAtLeast(0)
+                        spinner.setSelection(position)
                     }
                 }
             }
