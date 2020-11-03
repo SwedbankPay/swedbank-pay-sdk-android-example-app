@@ -307,11 +307,6 @@ class ProductsViewModel(app: Application) : AndroidViewModel(app) {
         val observer = Observer<Any> {
             value = paymentFragmentPaymentOrder.value?.let {
                 PaymentFragment.ArgumentsBuilder()
-                    .setEnabledDefaultUI(
-                        PaymentFragment.RETRY_PROMPT,
-                        PaymentFragment.INSTRUMENT_SPINNER,
-                        PaymentFragment.UPDATE_PAYMENTORDER_ERROR_DIALOG
-                    )
                     .consumer(paymentFragmentConsumer.value)
                     .paymentOrder(it)
                     .useBrowser(useBrowser.value ?: false)

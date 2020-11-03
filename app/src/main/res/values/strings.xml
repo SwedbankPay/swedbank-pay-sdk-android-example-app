@@ -58,4 +58,9 @@
     <string name="error_terminal_failure">There appears to be a configuration error in the payment service. Please try again later.</string>
 
     <string name="error_problem_id_format">Problem ID: %s</string>
+
+    <string name="instrument_spinner_title">Instrument</string>
+    <string name="update_instrument_failed">Unable to change instrument</string>
+    <string name="invalid_instrument_format">%s is not valid for this payment</string>
+
 </resources>
