@@ -330,11 +330,11 @@ class CartAndSettingsAdapter(
                             { vm.currency.value = sek }
                         )
 
-                        initSettingWidget(adapter, browser_no, R.string.browser_no,
+                        initSettingWidget(adapter, browser_no, R.string.option_no,
                             vm.useBrowser, false,
                             { vm.useBrowser.value = false }
                         )
-                        initSettingWidget(adapter, browser_yes, R.string.browser_yes,
+                        initSettingWidget(adapter, browser_yes, R.string.option_yes,
                             vm.useBrowser, true,
                             { vm.useBrowser.value = true }
                         )
@@ -370,6 +370,35 @@ class CartAndSettingsAdapter(
                         )
 
                         initInstrumentModeSpinner(adapter, instrument_mode_spinner)
+
+                        vm.payerReference.observe(adapter.lifecycleOwner, payer_reference_input::setText)
+                        payer_reference_input.doAfterTextChanged {
+                            val payerReference = it?.toString()?.takeUnless(String::isEmpty)
+                            vm.payerReference.apply {
+                                if (value != payerReference) value = payerReference
+                            }
+                        }
+                        payer_reference_generate.setOnClickListener {
+                            vm.setRandomPayerReference()
+                        }
+                        payer_reference_last_used.setOnClickListener {
+                            vm.setPayerReferenceToLastUsed()
+                        }
+
+                        vm.paymentToken.observe(adapter.lifecycleOwner, payment_token_input::setText)
+                        payment_token_input.doAfterTextChanged {
+                            val paymentToken = it?.toString()?.takeUnless(String::isEmpty)
+                            vm.paymentToken.apply {
+                                if (value != paymentToken) value = paymentToken
+                            }
+                        }
+
+                        initSettingWidget(adapter, generate_token_no, R.string.option_no,
+                            vm.generatePaymentToken, false
+                        )
+                        initSettingWidget(adapter, generate_token_yes, R.string.option_yes,
+                            vm.generatePaymentToken, true
+                        )
                     }
                 }
 

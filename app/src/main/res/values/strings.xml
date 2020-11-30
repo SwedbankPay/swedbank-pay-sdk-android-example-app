@@ -27,16 +27,27 @@
     <string name="norway">Norway</string>
     <string name="sweden">Sweden</string>
     <string name="browser">Use Browser</string>
-    <string name="browser_yes">YES</string>
-    <string name="browser_no">NO</string>
+    <string name="option_yes">YES</string>
+    <string name="option_no">NO</string>
     <string name="disable_payment_menu">Disable Payment Menu</string>
     <string name="disable_payment_menu_yes">Disable</string>
     <string name="disable_payment_menu_no">Don\'t disable</string>
+    <string name="payer_reference">Payer Reference</string>
+    <string name="payer_reference_hint">payerReference</string>
+    <string name="payer_reference_generate">Generate</string>
+    <string name="payer_reference_last_used">Last Used</string>
+    <string name="payment_token">Payment Token</string>
+    <string name="payment_token_hint">paymentToken</string>
+    <string name="payment_token_get">GET</string>
+    <string name="generate_token">Generate Payment Token</string>
     <string name="instruments">Restricted instruments</string>
     <string name="instruments_hint">Instruments separated with comma</string>
     <string name="use_bogus_hosturl">Test wrong page url for paymentmenu</string>
     <string name="use_bogus_hosturl_yes">Enable</string>
     <string name="use_bogus_hosturl_no">Disable</string>
+
+    <string name="payer_reference_current">Current</string>
+    <string name="payer_reference_use">USE</string>
 
     <string name="consumer">Consumer</string>
     <string name="close_consumer">Close Consumer Settings</string>

@@ -136,12 +136,118 @@
 
         <TextView
             style="@style/tiny_white_text"
-            android:id="@+id/disable_payment_menu_title"
+            android:id="@+id/payer_reference"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             app:layout_constraintStart_toStartOf="@id/currency_title"
             app:layout_constraintEnd_toEndOf="@id/currency_title"
             app:layout_constraintTop_toBottomOf="@id/user_country_area"
+            android:layout_marginTop="16dp"
+            android:gravity="center_horizontal"
+            android:text="@string/payer_reference"/>
+        <TextView
+            style="@style/tiny_white_text"
+            android:id="@+id/payer_reference_generate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            app:layout_constraintStart_toStartOf="@id/currency_title"
+            app:layout_constraintEnd_toStartOf="@id/payer_reference_last_used"
+            app:layout_constraintTop_toBottomOf="@id/payer_reference"
+            android:text="@string/payer_reference_generate"/>
+        <TextView
+            style="@style/tiny_white_text"
+            android:id="@+id/payer_reference_last_used"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toEndOf="@id/payer_reference_generate"
+            app:layout_constraintEnd_toEndOf="@id/currency_title"
+            app:layout_constraintTop_toTopOf="@id/payer_reference_generate"
+            android:text="@string/payer_reference_last_used"/>
+        <EditText
+            style="@style/tiny_white_text"
+            android:id="@+id/payer_reference_input"
+            android:layout_width="0dp"
+            android:singleLine="true"
+            android:layout_height="wrap_content"
+            android:backgroundTint="#666666"
+            app:layout_constraintStart_toStartOf="@id/currency_title"
+            app:layout_constraintEnd_toEndOf="@id/currency_title"
+            app:layout_constraintTop_toBottomOf="@id/payer_reference_generate"
+            android:layout_marginTop="8dp"
+            android:gravity="center_horizontal"
+            android:textColorHint="#999999"
+            android:hint="@string/payer_reference_hint"/>
+
+        <TextView
+            style="@style/tiny_white_text"
+            android:id="@+id/payment_token_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="@id/currency_title"
+            app:layout_constraintEnd_toEndOf="@id/currency_title"
+            app:layout_constraintTop_toBottomOf="@id/payer_reference_input"
+            android:layout_marginTop="16dp"
+            android:gravity="center_horizontal"
+            android:text="@string/payment_token"/>
+        <!-- Button
+            android:id="@+id/payment_token_get"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="@id/currency_title"
+            app:layout_constraintTop_toTopOf="@id/payment_token_title"
+            app:layout_constraintBottom_toBottomOf="@id/payment_token_title"
+            android:text="@string/payment_token_get"/ -->
+        <EditText
+            style="@style/tiny_white_text"
+            android:id="@+id/payment_token_input"
+            android:layout_width="0dp"
+            android:singleLine="true"
+            android:layout_height="wrap_content"
+            android:backgroundTint="#666666"
+            app:layout_constraintStart_toStartOf="@id/currency_title"
+            app:layout_constraintEnd_toEndOf="@id/currency_title"
+            app:layout_constraintTop_toBottomOf="@id/payment_token_title"
+            android:layout_marginTop="16dp"
+            android:gravity="center_horizontal"
+            android:textColorHint="#999999"
+            android:hint="@string/payment_token_hint"/>
+
+        <TextView
+            style="@style/tiny_white_text"
+            android:id="@+id/generate_token_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="@id/currency_title"
+            app:layout_constraintEnd_toEndOf="@id/currency_title"
+            app:layout_constraintTop_toBottomOf="@id/payment_token_input"
+            android:layout_marginTop="16dp"
+            android:gravity="center_horizontal"
+            android:text="@string/generate_token"/>
+        <LinearLayout
+            android:id="@+id/generate_token_area"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            app:layout_constraintStart_toStartOf="@id/currency_title"
+            app:layout_constraintEnd_toEndOf="@id/currency_title"
+            app:layout_constraintTop_toBottomOf="@id/generate_token_title"
+            android:layout_marginTop="4dp"
+            android:orientation="horizontal"
+            android:baselineAligned="false">
+            <include android:id="@+id/generate_token_no"
+                layout="@layout/settings_option_label"/>
+            <include android:id="@+id/generate_token_yes"
+                layout="@layout/settings_option_label"/>
+        </LinearLayout>
+
+        <TextView
+            style="@style/tiny_white_text"
+            android:id="@+id/disable_payment_menu_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="@id/currency_title"
+            app:layout_constraintEnd_toEndOf="@id/currency_title"
+            app:layout_constraintTop_toBottomOf="@id/generate_token_area"
             android:layout_marginTop="16dp"
             android:gravity="center_horizontal"
             android:text="@string/disable_payment_menu"/>
@@ -218,7 +324,7 @@
             android:id="@+id/expanded_state_widgets"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:constraint_referenced_ids="close_settings,currency_title,currency_area,browser_title,browser_area,user_country_title,user_country_area,disable_payment_menu_title,disable_payment_menu_area,instruments,instruments_input,use_bogus_hosturl_title,use_bogus_hosturl_area,instrument_mode_title,instrument_mode_spinner"
+            app:constraint_referenced_ids="close_settings,currency_title,currency_area,browser_title,browser_area,user_country_title,user_country_area,disable_payment_menu_title,disable_payment_menu_area,instruments,instruments_input,use_bogus_hosturl_title,use_bogus_hosturl_area,instrument_mode_title,instrument_mode_spinner,payer_reference,payer_reference_generate,payer_reference_last_used,payer_reference_input,payment_token_title,payment_token_input,generate_token_title,generate_token_area"
             />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>
