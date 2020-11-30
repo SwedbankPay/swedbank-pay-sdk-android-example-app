@@ -1,26 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="48dp"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_height="wrap_content"
     android:background="@drawable/expanding_button_background"
-    android:backgroundTint="#000000">
-    <include layout="@layout/settings_option_label"
-        android:id="@+id/env_stage"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/env_ext_integration"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        />
-    <include layout="@layout/settings_option_label"
-        android:id="@+id/env_ext_integration"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        app:layout_constraintStart_toEndOf="@id/env_stage"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        />
-</androidx.constraintlayout.widget.ConstraintLayout>
+    android:backgroundTint="#000000"
+    android:columnCount="2"
+    >
+</GridLayout>

@@ -70,7 +70,7 @@ class PaymentContainerFragment : Fragment(R.layout.fragment_payment) {
         val activity = requireActivity()
         val vm = activity.paymentViewModel
         val info = vm.richState.value?.viewPaymentOrderInfo
-        val instruments = info?.validInstruments.orEmpty()
+        val instruments = info?.availableInstruments.orEmpty()
         val showInstrumentUI = instruments.size > 1 && vm.showingPaymentMenu.value == true
 
         if (!showInstrumentUI) {

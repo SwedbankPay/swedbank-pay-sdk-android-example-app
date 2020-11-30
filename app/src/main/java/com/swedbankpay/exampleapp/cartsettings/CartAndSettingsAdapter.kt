@@ -1,16 +1,11 @@
 package com.swedbankpay.exampleapp.cartsettings
 
-import android.content.Context
 import android.content.res.ColorStateList
 import android.transition.TransitionManager
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
-import android.widget.Spinner
-import android.widget.TextView
+import android.widget.*
 import androidx.annotation.LayoutRes
 import androidx.annotation.StringRes
 import androidx.core.content.ContextCompat
@@ -32,7 +27,6 @@ import kotlinx.android.synthetic.main.cart_footer_cell.view.*
 import kotlinx.android.synthetic.main.cart_header_cell.view.*
 import kotlinx.android.synthetic.main.cart_item_cell.view.*
 import kotlinx.android.synthetic.main.consumer_options_cell.view.*
-import kotlinx.android.synthetic.main.environment_cell.view.*
 import kotlinx.android.synthetic.main.settings_cell.view.*
 import kotlinx.android.synthetic.main.settings_option_label.view.*
 import java.util.*
@@ -87,13 +81,43 @@ class CartAndSettingsAdapter(
             override fun createViewHolder(adapter: CartAndSettingsAdapter, itemView: View) =
                 object : ViewHolder(itemView) {
                     init {
-                        val vm = adapter.viewModel
-                        initSettingWidget(adapter, itemView.env_stage, R.string.env_stage,
-                            vm.environment, Environment.STAGE)
-                        initSettingWidget(adapter, itemView.env_ext_integration, R.string.env_ext_integration,
-                            vm.environment, Environment.EXTERNAL_INTEGRATION)
+                        val gridLayout = itemView as GridLayout
+                        for ((index, environment) in Environment.values().withIndex()) {
+                            gridLayout.addEnvironmentWidget(adapter, environment, index > 1)
+                        }
                     }
                 }
+
+            private val weightOne = GridLayout.spec(GridLayout.UNDEFINED, 1.0f)
+
+            private fun GridLayout.addEnvironmentWidget(
+                adapter: CartAndSettingsAdapter,
+                environment: Environment,
+                withTopMargin: Boolean
+            ) {
+                val context = context
+                val resources = context.resources
+                val widget = LayoutInflater
+                    .from(context)
+                    .inflate(R.layout.settings_option_label, this, false)
+                    .apply {
+                        layoutParams = (layoutParams as GridLayout.LayoutParams).apply {
+                            height = resources.getDimensionPixelSize(
+                                R.dimen.environment_option_height
+                            )
+                            columnSpec = weightOne
+                            if (withTopMargin) {
+                                topMargin = resources.getDimensionPixelOffset(
+                                    R.dimen.environment_option_vertical_space
+                                )
+                            }
+                        }
+                    }
+                initSettingWidget(adapter, widget, environment.displayName,
+                    adapter.viewModel.environment, environment
+                )
+                addView(widget)
+            }
         },
 
         HEADER(R.layout.cart_header_cell) {
