@@ -8,6 +8,7 @@ import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.swedbankpay.exampleapp.R
+import com.swedbankpay.exampleapp.cartsettings.CartAndSettingsFragment
 import kotlinx.android.synthetic.main.dialog_price_cell.view.*
 import kotlinx.android.synthetic.main.fragment_products.view.*
 
@@ -54,17 +55,22 @@ class ProductsFragment : Fragment(R.layout.fragment_products) {
                 builder.create().show()
             }
         })
+        viewModel.onGetPaymentTokenPressed.observe(this) {
+            if (it != null) {
+                findNavController()
+                    .navigate(R.id.action_productsFragment_to_getPaymentTokenFragment)
+            }
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        if (savedInstanceState == null) {
-            childFragmentManager.apply {
-                val cartAndSettingsFragment =
-                    checkNotNull(findFragmentById(R.id.cart_and_settings))
-
+        childFragmentManager.apply {
+            if (findFragmentById(R.id.cart_and_settings) == null) {
+                val cartAndSettingsFragment = CartAndSettingsFragment()
                 beginTransaction()
+                    .add(R.id.cart_and_settings, cartAndSettingsFragment)
                     .hide(cartAndSettingsFragment)
                     .commit()
             }

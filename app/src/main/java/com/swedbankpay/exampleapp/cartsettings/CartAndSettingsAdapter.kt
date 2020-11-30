@@ -22,6 +22,7 @@ import com.swedbankpay.exampleapp.R
 import com.swedbankpay.exampleapp.payment.Environment
 import com.swedbankpay.exampleapp.products.ProductsViewModel
 import com.swedbankpay.exampleapp.products.ShopItem
+import com.swedbankpay.exampleapp.setTextIfNeeded
 import com.swedbankpay.mobilesdk.PaymentInstruments
 import kotlinx.android.synthetic.main.cart_footer_cell.view.*
 import kotlinx.android.synthetic.main.cart_header_cell.view.*
@@ -371,12 +372,9 @@ class CartAndSettingsAdapter(
 
                         initInstrumentModeSpinner(adapter, instrument_mode_spinner)
 
-                        vm.payerReference.observe(adapter.lifecycleOwner, payer_reference_input::setText)
+                        vm.payerReference.observe(adapter.lifecycleOwner, payer_reference_input::setTextIfNeeded)
                         payer_reference_input.doAfterTextChanged {
-                            val payerReference = it?.toString()?.takeUnless(String::isEmpty)
-                            vm.payerReference.apply {
-                                if (value != payerReference) value = payerReference
-                            }
+                            vm.payerReference.value = it?.toString()?.takeUnless(String::isEmpty)
                         }
                         payer_reference_generate.setOnClickListener {
                             vm.setRandomPayerReference()
@@ -385,12 +383,9 @@ class CartAndSettingsAdapter(
                             vm.setPayerReferenceToLastUsed()
                         }
 
-                        vm.paymentToken.observe(adapter.lifecycleOwner, payment_token_input::setText)
+                        vm.paymentToken.observe(adapter.lifecycleOwner, payment_token_input::setTextIfNeeded)
                         payment_token_input.doAfterTextChanged {
-                            val paymentToken = it?.toString()?.takeUnless(String::isEmpty)
-                            vm.paymentToken.apply {
-                                if (value != paymentToken) value = paymentToken
-                            }
+                            vm.paymentToken.value = it?.toString()?.takeUnless(String::isEmpty)
                         }
 
                         initSettingWidget(adapter, generate_token_no, R.string.option_no,
@@ -399,6 +394,10 @@ class CartAndSettingsAdapter(
                         initSettingWidget(adapter, generate_token_yes, R.string.option_yes,
                             vm.generatePaymentToken, true
                         )
+
+                        payment_token_get.setOnClickListener {
+                            vm.onGetPaymentTokenPressed()
+                        }
                     }
                 }
 

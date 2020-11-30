@@ -35,6 +35,9 @@ class ProductsViewModel(app: Application) : AndroidViewModel(app) {
     private val _onAdjustPricePressed = MutableLiveData<Unit?>()
     val onAdjustPricePressed: LiveData<Unit?> get() = _onAdjustPricePressed
 
+    private val _onGetPaymentTokenPressed = MutableLiveData<Unit?>()
+    val onGetPaymentTokenPressed = _onGetPaymentTokenPressed
+
     private val basketId = UUID.randomUUID().toString()
 
     val currency = MutableLiveData(Currency.getInstance("NOK"))
@@ -53,9 +56,9 @@ class ProductsViewModel(app: Application) : AndroidViewModel(app) {
         payerReference.value = UUID.randomUUID().toString()
     }
     fun setPayerReferenceToLastUsed() {
-        payerReference.value = getApplication<Application>().getLastUsedPayerReference()
+        payerReference.value = getLastUsedPayerReference()
     }
-    private fun Application.getLastUsedPayerReference() = getSharedPreferences(
+    fun getLastUsedPayerReference() = getApplication<Application>().getSharedPreferences(
         SHARED_PREFERENCES_NAME,
         Context.MODE_PRIVATE
     ).getString(SHARED_PREF_LAST_PAYER_REFERNCE, null)
@@ -373,6 +376,8 @@ class ProductsViewModel(app: Application) : AndroidViewModel(app) {
     fun onCheckOutPressed() = fireEvent(_onCheckOutPressed)
 
     fun askForPrice() = fireEvent(_onAdjustPricePressed)
+
+    fun onGetPaymentTokenPressed() = fireEvent(_onGetPaymentTokenPressed)
 
     fun clearCart() {
         for (product in products) {

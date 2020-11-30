@@ -75,4 +75,9 @@
     <string name="update_instrument_failed">Unable to change instrument</string>
     <string name="invalid_instrument_format">%s is not valid for this payment</string>
 
+    <string name="no_tokens_note_title">Note</string>
+    <string name="no_tokens_note_body">No payment tokens found</string>
+    <string name="get_tokens_error_title">Error</string>
+    <string name="get_tokens_error_not_supported">Environment does not support token retrieval</string>
+    <string name="get_tokens_error_other">Could not retrieve tokens</string>
 </resources>

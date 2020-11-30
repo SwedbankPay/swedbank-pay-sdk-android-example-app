@@ -13,6 +13,9 @@
         <action
             android:id="@+id/action_productsFragment_to_successFragment"
             app:destination="@id/successFragment" />
+        <action
+            android:id="@+id/action_productsFragment_to_getPaymentTokenFragment"
+            app:destination="@id/getPaymentTokenFragment" />
     </fragment>
     <fragment
         android:id="@+id/paymentFragment"
@@ -22,5 +25,8 @@
         android:id="@+id/successFragment"
         android:name="com.swedbankpay.exampleapp.SuccessFragment"
         android:label="SuccessFragment" />
-
+    <fragment
+        android:id="@+id/getPaymentTokenFragment"
+        android:name="com.swedbankpay.exampleapp.payertokens.PayerOwnedTokensFragment"
+        android:label="PayerOwnedTokensFragment" />
 </navigation>

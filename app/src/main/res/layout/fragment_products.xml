@@ -21,10 +21,9 @@
         android:scaleType="center"
         android:contentDescription="@string/cart_button"
         />
-    <fragment
+    <androidx.fragment.app.FragmentContainerView
         android:id="@+id/cart_and_settings"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:name="com.swedbankpay.exampleapp.cartsettings.CartAndSettingsFragment"
         />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
