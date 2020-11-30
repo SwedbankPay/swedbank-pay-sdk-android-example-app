@@ -49,6 +49,7 @@
 
     <string name="env_stage">Stage</string>
     <string name="env_ext_integration">Ext. Integration</string>
+    <string name="env_pp_ext_integration">PaymentPages (EI)</string>
 
     <string name="success_dialog_title">Payment successul!</string>
 

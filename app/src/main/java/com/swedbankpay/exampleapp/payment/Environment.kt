@@ -15,4 +15,8 @@ enum class Environment(
         "https://payex-merchant-samples.ey.r.appspot.com",
         R.string.env_ext_integration
     ),
+    PAYMENTPAGES_EXTERNAL_INTEGRATION(
+        "https://pp-dot-payex-merchant-samples.ey.r.appspot.com",
+        R.string.env_pp_ext_integration
+    )
 }
