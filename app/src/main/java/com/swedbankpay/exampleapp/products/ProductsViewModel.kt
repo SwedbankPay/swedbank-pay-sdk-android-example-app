@@ -3,6 +3,7 @@ package com.swedbankpay.exampleapp.products
 import android.app.Application
 import android.content.Context
 import android.os.Bundle
+import androidx.core.content.edit
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.*
 import androidx.lifecycle.Observer
@@ -16,6 +17,11 @@ import java.util.*
 val FragmentActivity.productsViewModel get() = ViewModelProvider(this)[ProductsViewModel::class.java]
 
 class ProductsViewModel(app: Application) : AndroidViewModel(app) {
+    companion object {
+        private const val SHARED_PREFERENCES_NAME = "ProductsViewModel"
+        private const val SHARED_PREF_LAST_PAYER_REFERNCE = "lastPayerRef"
+    }
+
     private val currencyFormat get() = DecimalFormat("#,##0 ¤¤").apply {
         minimumFractionDigits = 0
     }
@@ -40,6 +46,30 @@ class ProductsViewModel(app: Application) : AndroidViewModel(app) {
             ?.split(",")
             ?.filter(String::isNotBlank)
     }
+
+    val payerReference = MutableLiveData<String>()
+
+    fun setRandomPayerReference() {
+        payerReference.value = UUID.randomUUID().toString()
+    }
+    fun setPayerReferenceToLastUsed() {
+        payerReference.value = getApplication<Application>().getLastUsedPayerReference()
+    }
+    private fun Application.getLastUsedPayerReference() = getSharedPreferences(
+        SHARED_PREFERENCES_NAME,
+        Context.MODE_PRIVATE
+    ).getString(SHARED_PREF_LAST_PAYER_REFERNCE, null)
+    fun saveLastUsedPayerReference(payerReference: String) {
+        getApplication<Application>().getSharedPreferences(
+            SHARED_PREFERENCES_NAME,
+            Context.MODE_PRIVATE
+        ).edit {
+            putString(SHARED_PREF_LAST_PAYER_REFERNCE, payerReference)
+        }
+    }
+
+    val paymentToken = MutableLiveData<String>()
+    val generatePaymentToken = MutableLiveData(false)
 
     val products = ShopItem.demoItems(app)
 
@@ -123,16 +153,18 @@ class ProductsViewModel(app: Application) : AndroidViewModel(app) {
 
     private val paymentFragmentPayerPrefill = MediatorLiveData<PaymentOrderPayer>().apply {
         val observer = Observer<Any> {
-            value = if (consumerType.value == ConsumerType.PREFILL) {
-                PaymentOrderPayer(
+            val payerReference = payerReference.value
+            value = when {
+                payerReference != null -> PaymentOrderPayer(payerReference = payerReference)
+                consumerType.value == ConsumerType.PREFILL -> PaymentOrderPayer(
                     consumerProfileRef = consumerPrefillProfileRef.value?.takeUnless(String::isEmpty),
                     email = consumerPrefillEmail.value?.takeUnless(String::isEmpty),
                     msisdn = consumerPrefillMsisdn.value?.takeUnless(String::isEmpty)
                 )
-            } else {
-                null
+                else -> null
             }
         }
+        addSource(payerReference, observer)
         addSource(consumerPrefillProfileRef, observer)
         addSource(consumerPrefillEmail, observer)
         addSource(consumerPrefillMsisdn, observer)
@@ -167,7 +199,7 @@ class ProductsViewModel(app: Application) : AndroidViewModel(app) {
         val instrumentObserver = Observer<String?> {
             value = value?.copy(instrument = it)
         }
-        
+
         addSource(productsInCart, productsObserver)
         addSource(currency, currencyObserver)
         addSource(paymentFragmentPayerPrefill, payerPrefillObserver)
@@ -178,6 +210,13 @@ class ProductsViewModel(app: Application) : AndroidViewModel(app) {
         addSource(useBogusHostUrl, paymentUrlsObserver)
         addSource(environment, paymentUrlsObserver)
         addSource(paymentInstrument, instrumentObserver)
+
+        addSource(generatePaymentToken) {
+            value = value?.copy(generatePaymentToken = it == true)
+        }
+        addSource(paymentToken) {
+            value = value?.copy(paymentToken = it)
+        }
     }
 
     private fun buildPaymentOrderUrls(): PaymentOrderUrls {
@@ -280,6 +319,7 @@ class ProductsViewModel(app: Application) : AndroidViewModel(app) {
             description = basketId,
             language = checkNotNull(userCountry.value).language,
             instrument = paymentInstrument.value,
+            generatePaymentToken = generatePaymentToken.value == true,
             urls = buildPaymentOrderUrls(),
             payeeInfo = PayeeInfo(
                 // It is unwise to expose your merchant id in a shipping app.
@@ -299,7 +339,8 @@ class ProductsViewModel(app: Application) : AndroidViewModel(app) {
                 payeeReference = ""
             ),
             payer = paymentFragmentPayerPrefill.value,
-            orderItems = orderItems
+            orderItems = orderItems,
+            paymentToken = paymentToken.value
         )
     }
 

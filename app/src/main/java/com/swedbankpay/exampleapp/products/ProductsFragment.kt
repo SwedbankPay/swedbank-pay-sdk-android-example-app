@@ -102,6 +102,9 @@ class ProductsFragment : Fragment(R.layout.fragment_products) {
             value
         }
         if (arguments != null) {
+            requireActivity().productsViewModel.apply {
+                payerReference.value?.let(::saveLastUsedPayerReference)
+            }
             findNavController().navigate(R.id.action_productsFragment_to_paymentFragment, arguments)
         }
     }
