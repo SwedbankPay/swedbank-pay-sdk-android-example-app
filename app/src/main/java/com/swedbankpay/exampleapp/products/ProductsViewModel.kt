@@ -138,6 +138,8 @@ class ProductsViewModel(app: Application) : AndroidViewModel(app) {
 
     val paymentInstrument = MutableLiveData<String>()
 
+    val subsite = MutableLiveData<String>()
+
     private val paymentFragmentConsumer = MediatorLiveData<Consumer>().apply {
         val observer = Observer<Any> {
             value = if (consumerType.value == ConsumerType.CHECKIN) {
@@ -220,6 +222,9 @@ class ProductsViewModel(app: Application) : AndroidViewModel(app) {
         addSource(paymentToken) {
             value = value?.copy(paymentToken = it)
         }
+        addSource(subsite) {
+            value = value?.copy(payeeInfo = buildPayeeInfo())
+        }
     }
 
     private fun buildPaymentOrderUrls(): PaymentOrderUrls {
@@ -260,7 +265,28 @@ class ProductsViewModel(app: Application) : AndroidViewModel(app) {
             PaymentOrderUrls(context, backendUrl)
         }
     }
-    
+
+    private fun buildPayeeInfo() = PayeeInfo(
+        // It is unwise to expose your merchant id in a shipping app.
+        // It is better to have the backend fill in your merchant id here;
+        // the example backend does this. In the interest of having
+        // the Android SDK API mirror the Swedbank Pay API,
+        // payeeId is still made a required parameter, but it also defaults
+        // to the empty string to facilitate this common pattern.
+        payeeId = "not-the-real-merchant-id",
+
+        // PayeeReference must be unique to this payment order.
+        // In a real application you would get it from your backend.
+        // If you don't need the payeeReference in your app,
+        // you can also generate it in your backend. The example backend
+        // does this. PayeeReference is still a required field, so we
+        // must set it to a valid value. The empty string is fine;
+        // indeed, similarly to payeeId above, it defaults to the empty string.
+        payeeReference = "",
+
+        subsite = subsite.value?.takeUnless(String::isEmpty)
+    )
+
     private fun createPaymentOrder(items: List<ShopItem>): PaymentOrder { 
         var orderItems = items.map {
             OrderItem(
@@ -324,23 +350,7 @@ class ProductsViewModel(app: Application) : AndroidViewModel(app) {
             instrument = paymentInstrument.value,
             generatePaymentToken = generatePaymentToken.value == true,
             urls = buildPaymentOrderUrls(),
-            payeeInfo = PayeeInfo(
-                // It is unwise to expose your merchant id in a shipping app.
-                // It is better to have the backend fill in your merchant id here;
-                // the example backend does this. In the interest of having
-                // the Android SDK API mirror the Swedbank Pay API,
-                // payeeId is still made a required parameter, but it also defaults
-                // to the empty string to facilitate this common pattern.
-                payeeId = "not-the-real-merchant-id",
-                // PayeeReference must be unique to this payment order.
-                // In a real application you would get it from your backend.
-                // If you don't need the payeeReference in your app,
-                // you can also generate it in your backend. The example backend
-                // does this. PayeeReference is still a required field, so we
-                // must set it to a valid value. The empty string is fine;
-                // indeed, similarly to payeeId above, it defaults to the empty string.
-                payeeReference = ""
-            ),
+            payeeInfo = buildPayeeInfo(),
             payer = paymentFragmentPayerPrefill.value,
             orderItems = orderItems,
             paymentToken = paymentToken.value

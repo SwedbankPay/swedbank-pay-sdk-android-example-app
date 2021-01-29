@@ -45,6 +45,7 @@
     <string name="use_bogus_hosturl">Test wrong page url for paymentmenu</string>
     <string name="use_bogus_hosturl_yes">Enable</string>
     <string name="use_bogus_hosturl_no">Disable</string>
+    <string name="subsite_hint">subsite</string>
 
     <string name="payer_reference_current">Current</string>
     <string name="payer_reference_use">USE</string>

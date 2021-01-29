@@ -398,6 +398,11 @@ class CartAndSettingsAdapter(
                         payment_token_get.setOnClickListener {
                             vm.onGetPaymentTokenPressed()
                         }
+
+                        vm.subsite.observe(adapter.lifecycleOwner, subsite_input::setTextIfNeeded)
+                        subsite_input.doAfterTextChanged {
+                            vm.subsite.value = it?.toString()?.takeUnless(String::isEmpty)
+                        }
                     }
                 }
 

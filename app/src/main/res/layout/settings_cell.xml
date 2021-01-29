@@ -321,11 +321,26 @@
                 layout="@layout/settings_option_label"/>
         </LinearLayout>
 
+        <EditText
+            style="@style/tiny_white_text"
+            android:id="@+id/subsite_input"
+            android:layout_width="0dp"
+            android:singleLine="true"
+            android:layout_height="wrap_content"
+            android:backgroundTint="#666666"
+            app:layout_constraintStart_toStartOf="@id/currency_title"
+            app:layout_constraintEnd_toEndOf="@id/currency_title"
+            app:layout_constraintTop_toBottomOf="@id/use_bogus_hosturl_area"
+            android:layout_marginTop="16dp"
+            android:gravity="center_horizontal"
+            android:textColorHint="#999999"
+            android:hint="@string/subsite_hint"/>
+
         <androidx.constraintlayout.widget.Group
             android:id="@+id/expanded_state_widgets"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:constraint_referenced_ids="close_settings,currency_title,currency_area,browser_title,browser_area,user_country_title,user_country_area,disable_payment_menu_title,disable_payment_menu_area,instruments,instruments_input,use_bogus_hosturl_title,use_bogus_hosturl_area,instrument_mode_title,instrument_mode_spinner,payer_reference,payer_reference_generate,payer_reference_last_used,payer_reference_input,payment_token_title,payment_token_input,generate_token_title,generate_token_area,payment_token_get"
+            app:constraint_referenced_ids="close_settings,currency_title,currency_area,browser_title,browser_area,user_country_title,user_country_area,disable_payment_menu_title,disable_payment_menu_area,instruments,instruments_input,use_bogus_hosturl_title,use_bogus_hosturl_area,instrument_mode_title,instrument_mode_spinner,payer_reference,payer_reference_generate,payer_reference_last_used,payer_reference_input,payment_token_title,payment_token_input,generate_token_title,generate_token_area,payment_token_get,subsite_input"
             />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>
