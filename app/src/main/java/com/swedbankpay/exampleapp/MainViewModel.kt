@@ -3,9 +3,11 @@ package com.swedbankpay.exampleapp
 import android.app.Application
 import android.os.Bundle
 import androidx.fragment.app.FragmentActivity
-import androidx.lifecycle.*
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModelProvider
 import com.swedbankpay.mobilesdk.PaymentViewModel
-import com.swedbankpay.mobilesdk.Problem
 import com.swedbankpay.mobilesdk.merchantbackend.MerchantBackendProblem
 import com.swedbankpay.mobilesdk.merchantbackend.RequestProblemException
 
@@ -14,8 +16,8 @@ private const val KEY_ERROR_MESSAGE = "KEY_ERROR_MESSAGE"
 val FragmentActivity.mainViewModel get() = ViewModelProvider(this)[MainViewModel::class.java]
 
 class MainViewModel(app: Application) : AndroidViewModel(app) {
-    private val _currentErrorMessage = MutableLiveData<String>()
-    val currentErrorMessage: LiveData<String> get() = _currentErrorMessage
+    private val _currentErrorMessage = MutableLiveData<String?>()
+    val currentErrorMessage: LiveData<String?> get() = _currentErrorMessage
 
     fun saveState(bundle: Bundle) {
         bundle.putString(KEY_ERROR_MESSAGE, _currentErrorMessage.value)

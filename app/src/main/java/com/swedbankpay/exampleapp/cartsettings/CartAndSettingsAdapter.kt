@@ -194,10 +194,10 @@ class CartAndSettingsAdapter(
                     }
                     private var shippingPrice: LiveData<String>? = null
 
-                    private val priceObserver = Observer<String> {
+                    private val priceObserver = Observer<String?> {
                         this.itemView.total_price.text = it
                     }
-                    private var price: LiveData<String>? = null
+                    private var price: LiveData<String?>? = null
 
                     init {
                         itemView.check_out_button.setOnClickListener {
@@ -518,7 +518,7 @@ class CartAndSettingsAdapter(
 
         protected fun bindTextView(
             widget: TextView,
-            setting: MutableLiveData<String>
+            setting: MutableLiveData<String?>
         ) {
             widget.text = setting.value
             widget.doAfterTextChanged { setting.value = it?.toString() }

@@ -50,7 +50,7 @@ class ProductsViewModel(app: Application) : AndroidViewModel(app) {
             ?.filter(String::isNotBlank)
     }
 
-    val payerReference = MutableLiveData<String>()
+    val payerReference = MutableLiveData<String?>()
 
     fun setRandomPayerReference() {
         payerReference.value = UUID.randomUUID().toString()
@@ -71,7 +71,7 @@ class ProductsViewModel(app: Application) : AndroidViewModel(app) {
         }
     }
 
-    val paymentToken = MutableLiveData<String>()
+    val paymentToken = MutableLiveData<String?>()
     val generatePaymentToken = MutableLiveData(false)
 
     val products = ShopItem.demoItems(app)
@@ -105,7 +105,7 @@ class ProductsViewModel(app: Application) : AndroidViewModel(app) {
         addSource(productsInCart, observer)
     }
 
-    val formattedTotalPrice = MediatorLiveData<String>().apply {
+    val formattedTotalPrice = MediatorLiveData<String?>().apply {
         val observer = Observer<Any> {
             value = totalPrice.value?.let { price ->
                 currency.value?.let { currency ->
@@ -136,11 +136,11 @@ class ProductsViewModel(app: Application) : AndroidViewModel(app) {
 
     val userCountry = MutableLiveData(UserCountry.NORWAY)
 
-    val paymentInstrument = MutableLiveData<String>()
+    val paymentInstrument = MutableLiveData<String?>()
 
-    val subsite = MutableLiveData<String>()
+    val subsite = MutableLiveData<String?>()
 
-    private val paymentFragmentConsumer = MediatorLiveData<Consumer>().apply {
+    private val paymentFragmentConsumer = MediatorLiveData<Consumer?>().apply {
         val observer = Observer<Any> {
             value = if (consumerType.value == ConsumerType.CHECKIN) {
                 val country = checkNotNull(userCountry.value)
@@ -156,8 +156,8 @@ class ProductsViewModel(app: Application) : AndroidViewModel(app) {
         addSource(userCountry, observer)
     }
 
-    private val paymentFragmentPayerPrefill = MediatorLiveData<PaymentOrderPayer>().apply {
-        val observer = Observer<Any> {
+    private val paymentFragmentPayerPrefill = MediatorLiveData<PaymentOrderPayer?>().apply {
+        val observer = Observer<Any?> {
             val payerReference = payerReference.value
             value = when {
                 payerReference != null -> PaymentOrderPayer(payerReference = payerReference)
@@ -358,7 +358,7 @@ class ProductsViewModel(app: Application) : AndroidViewModel(app) {
     }
 
     val paymentFragmentArguments = MediatorLiveData<Bundle>().apply {
-        val observer = Observer<Any> {
+        val observer = Observer<Any?> {
             value = paymentFragmentPaymentOrder.value?.let {
                 PaymentFragment.ArgumentsBuilder()
                     .consumer(paymentFragmentConsumer.value)

@@ -14,20 +14,20 @@ class PayerOwnedTokensViewModel(app: Application) : AndroidViewModel(app) {
         @StringRes val body: Int
     )
 
-    private val getTokensJob = MutableLiveData<Job>()
+    private val getTokensJob = MutableLiveData<Job?>()
 
     private val _onUsePaymentTokenPressed = MutableLiveData<String?>()
     val onUsePaymentTokenPressed: LiveData<String?> get() = _onUsePaymentTokenPressed
 
     val updating = Transformations.map(getTokensJob) { it != null }
 
-    val payerReference = MutableLiveData<String>()
+    val payerReference = MutableLiveData<String?>()
 
-    private val _paymentTokens = MutableLiveData<List<PaymentTokenInfo>>()
-    val paymentTokens: LiveData<List<PaymentTokenInfo>> get() = _paymentTokens
+    private val _paymentTokens = MutableLiveData<List<PaymentTokenInfo>?>()
+    val paymentTokens: LiveData<List<PaymentTokenInfo>?> get() = _paymentTokens
 
-    private val _getTokensMessage = MutableLiveData<Message>()
-    val getTokensMessage: LiveData<Message> get() = _getTokensMessage
+    private val _getTokensMessage = MutableLiveData<Message?>()
+    val getTokensMessage: LiveData<Message?> get() = _getTokensMessage
 
     fun getTokens(configuration: MerchantBackendConfiguration) {
         if (getTokensJob.value == null) {
