@@ -14,12 +14,15 @@ class PayerOwnedTokensViewModel(app: Application) : AndroidViewModel(app) {
         @StringRes val body: Int
     )
 
-    private val getTokensJob = MutableLiveData<Job?>()
+    private val updateJob = MutableLiveData<Job?>()
 
     private val _onUsePaymentTokenPressed = MutableLiveData<String?>()
     val onUsePaymentTokenPressed: LiveData<String?> get() = _onUsePaymentTokenPressed
 
-    val updating = Transformations.map(getTokensJob) { it != null }
+    private val _onDeletePaymentTokenPressed = MutableLiveData<Int?>()
+    val onDeletePaymentTokenPressed: LiveData<Int?> get() = _onDeletePaymentTokenPressed
+
+    val updating = Transformations.map(updateJob) { it != null }
 
     val payerReference = MutableLiveData<String?>()
 
@@ -30,12 +33,21 @@ class PayerOwnedTokensViewModel(app: Application) : AndroidViewModel(app) {
     val getTokensMessage: LiveData<Message?> get() = _getTokensMessage
 
     fun getTokens(configuration: MerchantBackendConfiguration) {
-        if (getTokensJob.value == null) {
-            payerReference.value?.takeUnless { it.isEmpty() }?.let { payerReference ->
-                getTokensJob.value = viewModelScope.launch {
-                    getTokens(configuration, payerReference)
-                    getTokensJob.value = null
-                }
+        payerReference.value?.takeUnless { it.isEmpty() }?.let { payerReference ->
+            updateJob.value?.cancel()
+            updateJob.value = viewModelScope.launch {
+                getTokens(configuration, payerReference)
+                updateJob.value = null
+            }
+        }
+    }
+
+    fun deleteToken(configuration: MerchantBackendConfiguration, index: Int) {
+        paymentTokens.value?.get(index)?.let {
+            updateJob.value?.cancel()
+            updateJob.value = viewModelScope.launch {
+                deleteToken(configuration, index, it)
+                updateJob.value = null
             }
         }
     }
@@ -77,6 +89,26 @@ class PayerOwnedTokensViewModel(app: Application) : AndroidViewModel(app) {
         }
     }
 
+    private suspend fun deleteToken(
+        configuration: MerchantBackendConfiguration,
+        index: Int,
+        info: PaymentTokenInfo
+    ) {
+        try {
+            MerchantBackend.deletePayerOwnerPaymentToken(
+                getApplication(),
+                configuration,
+                info,
+                "User deleted from example app"
+            )
+            _paymentTokens.apply {
+                value = value?.toMutableList()?.also {
+                    it.removeAt(index)
+                }
+            }
+        } catch (e: Exception) {}
+    }
+
     fun clearErrorMessage() {
         _getTokensMessage.value = null
     }
@@ -84,6 +116,13 @@ class PayerOwnedTokensViewModel(app: Application) : AndroidViewModel(app) {
     fun onUsePaymentTokenPressed(paymentToken: String) {
         _onUsePaymentTokenPressed.apply {
             value = paymentToken
+            value = null
+        }
+    }
+
+    fun onDeletePaymentTokenPressed(index: Int) {
+        _onDeletePaymentTokenPressed.apply {
+            value = index
             value = null
         }
     }

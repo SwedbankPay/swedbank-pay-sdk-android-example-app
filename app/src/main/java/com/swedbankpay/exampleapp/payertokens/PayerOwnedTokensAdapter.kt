@@ -31,6 +31,9 @@ class PayerOwnedTokensAdapter(
             viewHolder.itemView.findViewById<Button>(R.id.use).setOnClickListener {
                 onUsePressed(viewHolder)
             }
+            viewHolder.itemView.findViewById<Button>(R.id.delete).setOnClickListener {
+                onDeletePressed(viewHolder)
+            }
         }
     }
 
@@ -42,6 +45,10 @@ class PayerOwnedTokensAdapter(
 
     private fun onUsePressed(holder: ViewHolder) {
         vm.onUsePaymentTokenPressed(getItem(holder.adapterPosition).paymentToken)
+    }
+
+    private fun onDeletePressed(holder: ViewHolder) {
+        vm.onDeletePaymentTokenPressed(holder.adapterPosition)
     }
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {

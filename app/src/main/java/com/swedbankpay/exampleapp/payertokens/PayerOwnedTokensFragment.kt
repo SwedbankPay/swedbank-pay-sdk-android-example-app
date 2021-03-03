@@ -66,6 +66,13 @@ class PayerOwnedTokensFragment : Fragment(R.layout.fragment_get_payment_token) {
             }
         }
 
+        vm.onDeletePaymentTokenPressed.observe(viewLifecycleOwner) {
+            if (it != null) {
+                val environment = checkNotNull(productsVm.environment.value)
+                vm.deleteToken(environment.configuration, it)
+            }
+        }
+
         vm.getTokensMessage.observe(viewLifecycleOwner) {
             if (it != null) {
                 childFragmentManager.apply {

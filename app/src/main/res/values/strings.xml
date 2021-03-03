@@ -49,6 +49,8 @@
 
     <string name="payer_reference_current">Current</string>
     <string name="payer_reference_use">USE</string>
+    <string name="payer_reference_delete">DELETE</string>
+
 
     <string name="consumer">Consumer</string>
     <string name="close_consumer">Close Consumer Settings</string>
