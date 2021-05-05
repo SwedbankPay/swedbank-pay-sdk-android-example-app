@@ -7,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
-import androidx.annotation.LayoutRes
 import androidx.annotation.StringRes
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
@@ -15,9 +14,10 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
+import androidx.viewbinding.ViewBinding
 import com.swedbankpay.exampleapp.R
-import kotlinx.android.synthetic.main.products_header_cell.view.*
-import kotlinx.android.synthetic.main.products_item_cell.view.*
+import com.swedbankpay.exampleapp.databinding.ProductsHeaderCellBinding
+import com.swedbankpay.exampleapp.databinding.ProductsItemCellBinding
 
 class ProductsAdapter(
     val lifecycleOwner: LifecycleOwner,
@@ -41,111 +41,129 @@ class ProductsAdapter(
 
     private fun getItem(position: Int) = items[position - 1]
 
-    abstract class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    open class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         open fun bind(adapter: ProductsAdapter, position: Int) {}
         open fun onRecycled() {}
     }
 
-    private enum class ViewType(@LayoutRes val layout: Int) {
-        HEADER(R.layout.products_header_cell) {
-            override fun createViewHolder(itemView: View) = object : ViewHolder(itemView) {
-                init {
-                    itemView.title.typeface = ResourcesCompat.getFont(itemView.context,
+    private enum class ViewType {
+        HEADER {
+            override fun createViewHolder(parent: ViewGroup): ViewHolder {
+                val binding = inflate(parent, ProductsHeaderCellBinding::inflate).apply {
+                    title.typeface = ResourcesCompat.getFont(
+                        title.context,
                         R.font.ibm_plex_mono_medium
                     )
                 }
+                return ViewHolder(binding.root)
             }
         },
-        ITEM(R.layout.products_item_cell) {
-            override fun createViewHolder(itemView: View) = object : ViewHolder(itemView) {
-                private val inCartObserver = Observer<Boolean> {
-                    TransitionManager.beginDelayedTransition(this.itemView as ViewGroup)
-                    setButtonState(when (it) {
-                        true -> AddRemoveButtonState.REMOVE
-                        else -> AddRemoveButtonState.ADD
-                    }, false)
+        ITEM {
+            override fun createViewHolder(parent: ViewGroup): ViewHolder {
+                val binding = inflate(parent, ProductsItemCellBinding::inflate).apply {
+                    val context = root.context
+                    itemName.typeface = ResourcesCompat.getFont(
+                        context,
+                        R.font.ibm_plex_mono_regular
+                    )
+                    itemPrice.typeface = ResourcesCompat.getFont(
+                        context,
+                        R.font.ibm_plex_mono_semibold
+                    )
+                    removeButtonLabel.typeface = ResourcesCompat.getFont(
+                        context,
+                        R.font.ibm_plex_mono_medium
+                    )
                 }
 
-                private var item: ShopItem? = null
-                private var buttonState =
-                    AddRemoveButtonState.ADD
-
-                private val priceFormatterObserver = Observer<(Int) -> String> {
-                    this.itemView.item_price.text = item?.price?.let(it)
-                }
-                private var priceFormatter: LiveData<(Int) -> String>? = null
-
-                init {
-                    val context = itemView.context
-                    itemView.apply {
-                        item_name.typeface = ResourcesCompat.getFont(context,
-                            R.font.ibm_plex_mono_regular
+                return object : ViewHolder(binding.root) {
+                    private val inCartObserver = Observer<Boolean> {
+                        TransitionManager.beginDelayedTransition(this.itemView as ViewGroup)
+                        setButtonState(
+                            when (it) {
+                                true -> AddRemoveButtonState.REMOVE
+                                else -> AddRemoveButtonState.ADD
+                            }, false
                         )
-                        item_price.typeface = ResourcesCompat.getFont(context,
-                            R.font.ibm_plex_mono_semibold
-                        )
-                        remove_button_label.typeface = ResourcesCompat.getFont(context,
-                            R.font.ibm_plex_mono_medium
-                        )
+                    }
 
-                        add_remove_button.setOnClickListener {
+                    private var item: ShopItem? = null
+                    private var buttonState =
+                        AddRemoveButtonState.ADD
+
+                    private val priceFormatterObserver = Observer<(Int) -> String> {
+                        binding.itemPrice.text = item?.price?.let(it)
+                    }
+                    private var priceFormatter: LiveData<(Int) -> String>? = null
+
+                    init {
+                        binding.addRemoveButton.setOnClickListener {
                             item?.inCart?.apply {
                                 value = value != true
                             }
                         }
                     }
-                }
 
-                override fun bind(adapter: ProductsAdapter, position: Int) {
-                    val item = adapter.getItem(position)
-                    this.itemView.apply {
-                        item_background.imageTintList = ColorStateList.valueOf(item.imageBackground)
-                        item_image.setImageDrawable(item.image)
-                        item_name.text = item.name
+                    override fun bind(adapter: ProductsAdapter, position: Int) {
+                        val item = adapter.getItem(position)
+                        binding.apply {
+                            itemBackground.imageTintList =
+                                ColorStateList.valueOf(item.imageBackground)
+                            itemImage.setImageDrawable(item.image)
+                            itemName.text = item.name
 
-                        setButtonState(when (item.inCart.value) {
-                            true -> AddRemoveButtonState.REMOVE
-                            else -> AddRemoveButtonState.ADD
-                        }, true)
+                            setButtonState(
+                                when (item.inCart.value) {
+                                    true -> AddRemoveButtonState.REMOVE
+                                    else -> AddRemoveButtonState.ADD
+                                }, true
+                            )
+                        }
+
+                        this.item?.inCart?.removeObserver(inCartObserver)
+                        this.item = item
+                        item.inCart.observe(adapter.lifecycleOwner, inCartObserver)
+
+                        priceFormatter?.removeObserver(priceFormatterObserver)
+                        priceFormatter = adapter.viewModel.itemPriceFormatter.apply {
+                            observe(adapter.lifecycleOwner, priceFormatterObserver)
+                        }
                     }
 
-                    this.item?.inCart?.removeObserver(inCartObserver)
-                    this.item = item
-                    item.inCart.observe(adapter.lifecycleOwner, inCartObserver)
-
-                    priceFormatter?.removeObserver(priceFormatterObserver)
-                    priceFormatter = adapter.viewModel.itemPriceFormatter.apply {
-                        observe(adapter.lifecycleOwner, priceFormatterObserver)
+                    override fun onRecycled() {
+                        item?.inCart?.removeObserver(inCartObserver)
+                        item = null
+                        priceFormatter?.removeObserver(priceFormatterObserver)
+                        priceFormatter = null
                     }
-                }
 
-                override fun onRecycled() {
-                    item?.inCart?.removeObserver(inCartObserver)
-                    item = null
-                    priceFormatter?.removeObserver(priceFormatterObserver)
-                    priceFormatter = null
-                }
+                    private fun setButtonState(state: AddRemoveButtonState, force: Boolean) {
+                        if (force || state != buttonState) {
+                            buttonState = state
 
-                private fun setButtonState(state: AddRemoveButtonState, force: Boolean) {
-                    if (force || state != buttonState) {
-                        buttonState = state
-
-                        this.itemView.apply {
-                            val context = context
-                            add_remove_button.contentDescription = context.getString(state.descriptionId)
-                            add_remove_button.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(context, state.tintId))
-                            add_remove_button_icon.setImageResource(state.iconId)
-                            remove_button_label.visibility = state.removeButtonVisibility
+                            binding.apply {
+                                val context = root.context
+                                addRemoveButton.contentDescription =
+                                    context.getString(state.descriptionId)
+                                addRemoveButton.backgroundTintList = ColorStateList.valueOf(
+                                    ContextCompat.getColor(
+                                        context,
+                                        state.tintId
+                                    )
+                                )
+                                addRemoveButtonIcon.setImageResource(state.iconId)
+                                removeButtonLabel.visibility = state.removeButtonVisibility
+                            }
                         }
                     }
                 }
             }
         };
 
-        fun createViewHolder(parent: ViewGroup) = createViewHolder(
-            LayoutInflater.from(parent.context).inflate(layout, parent, false)
-        )
-        protected abstract fun createViewHolder(itemView: View): ViewHolder
+        abstract fun createViewHolder(parent: ViewGroup): ViewHolder
+        protected inline fun <B : ViewBinding> inflate(parent: ViewGroup, inflater: (LayoutInflater, ViewGroup?, Boolean) -> B): B {
+            return inflater(LayoutInflater.from(parent.context), parent, false)
+        }
 
         private enum class AddRemoveButtonState(
             @StringRes val descriptionId: Int,

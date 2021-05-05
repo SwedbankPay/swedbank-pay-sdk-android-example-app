@@ -98,7 +98,7 @@ class ProductsViewModel(app: Application) : AndroidViewModel(app) {
                 adjustedPrice.value
             }
             else {
-                shippingPrice + (productsInCart.value?.sumBy(ShopItem::price) ?: 0)
+                shippingPrice + (productsInCart.value?.sumOf(ShopItem::price) ?: 0)
             }
         }
         addSource(adjustedPrice, observer)

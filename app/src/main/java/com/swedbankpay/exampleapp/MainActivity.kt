@@ -2,11 +2,10 @@ package com.swedbankpay.exampleapp
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.findNavController
 import com.swedbankpay.exampleapp.products.productsViewModel
 import com.swedbankpay.mobilesdk.PaymentViewModel
 import com.swedbankpay.mobilesdk.paymentViewModel
-import kotlinx.android.synthetic.main.activity_main.*
 
 private const val ALERT_TAG = "com.swedbankpay.exampleapp.alert"
 
@@ -33,10 +32,11 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
             if (it.state == PaymentViewModel.State.FAILURE) {
                 mainViewModel.setErrorMessageFromState(it)
             }
+
             if (it.state.isFinal) {
-                (nav_host as NavHostFragment)
-                    .navController
-                    .apply {
+                supportFragmentManager.findFragmentById(R.id.nav_host)
+                    ?.findNavController()
+                    ?.apply {
                         popBackStack(R.id.productsFragment, false)
                         if (it.state == PaymentViewModel.State.COMPLETE) {
                             productsViewModel.clearCart()
