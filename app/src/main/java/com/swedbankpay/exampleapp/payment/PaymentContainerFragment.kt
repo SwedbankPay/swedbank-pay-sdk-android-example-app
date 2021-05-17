@@ -11,59 +11,59 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import com.swedbankpay.exampleapp.R
+import com.swedbankpay.exampleapp.databinding.FragmentPaymentBinding
 import com.swedbankpay.mobilesdk.PaymentViewModel
 import com.swedbankpay.mobilesdk.merchantbackend.InvalidInstrumentException
 import com.swedbankpay.mobilesdk.paymentViewModel
-import kotlinx.android.synthetic.main.fragment_payment.view.*
 
-class PaymentContainerFragment : Fragment(R.layout.fragment_payment) {
+class PaymentContainerFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return super.onCreateView(inflater, container, savedInstanceState).also {
-            val fm = childFragmentManager
-            if (fm.findFragmentById(R.id.sdk_payment_fragment) == null) {
-                val paymentFragment = MyPaymentFragment()
-                paymentFragment.arguments = arguments
-                fm.beginTransaction()
-                    .add(R.id.sdk_payment_fragment, paymentFragment)
-                    .commit()
-            }
+    ): View {
+        val binding = FragmentPaymentBinding.inflate(inflater, container, false)
 
-            val vm = requireActivity().paymentViewModel
-            vm.observeInstruments()
-            vm.observeUpdating()
-            vm.observeUpdateError()
+        val fm = childFragmentManager
+        if (fm.findFragmentById(R.id.sdk_payment_fragment) == null) {
+            val paymentFragment = MyPaymentFragment()
+            paymentFragment.arguments = arguments
+            fm.beginTransaction()
+                .add(R.id.sdk_payment_fragment, paymentFragment)
+                .commit()
         }
+
+        val vm = requireActivity().paymentViewModel
+        vm.observeInstruments(binding)
+        vm.observeUpdating(binding)
+        vm.observeUpdateError()
+
+        return binding.root
     }
 
-    private fun PaymentViewModel.observeInstruments() {
+    private fun PaymentViewModel.observeInstruments(binding: FragmentPaymentBinding) {
         val observer = Observer<Any?> {
-            refreshInstrumentUI()
+            refreshInstrumentUI(binding)
         }
         richState.observe(viewLifecycleOwner, observer)
         showingPaymentMenu.observe(viewLifecycleOwner, observer)
     }
 
-    private fun PaymentViewModel.observeUpdating() {
+    private fun PaymentViewModel.observeUpdating(binding: FragmentPaymentBinding) {
         state.observe(viewLifecycleOwner) {
-            val view = requireView()
             if (it == PaymentViewModel.State.UPDATING_PAYMENT_ORDER) {
-                view.updating_background.visibility = View.VISIBLE
-                view.updating_indicator.show()
+                binding.updatingBackground.visibility = View.VISIBLE
+                binding.updatingIndicator.show()
             } else {
-                view.updating_background.visibility = View.INVISIBLE
-                view.updating_indicator.hide()
+                binding.updatingBackground.visibility = View.INVISIBLE
+                binding.updatingIndicator.hide()
             }
         }
     }
 
-    private fun refreshInstrumentUI() {
-        val view = requireView()
-        val title = view.instrument_title
-        val spinner = view.instrument_spinner
+    private fun refreshInstrumentUI(binding: FragmentPaymentBinding) {
+        val title = binding.instrumentTitle
+        val spinner = binding.instrumentSpinner
 
         spinner.onItemSelectedListener = null
 

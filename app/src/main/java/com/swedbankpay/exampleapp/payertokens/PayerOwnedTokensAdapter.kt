@@ -44,11 +44,11 @@ class PayerOwnedTokensAdapter(
     }
 
     private fun onUsePressed(holder: ViewHolder) {
-        vm.onUsePaymentTokenPressed(getItem(holder.adapterPosition).paymentToken)
+        vm.onUsePaymentTokenPressed(getItem(holder.bindingAdapterPosition).paymentToken)
     }
 
     private fun onDeletePressed(holder: ViewHolder) {
-        vm.onDeletePaymentTokenPressed(holder.adapterPosition)
+        vm.onDeletePaymentTokenPressed(holder.bindingAdapterPosition)
     }
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {

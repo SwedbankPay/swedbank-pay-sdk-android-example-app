@@ -9,8 +9,8 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.swedbankpay.exampleapp.R
 import com.swedbankpay.exampleapp.cartsettings.CartAndSettingsFragment
-import kotlinx.android.synthetic.main.dialog_price_cell.view.*
-import kotlinx.android.synthetic.main.fragment_products.view.*
+import com.swedbankpay.exampleapp.databinding.DialogPriceCellBinding
+import com.swedbankpay.exampleapp.databinding.FragmentProductsBinding
 
 class ProductsFragment : Fragment(R.layout.fragment_products) {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -33,13 +33,12 @@ class ProductsFragment : Fragment(R.layout.fragment_products) {
         viewModel.onAdjustPricePressed.observe(this, Observer {
             it ?: return@Observer
             activity?.let {
-                val inflater = it.layoutInflater
                 val builder = AlertDialog.Builder(it)
-                val view = inflater.inflate(R.layout.dialog_price_cell, null)
-                builder.setView(view)
+                val binding = DialogPriceCellBinding.inflate(it.layoutInflater)
+                builder.setView(binding.root)
                 builder.apply { 
                     setPositiveButton("Set price") { dialog, _ ->
-                        val input:String = view.input_decimal.text.toString().ifEmpty { "0" }
+                        val input:String = binding.inputDecimal.text.toString().ifEmpty { "0" }
                         var price:Double = input.toDouble()
                         price *= 100
                         viewModel.adjustedPrice.value = price.toInt()
@@ -76,12 +75,14 @@ class ProductsFragment : Fragment(R.layout.fragment_products) {
             }
         }
 
-        view.recyclerView.adapter = ProductsAdapter(
+        val binding = FragmentProductsBinding.bind(view)
+
+        binding.recyclerView.adapter = ProductsAdapter(
             this,
             requireActivity().productsViewModel
         )
 
-        view.open_cart.setOnClickListener {
+        binding.openCart.setOnClickListener {
             childFragmentManager.apply {
                 val cartAndSettingsFragment =
                     checkNotNull(findFragmentById(R.id.cart_and_settings))
