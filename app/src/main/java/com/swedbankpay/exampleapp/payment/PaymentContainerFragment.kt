@@ -70,8 +70,8 @@ class PaymentContainerFragment : Fragment() {
         val activity = requireActivity()
         val vm = activity.paymentViewModel
         val info = vm.richState.value?.viewPaymentOrderInfo
-        val instruments = info?.availableInstruments.orEmpty()
-        val showInstrumentUI = instruments.size > 1 && vm.showingPaymentMenu.value == true
+        val availableInstruments = info?.availableInstruments.orEmpty()
+        val showInstrumentUI = availableInstruments.size > 1 && vm.showingPaymentMenu.value == true
 
         if (!showInstrumentUI) {
             title.visibility = View.GONE
@@ -81,15 +81,19 @@ class PaymentContainerFragment : Fragment() {
             title.visibility = View.VISIBLE
             spinner.visibility = View.VISIBLE
 
+            val currentInstrument = info?.instrument
+            val currentInstrumentIndex = availableInstruments.indexOf(currentInstrument)
+            val spinnerOptions = if (currentInstrumentIndex >= 0) {
+                availableInstruments
+            } else {
+                listOf(currentInstrument.orEmpty()) + availableInstruments
+            }
             spinner.adapter = ArrayAdapter(
                 activity,
                 android.R.layout.simple_spinner_item,
-                instruments
+                spinnerOptions
             )
-            val currentInstrumentIndex = instruments.indexOf(info?.instrument)
-            if (currentInstrumentIndex > 0) {
-                spinner.setSelection(currentInstrumentIndex)
-            }
+            spinner.setSelection(currentInstrumentIndex.coerceAtLeast(0))
 
             spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                 override fun onItemSelected(
@@ -98,7 +102,10 @@ class PaymentContainerFragment : Fragment() {
                     position: Int,
                     id: Long
                 ) {
-                    setInstrument(instruments[position])
+                    val instrument = spinnerOptions[position]
+                    if (instrument.isNotEmpty()) {
+                        setInstrument(instrument)
+                    }
                 }
 
                 override fun onNothingSelected(parent: AdapterView<*>?) {}
