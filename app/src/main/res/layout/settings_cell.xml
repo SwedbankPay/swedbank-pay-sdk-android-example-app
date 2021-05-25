@@ -55,28 +55,32 @@
                 layout="@layout/settings_option_label"/>
         </LinearLayout>
 
-        <TextView
-            style="@style/tiny_white_text"
-            android:id="@+id/instrument_mode_title"
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+            android:id="@+id/instrument_mode_input_layout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             app:layout_constraintStart_toEndOf="@id/open_settings"
             app:layout_constraintEnd_toStartOf="@id/close_settings"
             app:layout_constraintTop_toBottomOf="@id/currency_area"
+            android:layout_marginTop="16dp"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
-            android:gravity="start"
-            android:text="@string/instrument_mode"/>
-        <Spinner
-            android:id="@+id/instrument_mode_spinner"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            app:layout_constraintStart_toEndOf="@id/open_settings"
-            app:layout_constraintEnd_toStartOf="@id/close_settings"
-            app:layout_constraintTop_toBottomOf="@id/instrument_mode_title"
-            android:layout_marginTop="4dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"/>
+            app:endIconTint="@color/white_text"
+            app:hintTextColor="#999999"
+            app:placeholderTextColor="@color/white_text"
+            android:textColorHint="#999999"
+            android:hint="@string/instrument_input_hint"
+            >
+            <AutoCompleteTextView
+                style="@style/tiny_white_text"
+                android:id="@+id/instrument_mode_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:textColorHint="#999999"
+                android:imeOptions="actionDone"/>
+        </com.google.android.material.textfield.TextInputLayout>
 
         <TextView
             style="@style/tiny_white_text"
@@ -85,7 +89,7 @@
             android:layout_height="wrap_content"
             app:layout_constraintStart_toEndOf="@id/open_settings"
             app:layout_constraintEnd_toStartOf="@id/close_settings"
-            app:layout_constraintTop_toBottomOf="@id/instrument_mode_spinner"
+            app:layout_constraintTop_toBottomOf="@id/instrument_mode_input_layout"
             android:layout_marginTop="16dp"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
@@ -177,7 +181,8 @@
             android:layout_marginTop="8dp"
             android:gravity="center_horizontal"
             android:textColorHint="#999999"
-            android:hint="@string/payer_reference_hint"/>
+            android:hint="@string/payer_reference_hint"
+            android:imeOptions="actionDone"/>
 
         <TextView
             style="@style/tiny_white_text"
@@ -212,7 +217,8 @@
             android:layout_marginTop="16dp"
             android:gravity="center_horizontal"
             android:textColorHint="#999999"
-            android:hint="@string/payment_token_hint"/>
+            android:hint="@string/payment_token_hint"
+            android:imeOptions="actionDone"/>
 
         <TextView
             style="@style/tiny_white_text"
@@ -292,7 +298,8 @@
             android:layout_marginTop="16dp"
             android:gravity="center_horizontal"
             android:textColorHint="#999999"
-            android:hint="@string/instruments_hint"/>
+            android:hint="@string/instruments_hint"
+            android:imeOptions="actionDone"/>
 
         <TextView
             style="@style/tiny_white_text"
@@ -334,13 +341,14 @@
             android:layout_marginTop="16dp"
             android:gravity="center_horizontal"
             android:textColorHint="#999999"
-            android:hint="@string/subsite_hint"/>
+            android:hint="@string/subsite_hint"
+            android:imeOptions="actionDone"/>
 
         <androidx.constraintlayout.widget.Group
             android:id="@+id/expanded_state_widgets"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:constraint_referenced_ids="close_settings,currency_title,currency_area,browser_title,browser_area,user_country_title,user_country_area,disable_payment_menu_title,disable_payment_menu_area,instruments,instruments_input,use_bogus_hosturl_title,use_bogus_hosturl_area,instrument_mode_title,instrument_mode_spinner,payer_reference,payer_reference_generate,payer_reference_last_used,payer_reference_input,payment_token_title,payment_token_input,generate_token_title,generate_token_area,payment_token_get,subsite_input"
+            app:constraint_referenced_ids="close_settings,currency_title,currency_area,browser_title,browser_area,user_country_title,user_country_area,disable_payment_menu_title,disable_payment_menu_area,instruments,instruments_input,use_bogus_hosturl_title,use_bogus_hosturl_area,instrument_mode_input_layout,payer_reference,payer_reference_generate,payer_reference_last_used,payer_reference_input,payment_token_title,payment_token_input,generate_token_title,generate_token_area,payment_token_get,subsite_input"
             />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>
