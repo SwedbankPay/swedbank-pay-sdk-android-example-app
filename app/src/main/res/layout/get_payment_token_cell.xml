@@ -39,5 +39,6 @@
         app:layout_constraintEnd_toStartOf="@id/use"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginEnd="8dp"
         android:text="@string/payer_reference_delete"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

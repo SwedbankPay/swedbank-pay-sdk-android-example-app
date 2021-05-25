@@ -19,7 +19,9 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
 import com.swedbankpay.exampleapp.R
+import com.swedbankpay.exampleapp.all
 import com.swedbankpay.exampleapp.databinding.*
+import com.swedbankpay.exampleapp.hideSoftKeyboard
 import com.swedbankpay.exampleapp.payment.Environment
 import com.swedbankpay.exampleapp.products.ProductsViewModel
 import com.swedbankpay.exampleapp.products.ShopItem
@@ -366,7 +368,7 @@ class CartAndSettingsAdapter(
                         vm.useBogusHostUrl, true
                     )
 
-                    initInstrumentModeSpinner(adapter, instrumentModeSpinner)
+                    initInstrumentModeInput(adapter, instrumentModeInput)
 
                     vm.payerReference.observe(adapter.lifecycleOwner, payerReferenceInput::setTextIfNeeded)
                     payerReferenceInput.doAfterTextChanged {
@@ -401,16 +403,17 @@ class CartAndSettingsAdapter(
                     }
                 }
 
-            private fun initInstrumentModeSpinner(adapter: CartAndSettingsAdapter, spinner: Spinner) {
-                val spinnerAdapter = object : ArrayAdapter<String>(
-                    spinner.context,
+            private fun initInstrumentModeInput(
+                adapter: CartAndSettingsAdapter,
+                input: AutoCompleteTextView
+            ) {
+                val instruments = PaymentInstruments.all
+                val context = input.context
+                val options = listOf("") + instruments
+                val inputAdapter = object : ArrayAdapter<String>(
+                    context,
                     android.R.layout.simple_spinner_item,
-                    arrayOf(
-                        "Disabled",
-                        PaymentInstruments.CREDIT_CARD,
-                        PaymentInstruments.SWISH,
-                        PaymentInstruments.INVOICE
-                    )
+                    options
                 ) {
                     override fun getView(
                         position: Int,
@@ -418,39 +421,21 @@ class CartAndSettingsAdapter(
                         parent: ViewGroup
                     ): View {
                         return super.getView(position, convertView, parent).also {
-                            (it as? TextView)?.apply {
-                                setTextColor(ContextCompat.getColor(
-                                    parent.context, R.color.white_text
-                                ))
+                            if (position == 0) {
+                                (it as? TextView)?.setText(R.string.instrument_none)
                             }
                         }
                     }
                 }
-                spinner.adapter = spinnerAdapter
-
-                val instrumentLiveData = adapter.viewModel.paymentInstrument
-                spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-                    override fun onItemSelected(
-                        parent: AdapterView<*>,
-                        view: View?,
-                        position: Int,
-                        id: Long
-                    ) {
-                        val instrument = if (position == 0) {
-                            null
-                        } else {
-                            spinnerAdapter.getItem(position)
-                        }
-                        if (instrumentLiveData.value != instrument) {
-                            instrumentLiveData.value = instrument
-                        }
-                    }
-
-                    override fun onNothingSelected(parent: AdapterView<*>?) {}
+                input.setAdapter(inputAdapter)
+                input.onItemClickListener = AdapterView.OnItemClickListener { _, view, _, _ ->
+                    view.hideSoftKeyboard()
                 }
-                instrumentLiveData.observe(adapter.lifecycleOwner) {
-                    val position = spinnerAdapter.getPosition(it).coerceAtLeast(0)
-                    spinner.setSelection(position)
+
+                val vm = adapter.viewModel
+                vm.paymentInstrument.observe(adapter.lifecycleOwner, input::setTextIfNeeded)
+                input.doAfterTextChanged {
+                    vm.paymentInstrument.value = it?.toString()?.takeUnless(String::isEmpty)
                 }
             }
         };

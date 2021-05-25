@@ -75,6 +75,8 @@
     <string name="error_problem_id_format">Problem ID: %s</string>
 
     <string name="instrument_spinner_title">Instrument</string>
+    <string name="instrument_input_hint">Payment Instrument</string>
+    <string name="instrument_none">(none)</string>
     <string name="update_instrument_failed">Unable to change instrument</string>
     <string name="invalid_instrument_format">%s is not valid for this payment</string>
 
