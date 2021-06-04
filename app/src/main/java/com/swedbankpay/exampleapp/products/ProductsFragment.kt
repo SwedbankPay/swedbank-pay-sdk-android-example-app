@@ -99,15 +99,7 @@ class ProductsFragment : Fragment(R.layout.fragment_products) {
     }
 
     private fun navigateToPayment() {
-        // A MediatorLiveData only updates when it has an active observer
-        val arguments = requireActivity().productsViewModel.paymentFragmentArguments.run {
-            if (!hasActiveObservers()) {
-                val observer = Observer<Any> {}
-                observeForever(observer)
-                removeObserver(observer)
-            }
-            value
-        }
+        val arguments = requireActivity().productsViewModel.paymentFragmentArguments
         if (arguments != null) {
             requireActivity().productsViewModel.apply {
                 payerReference.value?.let(::saveLastUsedPayerReference)

@@ -85,4 +85,7 @@
     <string name="get_tokens_error_title">Error</string>
     <string name="get_tokens_error_not_supported">Environment does not support token retrieval</string>
     <string name="get_tokens_error_other">Could not retrieve tokens</string>
+
+    <string name="style_title">Style</string>
+    <string name="style_error">Invalid style</string>
 </resources>
