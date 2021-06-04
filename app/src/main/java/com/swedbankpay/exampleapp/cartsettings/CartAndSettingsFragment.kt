@@ -17,4 +17,18 @@ class CartAndSettingsFragment : Fragment(R.layout.fragment_cart_and_settings) {
         )
         recyclerView.addItemDecoration(CartAndSettingsItemDecoration(requireContext()))
     }
+
+    override fun onStart() {
+        super.onStart()
+        parseStyle()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        parseStyle()
+    }
+
+    private fun parseStyle() {
+        requireActivity().productsViewModel.parseStyle()
+    }
 }

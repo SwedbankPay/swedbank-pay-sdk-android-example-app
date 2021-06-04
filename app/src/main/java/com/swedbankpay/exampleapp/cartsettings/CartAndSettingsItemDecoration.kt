@@ -54,6 +54,12 @@ class CartAndSettingsItemDecoration(context: Context) : RecyclerView.ItemDecorat
             CartAndSettingsAdapter.ViewType.SETTINGS -> view.resources.apply {
                 side = getDimensionPixelOffset(R.dimen.settings_side_margin)
                 top = getDimensionPixelOffset(R.dimen.cart_separation)
+                bottom = 0
+            }
+
+            CartAndSettingsAdapter.ViewType.STYLE -> view.resources.apply {
+                side = getDimensionPixelOffset(R.dimen.settings_side_margin)
+                top = getDimensionPixelOffset(R.dimen.cart_separation)
                 bottom = getDimensionPixelOffset(R.dimen.cart_bottom_margin)
             }
 

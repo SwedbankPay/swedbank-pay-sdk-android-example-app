@@ -7,6 +7,7 @@ import androidx.core.content.edit
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.*
 import androidx.lifecycle.Observer
+import com.swedbankpay.exampleapp.StyleParser
 import com.swedbankpay.exampleapp.payment.Environment
 import com.swedbankpay.exampleapp.payment.MyPaymentFragment
 import com.swedbankpay.mobilesdk.*
@@ -124,6 +125,7 @@ class ProductsViewModel(app: Application) : AndroidViewModel(app) {
 
     val consumerOptionsExpanded = MutableLiveData(false)
     val optionsExpanded = MutableLiveData(false)
+    val styleExpanded = MutableLiveData(false)
 
     val environment = MutableLiveData(Environment.STAGE)
     val useBrowser = MutableLiveData(false)
@@ -139,6 +141,15 @@ class ProductsViewModel(app: Application) : AndroidViewModel(app) {
     val paymentInstrument = MutableLiveData<String?>()
 
     val subsite = MutableLiveData<String?>()
+
+    val styleText = MutableLiveData("")
+    val parsedStyle = MutableLiveData<Result<Map<*, *>>?>()
+    fun parseStyle() {
+        val trimmed = styleText.value?.trim()?.takeUnless(String::isEmpty)
+        parsedStyle.value = trimmed?.runCatching {
+            StyleParser.parse(this)
+        }
+    }
 
     private val paymentFragmentConsumer = MediatorLiveData<Consumer?>().apply {
         val observer = Observer<Any> {
@@ -357,13 +368,16 @@ class ProductsViewModel(app: Application) : AndroidViewModel(app) {
         )
     }
 
-    val paymentFragmentArguments = MediatorLiveData<Bundle>().apply {
+    private val livePaymentFragmentArguments = MediatorLiveData<Bundle>().apply {
         val observer = Observer<Any?> {
             value = paymentFragmentPaymentOrder.value?.let {
                 PaymentFragment.ArgumentsBuilder()
                     .consumer(paymentFragmentConsumer.value)
                     .paymentOrder(it)
                     .useBrowser(useBrowser.value ?: false)
+                    .apply {
+                        parsedStyle.value?.getOrNull()?.let(::style)
+                    }
                     .build()
                     .apply {
                         putInt(MyPaymentFragment.ARG_ENVIRONMENT, checkNotNull(environment.value).ordinal)
@@ -373,7 +387,20 @@ class ProductsViewModel(app: Application) : AndroidViewModel(app) {
         addSource(useBrowser, observer)
         addSource(paymentFragmentConsumer, observer)
         addSource(paymentFragmentPaymentOrder, observer)
+        addSource(parsedStyle, observer)
         addSource(environment, observer)
+    }
+    val paymentFragmentArguments: Bundle? get() {
+        parseStyle()
+        // A MediatorLiveData only updates when it has an active observer
+        return livePaymentFragmentArguments.run {
+            if (!hasActiveObservers()) {
+                val observer = Observer<Any> {}
+                observeForever(observer)
+                removeObserver(observer)
+            }
+            value
+        }
     }
 
     private fun formatPrice(price: Int, currency: Currency) = currencyFormat.run {

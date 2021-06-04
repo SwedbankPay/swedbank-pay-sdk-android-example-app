@@ -7,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.annotation.StringRes
-import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.widget.doAfterTextChanged
 import androidx.lifecycle.LifecycleOwner
@@ -37,13 +36,14 @@ class CartAndSettingsAdapter(
     init {
         viewModel.productsInCart.observe(lifecycleOwner, {
             submitList(
-                ArrayList<Cell>(it.size + 5).apply {
+                ArrayList<Cell>(it.size + 6).apply {
                     add(Cell.Environment)
                     add(Cell.Header)
                     it.mapTo(this, Cell::Item)
                     add(Cell.Footer)
                     add(Cell.Consumer)
                     add(Cell.Settings)
+                    add(Cell.Style)
                 }
             )
         })
@@ -65,6 +65,7 @@ class CartAndSettingsAdapter(
         object Footer : Cell(ViewType.FOOTER)
         object Consumer : Cell(ViewType.CONSUMER)
         object Settings : Cell(ViewType.SETTINGS)
+        object Style : Cell(ViewType.STYLE)
     }
 
     open class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -438,9 +439,14 @@ class CartAndSettingsAdapter(
                     vm.paymentInstrument.value = it?.toString()?.takeUnless(String::isEmpty)
                 }
             }
+        },
+
+        STYLE {
+            override fun createViewHolder(
+                adapter: CartAndSettingsAdapter,
+                parent: ViewGroup
+            ) = StyleCellViewHolder(adapter, parent)
         };
-
-
 
         abstract fun createViewHolder(
             adapter: CartAndSettingsAdapter,
@@ -511,6 +517,7 @@ class CartAndSettingsAdapter(
             Cell.Footer -> newItem is Cell.Footer
             Cell.Consumer -> newItem is Cell.Consumer
             Cell.Settings -> newItem is Cell.Settings
+            Cell.Style -> newItem is Cell.Style
         }
 
         override fun areContentsTheSame(oldItem: Cell, newItem: Cell) = when (oldItem) {
@@ -520,6 +527,7 @@ class CartAndSettingsAdapter(
             Cell.Footer -> newItem is Cell.Footer
             Cell.Consumer -> newItem is Cell.Consumer
             Cell.Settings -> newItem is Cell.Settings
+            Cell.Style -> newItem is Cell.Style
         }
     }
 }
