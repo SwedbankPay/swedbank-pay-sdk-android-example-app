@@ -7,6 +7,7 @@ import androidx.core.content.edit
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.*
 import androidx.lifecycle.Observer
+import com.swedbankpay.exampleapp.BuildConfig
 import com.swedbankpay.exampleapp.StyleParser
 import com.swedbankpay.exampleapp.payment.Environment
 import com.swedbankpay.exampleapp.payment.MyPaymentFragment
@@ -88,7 +89,7 @@ class ProductsViewModel(app: Application) : AndroidViewModel(app) {
 
     val adjustedPrice = MutableLiveData<Int?>(null)
 
-    private val shippingPrice = 120_00
+    private val shippingPrice = if (BuildConfig.ENABLE_PROD_DEMO) 0 else 120_00
     val formattedShippingPrice = Transformations.map(currency) {
         formatPrice(shippingPrice, it)
     }
