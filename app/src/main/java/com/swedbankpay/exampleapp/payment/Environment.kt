@@ -2,7 +2,7 @@ package com.swedbankpay.exampleapp.payment
 
 import androidx.annotation.StringRes
 import com.swedbankpay.exampleapp.R
-import com.swedbankpay.mobilesdk.RequestDecorator
+import com.swedbankpay.mobilesdk.merchantbackend.RequestDecorator
 import com.swedbankpay.mobilesdk.merchantbackend.MerchantBackendConfiguration
 
 enum class Environment(
