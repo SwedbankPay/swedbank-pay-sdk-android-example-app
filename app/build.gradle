@@ -42,7 +42,7 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version"
 
-    implementation 'com.swedbankpay.mobilesdk:mobilesdk:3.0.0'
+    implementation 'com.swedbankpay.mobilesdk:mobilesdk:3.0.1'
     implementation 'com.swedbankpay.mobilesdk:mobilesdk-merchantbackend:3.0.0'
 
     implementation 'androidx.constraintlayout:constraintlayout:2.1.0'
