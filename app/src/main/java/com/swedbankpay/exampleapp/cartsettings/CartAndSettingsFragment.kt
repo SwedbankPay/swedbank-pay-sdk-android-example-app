@@ -10,7 +10,7 @@ import com.swedbankpay.exampleapp.products.productsViewModel
 class CartAndSettingsFragment : Fragment(R.layout.fragment_cart_and_settings) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val recyclerView = view.findViewById<RecyclerView>(R.id.recyclerView)
+        val recyclerView = view.findViewById<RecyclerView>(R.id.cart_and_settings_recyclerView)
         recyclerView.adapter = CartAndSettingsAdapter(
             this,
             requireActivity().productsViewModel
