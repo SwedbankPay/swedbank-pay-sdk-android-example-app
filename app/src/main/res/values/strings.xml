@@ -65,7 +65,7 @@
     <string name="env_ext_integration">Ext. Integration</string>
     <string name="env_pp_ext_integration">PaymentPages (EI)</string>
 
-    <string name="success_dialog_title">Payment successul!</string>
+    <string name="success_dialog_title">Payment successful!</string>
 
     <string name="error_dialog_title">Payment failed</string>
     <string name="error_server_problem">Payment service is unavailable at the moment. Please try again later.</string>

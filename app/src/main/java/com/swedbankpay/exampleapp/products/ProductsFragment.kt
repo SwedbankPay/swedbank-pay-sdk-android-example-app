@@ -77,7 +77,7 @@ class ProductsFragment : Fragment(R.layout.fragment_products) {
 
         val binding = FragmentProductsBinding.bind(view)
 
-        binding.recyclerView.adapter = ProductsAdapter(
+        binding.productsRecyclerView.adapter = ProductsAdapter(
             this,
             requireActivity().productsViewModel
         )
