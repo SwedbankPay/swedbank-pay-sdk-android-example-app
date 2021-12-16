@@ -1,6 +1,7 @@
 package com.swedbankpay.exampleapp.payment
 
 import androidx.annotation.StringRes
+import com.swedbankpay.exampleapp.BuildConfig
 import com.swedbankpay.exampleapp.R
 import com.swedbankpay.mobilesdk.merchantbackend.RequestDecorator
 import com.swedbankpay.mobilesdk.merchantbackend.MerchantBackendConfiguration
@@ -20,7 +21,17 @@ enum class Environment(
     PAYMENTPAGES_EXTERNAL_INTEGRATION(
         "https://pp-dot-payex-merchant-samples.ey.r.appspot.com",
         R.string.env_pp_ext_integration
-    );
+    ),
+    PROD(
+        "https://payex-merchant-samples-prod.appspot.com",
+        R.string.env_prod
+    ) {
+        override val isEnabled = BuildConfig.ENABLE_PROD_DEMO
+    };
+
+    companion object {
+        val enabledEnvironments = values().filter(Environment::isEnabled)
+    }
 
     val configuration = MerchantBackendConfiguration.Builder(backendUrl)
         .requestDecorator(
@@ -29,4 +40,6 @@ enum class Environment(
                 "x-payex-sample-access-token", "token123")
         )
         .build()
+
+    open val isEnabled = true
 }

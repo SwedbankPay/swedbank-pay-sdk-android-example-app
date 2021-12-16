@@ -79,7 +79,7 @@ class CartAndSettingsAdapter(
         ENVIRONMENT {
             override fun createViewHolder(adapter: CartAndSettingsAdapter, parent: ViewGroup) =
                 createViewHolder(parent, EnvironmentCellBinding::inflate) {
-                    for ((index, environment) in Environment.values().withIndex()) {
+                    for ((index, environment) in Environment.enabledEnvironments.withIndex()) {
                         root.addEnvironmentWidget(adapter, environment, index > 1)
                     }
                 }

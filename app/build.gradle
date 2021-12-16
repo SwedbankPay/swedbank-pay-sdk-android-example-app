@@ -11,6 +11,8 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField("boolean", "ENABLE_PROD_DEMO", Boolean.valueOf(findProperty("enableProdDemo")).toString())
     }
     buildFeatures {
         viewBinding true
