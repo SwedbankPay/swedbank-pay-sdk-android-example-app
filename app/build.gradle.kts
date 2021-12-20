@@ -81,3 +81,15 @@ dependencies {
 play {
     resolutionStrategy.set(com.github.triplet.gradle.androidpublisher.ResolutionStrategy.AUTO)
 }
+
+// Include version code in version name
+androidComponents {
+    onVariants { variant ->
+        for (output in variant.outputs) {
+            val baseVersionName = output.versionName.orNull
+            output.versionName.set(output.versionCode.map {
+                "$baseVersionName ($it)"
+            })
+        }
+    }
+}
