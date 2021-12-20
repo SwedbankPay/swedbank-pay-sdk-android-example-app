@@ -1,10 +1,29 @@
 name: Deploy
 
-on: workflow_dispatch
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
 
 jobs:
-  test:
+  deploy:
     runs-on: ubuntu-latest
-
     steps:
-      - run: echo Auto-deploy is being developed!
+      - uses: actions/checkout@v2
+      - name: set up JDK
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'zulu'
+          java-version: '11'
+      - name: Build with Gradle
+        run: |
+          export UPLOAD_KEYSTORE_PATH=`mktemp`
+          printenv UPLOAD_KEYSTORE | base64 -d > "$UPLOAD_KEYSTORE_PATH"
+          ./gradlew publishReleaseBundle -PenableProdDemo=true
+          rm "$UPLOAD_KEYSTORE_PATH"
+        env:
+          ANDROID_PUBLISHER_CREDENTIALS: ${{ secrets.ANDROID_PUBLISHER_CREDENTIALS }}
+          UPLOAD_KEYSTORE: ${{ secrets.UPLOAD_KEYSTORE }}
+          UPLOAD_KEYSTORE_PASSWORD: ${{ secrets.UPLOAD_KEYSTORE_PASSWORD }}
+          UPLOAD_KEY_ALIAS: ${{ secrets.UPLOAD_KEY_ALIAS }}
+          UPLOAD_KEY_PASSWORD: ${{ secrets.UPLOAD_KEY_PASSWORD }}
