@@ -1,0 +1,24 @@
+pull_request_rules:
+  - name: Automatic approve on Dependabot PR
+    conditions:
+      - author~=^dependabot(|-preview)\[bot\]$
+    actions:
+      review:
+        type: APPROVE
+
+  - name: Automatically merge Dependabot PR
+    conditions:
+      - author~=^dependabot(|-preview)\[bot\]$
+      - '#commits-behind=0' # Only merge up to date pull requests
+      - check-success=build
+      - check-success=license/cla
+    actions:
+      merge:
+
+  - name: Thank non-bot contributors
+    conditions:
+      - merged
+      - -author~=^.*\[bot\]$
+    actions:
+      comment:
+        message: "Thank you @{{author}} for your contribution!"
