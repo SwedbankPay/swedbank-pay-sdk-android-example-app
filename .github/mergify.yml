@@ -15,11 +15,3 @@ pull_request_rules:
       - check-success=license/cla
     actions:
       merge:
-
-  - name: Thank non-bot contributors
-    conditions:
-      - merged
-      - -author~=^.*\[bot\]$
-    actions:
-      comment:
-        message: "Thank you @{{author}} for your contribution!"
