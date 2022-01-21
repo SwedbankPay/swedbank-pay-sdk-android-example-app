@@ -67,7 +67,7 @@ dependencies {
     implementation("androidx.navigation:navigation-ui-ktx:2.3.5")
     implementation("androidx.recyclerview:recyclerview:1.2.1")
 
-    implementation("com.google.android.material:material:1.4.0")
+    implementation("com.google.android.material:material:1.5.0")
 
     implementation("com.google.code.gson:gson:2.8.9")
 
