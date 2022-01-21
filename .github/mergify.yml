@@ -15,3 +15,4 @@ pull_request_rules:
       - check-success=license/cla
     actions:
       merge:
+        method: merge
