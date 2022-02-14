@@ -69,7 +69,7 @@ dependencies {
 
     implementation("com.google.android.material:material:1.5.0")
 
-    implementation("com.google.code.gson:gson:2.8.9")
+    implementation("com.google.code.gson:gson:2.9.0")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.3")
