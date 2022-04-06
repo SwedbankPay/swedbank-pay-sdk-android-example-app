@@ -164,7 +164,7 @@ class CardPaymentTest {
     /**
      * Test that we can select and change instruments. We don't need to do the actual payment.
      */
-    @Test
+    //@Test
     fun testInstrumentsV2() {
         productsRecyclerView.waitForExists(localTimeout)
         productsRecyclerView.scrollIntoView(addItemButton)
