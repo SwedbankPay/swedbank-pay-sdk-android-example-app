@@ -60,7 +60,24 @@ class CardPaymentTest {
     private val checkOutButton get() = device.findObject(
         byId("check_out_button")
     )
-
+    private val cogSettingsButton get() = device.findObject(
+        byId("open_settings")
+    )
+    private val instrumentDropDown get() = device.findObject(
+        byId("instrument_mode_input_layout")
+    )
+    private val instrumentDropDownInput get() = device.findObject(
+        byId("instrument_mode_input")
+    )
+    private val countrySwedenButton get() = device.findObject(
+        byId("country_sweden")
+    )
+    private val instrumentSpinner get() = device.findObject(
+        byId("instrument_spinner")
+    )
+    private val creditCardOption get() = device.findObject(
+        UiSelector().textStartsWith("CreditCard")
+    )
     private val webView get() = device.findScrollable(
         UiSelector().className(WebView::class.java)
     )
@@ -71,7 +88,8 @@ class CardPaymentTest {
     private val expiryDateInput
         get() = webView.getChild(UiSelector().resourceId("expiryInput"))
     private val cvvInput
-        get() = webView.getChild(UiSelector().resourceId("cvcInput"))
+        get() = webView.getChild(UiSelector().resourceIdMatches("cvcInput.*"))
+    
     private val payButton
         get() = webView.getChild(UiSelector().className(Button::class.java).textStartsWith("Betal "))
 
@@ -126,7 +144,6 @@ class CardPaymentTest {
         cardOption.clickUntilCheckedAndAssert(remoteTimeout)
 
         webView.waitAndScrollFullyIntoViewAndAssertExists(panInput, remoteTimeout)
-        panInput.clickUntilFocusedAndAssert(remoteTimeout)
         inputText(device, panInput, cardNumber)
 
         webView.waitAndScrollFullyIntoViewAndAssertExists(expiryDateInput, remoteTimeout)
@@ -142,5 +159,43 @@ class CardPaymentTest {
         Assert.assertTrue(payButton.click())
 
         successText.waitForExists(remoteTimeout)
+    }
+
+    /**
+     * Test that we can select and change instruments. We don't need to do the actual payment.
+     */
+    //@Test
+    fun testInstrumentsV2() {
+        productsRecyclerView.waitForExists(localTimeout)
+        productsRecyclerView.scrollIntoView(addItemButton)
+        Assert.assertTrue(addItemButton.click())
+
+        Assert.assertTrue(openCartButton.click())
+
+        cartAndSettingsRecyclerView.waitForExists(localTimeout)
+        cartAndSettingsRecyclerView.scrollIntoView(extIntegrationOption)
+        Assert.assertTrue(extIntegrationOption.click())
+        Assert.assertTrue(cogSettingsButton.click())
+
+        cartAndSettingsRecyclerView.scrollIntoView(countrySwedenButton)
+        countrySwedenButton.click()
+        
+        cartAndSettingsRecyclerView.scrollIntoView(instrumentDropDown)
+        Assert.assertTrue(instrumentDropDown.click())
+        instrumentDropDownInput.text = "Invoice-PayExFinancingNo"
+
+        cartAndSettingsRecyclerView.scrollIntoView(checkOutButton)
+        Assert.assertTrue(checkOutButton.click())
+
+        webView.waitForExists(localTimeout)
+        
+        //now see that things exists, and change to "CreditCard"
+        instrumentSpinner.waitForExists(localTimeout)
+        
+        instrumentSpinner.click()
+        creditCardOption.waitForExists(remoteTimeout)
+        Assert.assertTrue(creditCardOption.click())
+
+        webView.waitAndScrollFullyIntoViewAndAssertExists(panInput, remoteTimeout)
     }
 }

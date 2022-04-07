@@ -7,6 +7,7 @@ import androidx.test.uiautomator.UiObject
 import org.junit.Assert
 
 private const val textChangeTimeout = 5000L
+private const val timeout = 30_000L
 
 internal fun UiObject.clickUntilCheckedAndAssert(timeout: Long) {
     Assert.assertTrue(
@@ -29,7 +30,13 @@ private fun UiObject.clickUntilTrue(timeout: Long, condition: () -> Boolean): Bo
 }
 
 fun inputText(device: UiDevice, widget: UiObject, text: String) {
-    Assert.assertTrue("$widget not focused", widget.isFocused)
+    widget.text = text
+    widget.clickUntilFocusedAndAssert(timeout)
+    if (widget.text != null && widget.text != "") {
+        // We have succeeded to input something, but can't verify its correct since JS reformatting.
+        return
+    }
+    
     for (c in text) {
         val oldText = widget.text
         device.pressKeyCode(KeyEvent.keyCodeFromString("KEYCODE_$c"))
