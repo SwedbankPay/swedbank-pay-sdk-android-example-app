@@ -223,6 +223,8 @@ class CardPaymentTest {
         cartAndSettingsRecyclerView.waitForExists(localTimeout)
         cartAndSettingsRecyclerView.scrollIntoView(extIntegrationOption)
         Assert.assertTrue(extIntegrationOption.click())
+
+        cartAndSettingsRecyclerView.scrollIntoView(cogSettingsButton)
         Assert.assertTrue(cogSettingsButton.click())
 
         cartAndSettingsRecyclerView.scrollIntoView(countrySwedenButton)
