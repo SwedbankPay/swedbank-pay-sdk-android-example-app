@@ -60,6 +60,9 @@ class CardPaymentTest {
     private val extIntegrationOption get() = device.findObject(
         UiSelector().text(appString(R.string.env_ext_integration))
     )
+    private val extJavaIntegrationOption get() = device.findObject(
+        UiSelector().text(appString(R.string.env_ext_integration_java))
+    )
     private val checkOutButton get() = device.findObject(
         byId("check_out_button")
     )
@@ -172,30 +175,32 @@ class CardPaymentTest {
         Assert.assertTrue(extIntegrationOption.click())
         cartAndSettingsRecyclerView.scrollIntoView(checkOutButton)
         Assert.assertTrue(checkOutButton.click())
+        val cardNumbers = arrayOf(noScaCardNumber1, noScaCardNumber2, noScaCardNumber3)
+        var success = false
+        for (cardNumber in cardNumbers) {
+            success = fullPaymentTestAttempt(cardNumber, cvv, paymentFlowHandler = {})
+            if (success) {
+                break
+            }
+            //try again with a new purchase
+            device.pressBack()
+            Assert.assertTrue(checkOutButton.click())
+        }
+    }
+
+    @Test
+    fun testJavaBackendNonScaPayment() {
+        productsRecyclerView.waitForExists(localTimeout)
+        productsRecyclerView.scrollIntoView(addItemButton)
+        Assert.assertTrue(addItemButton.click())
+        Assert.assertTrue(openCartButton.click())
+
+        cartAndSettingsRecyclerView.waitForExists(localTimeout)
+        cartAndSettingsRecyclerView.scrollIntoView(extJavaIntegrationOption)
+        Assert.assertTrue(extJavaIntegrationOption.click())
+        cartAndSettingsRecyclerView.scrollIntoView(checkOutButton)
+        Assert.assertTrue(checkOutButton.click())
         
-        /*
-        webView.waitForExists(localTimeout)
-
-        webView.waitAndScrollFullyIntoViewAndAssertExists(cardOption, remoteTimeout)
-        cardOption.clickUntilCheckedAndAssert(remoteTimeout)
-
-        webView.waitAndScrollFullyIntoViewAndAssertExists(panInput, remoteTimeout)
-        inputText(device, panInput, noScaCardNumber2)
-
-        webView.waitAndScrollFullyIntoViewAndAssertExists(expiryDateInput, remoteTimeout)
-
-        expiryDateInput.clickUntilFocusedAndAssert(remoteTimeout)
-        inputText(device, expiryDateInput, expiryDate)
-
-        webView.waitAndScrollFullyIntoViewAndAssertExists(cvvInput, remoteTimeout)
-        cvvInput.clickUntilFocusedAndAssert(remoteTimeout)
-        inputText(device, cvvInput, cvv)
-
-        webView.waitAndScrollFullyIntoViewAndAssertExists(payButton, remoteTimeout)
-        Assert.assertTrue(payButton.click())
-
-        successText.waitForExists(remoteTimeout)
-         */
         val cardNumbers = arrayOf(noScaCardNumber1, noScaCardNumber2, noScaCardNumber3)
         var success = false
         for (cardNumber in cardNumbers) {

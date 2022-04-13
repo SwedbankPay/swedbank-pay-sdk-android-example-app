@@ -34,7 +34,7 @@ class CartAndSettingsAdapter(
     val viewModel: ProductsViewModel
 ) : ListAdapter<CartAndSettingsAdapter.Cell, CartAndSettingsAdapter.ViewHolder>(DiffCallback) {
     init {
-        viewModel.productsInCart.observe(lifecycleOwner, {
+        viewModel.productsInCart.observe(lifecycleOwner) {
             submitList(
                 ArrayList<Cell>(it.size + 6).apply {
                     add(Cell.Environment)
@@ -46,7 +46,7 @@ class CartAndSettingsAdapter(
                     add(Cell.Style)
                 }
             )
-        })
+        }
     }
 
     override fun getItemViewType(position: Int) = getItem(position).viewType.ordinal
