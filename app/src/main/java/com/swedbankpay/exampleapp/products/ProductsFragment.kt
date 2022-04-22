@@ -21,15 +21,15 @@ class ProductsFragment : Fragment(R.layout.fragment_products) {
         // is destroyed and recreated.
         val viewModel = requireActivity().productsViewModel
 
-        viewModel.onCloseCartPressed.observe(this, {
+        viewModel.onCloseCartPressed.observe(this) {
             if (it != null) childFragmentManager.popBackStack()
-        })
+        }
 
-        viewModel.onCheckOutPressed.observe(this, {
+        viewModel.onCheckOutPressed.observe(this) {
             if (it != null) {
                 navigateToPayment()
             }
-        })
+        }
         viewModel.onAdjustPricePressed.observe(this, Observer {
             it ?: return@Observer
             activity?.let {

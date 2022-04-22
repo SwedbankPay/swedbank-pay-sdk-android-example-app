@@ -48,7 +48,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
     }
 
     private fun observeErrorMessage() {
-        mainViewModel.currentErrorMessage.observe(this, {
+        mainViewModel.currentErrorMessage.observe(this) {
             if (it != null) {
                 supportFragmentManager.apply {
                     if (findFragmentByTag(ALERT_TAG) == null) {
@@ -56,6 +56,6 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
                     }
                 }
             }
-        })
+        }
     }
 }
