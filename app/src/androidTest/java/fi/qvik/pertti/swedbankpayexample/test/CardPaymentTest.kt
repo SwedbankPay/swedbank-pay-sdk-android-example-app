@@ -1,5 +1,6 @@
 package fi.qvik.pertti.swedbankpayexample.test
 
+import android.app.Instrumentation
 import android.content.Context
 import android.content.Intent
 import android.webkit.WebView
@@ -9,12 +10,13 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.*
+import androidx.fragment.app.Fragment
+import com.google.android.material.internal.ContextUtils.getActivity
 import com.swedbankpay.exampleapp.BuildConfig
+import com.swedbankpay.exampleapp.MainActivity
 import com.swedbankpay.exampleapp.R
+import com.swedbankpay.exampleapp.products.productsViewModel
 import fi.qvik.pertti.swedbankpayexample.test.util.*
-import fi.qvik.pertti.swedbankpayexample.test.util.clickUntilCheckedAndAssert
-import fi.qvik.pertti.swedbankpayexample.test.util.clickUntilFocusedAndAssert
-import fi.qvik.pertti.swedbankpayexample.test.util.waitAndScrollFullyIntoViewAndAssertExists
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
@@ -60,6 +62,9 @@ class CardPaymentTest {
     private val extIntegrationOption get() = device.findObject(
         UiSelector().text(appString(R.string.env_ext_integration))
     )
+    private val extJavaIntegrationOption get() = device.findObject(
+        UiSelector().text(appString(R.string.env_ext_integration_java))
+    )
     private val checkOutButton get() = device.findObject(
         byId("check_out_button")
     )
@@ -99,7 +104,8 @@ class CardPaymentTest {
     private val successText get() = device.findObject(
         UiSelector().text(appString(R.string.success_dialog_title))
     )
-
+    private var mainActivity: MainActivity? = null
+    
     @Before
     fun launchAppFromHomeScreen() {
         device.pressHome()
@@ -112,6 +118,10 @@ class CardPaymentTest {
             localTimeout
         )
 
+        val inst = InstrumentationRegistry.getInstrumentation()
+        val monitor: Instrumentation.ActivityMonitor =
+            inst.addMonitor("com.swedbankpay.exampleapp.MainActivity", null, false)
+        
         // launch app
         val context = ApplicationProvider.getApplicationContext<Context>()
         val intent = context.packageManager.getLaunchIntentForPackage(BuildConfig.APPLICATION_ID)
@@ -119,12 +129,13 @@ class CardPaymentTest {
         intent!!.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
 
         context.startActivity(intent)
-
+        
         // wait for app
         device.wait(
             Until.hasObject(By.pkg(BuildConfig.APPLICATION_ID).depth(0)),
             localTimeout
         )
+        mainActivity = monitor.waitForActivityWithTimeout(2000) as MainActivity
     }
 
     private fun fullPaymentTestAttempt(
@@ -172,30 +183,6 @@ class CardPaymentTest {
         Assert.assertTrue(extIntegrationOption.click())
         cartAndSettingsRecyclerView.scrollIntoView(checkOutButton)
         Assert.assertTrue(checkOutButton.click())
-        
-        /*
-        webView.waitForExists(localTimeout)
-
-        webView.waitAndScrollFullyIntoViewAndAssertExists(cardOption, remoteTimeout)
-        cardOption.clickUntilCheckedAndAssert(remoteTimeout)
-
-        webView.waitAndScrollFullyIntoViewAndAssertExists(panInput, remoteTimeout)
-        inputText(device, panInput, noScaCardNumber2)
-
-        webView.waitAndScrollFullyIntoViewAndAssertExists(expiryDateInput, remoteTimeout)
-
-        expiryDateInput.clickUntilFocusedAndAssert(remoteTimeout)
-        inputText(device, expiryDateInput, expiryDate)
-
-        webView.waitAndScrollFullyIntoViewAndAssertExists(cvvInput, remoteTimeout)
-        cvvInput.clickUntilFocusedAndAssert(remoteTimeout)
-        inputText(device, cvvInput, cvv)
-
-        webView.waitAndScrollFullyIntoViewAndAssertExists(payButton, remoteTimeout)
-        Assert.assertTrue(payButton.click())
-
-        successText.waitForExists(remoteTimeout)
-         */
         val cardNumbers = arrayOf(noScaCardNumber1, noScaCardNumber2, noScaCardNumber3)
         var success = false
         for (cardNumber in cardNumbers) {
@@ -209,11 +196,59 @@ class CardPaymentTest {
         }
     }
 
+    /*
+    Java backend isn't working anymore, we should remove support for it.
+    
+    @Test
+    fun testJavaBackendNonScaPayment() {
+        productsRecyclerView.waitForExists(localTimeout)
+        productsRecyclerView.scrollIntoView(addItemButton)
+        Assert.assertTrue(addItemButton.click())
+        Assert.assertTrue(openCartButton.click())
+
+        cartAndSettingsRecyclerView.waitForExists(localTimeout)
+        cartAndSettingsRecyclerView.scrollIntoView(extJavaIntegrationOption)
+        Assert.assertTrue(extJavaIntegrationOption.click())
+        cartAndSettingsRecyclerView.scrollIntoView(checkOutButton)
+        Assert.assertTrue(checkOutButton.click())
+        
+        val cardNumbers = arrayOf(noScaCardNumber1, noScaCardNumber2, noScaCardNumber3)
+        var success = false
+        for (cardNumber in cardNumbers) {
+            success = fullPaymentTestAttempt(cardNumber, cvv, paymentFlowHandler = {})
+            if (success) {
+                break
+            }
+            //try again with a new purchase
+            device.pressBack()
+            Assert.assertTrue(checkOutButton.click())
+        }
+    }
+    */
+
     /**
-     * Test that we can select and change instruments. We don't need to do the actual payment.
+     * Test that we can select and change instruments in version 2. We don't need to do the actual payment.
      */
     @Test
     fun testInstrumentsV2() {
+
+        //set it to useCheckoutVersion2 and wait for it to update
+        val liveData = mainActivity?.productsViewModel?.useCheckoutVersion2!!
+        liveData.postValue(true)
+        while (liveData.value == false) {
+        }
+        continueInstrumentTest()
+    }
+
+    /**
+     * Test that we can select and change instruments in version 3. We don't need to do the actual payment.
+     */
+    @Test
+    fun testInstrumentsV3() {
+        continueInstrumentTest()
+    }
+    
+    private fun continueInstrumentTest() {
         productsRecyclerView.waitForExists(localTimeout)
         productsRecyclerView.scrollIntoView(addItemButton)
         Assert.assertTrue(addItemButton.click())

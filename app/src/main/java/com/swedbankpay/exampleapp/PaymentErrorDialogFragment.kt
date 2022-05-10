@@ -8,11 +8,11 @@ import androidx.fragment.app.DialogFragment
 class PaymentErrorDialogFragment : DialogFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        requireActivity().mainViewModel.currentErrorMessage.observe(this, {
+        requireActivity().mainViewModel.currentErrorMessage.observe(this) {
             if (it != null) {
                 (dialog as? AlertDialog)?.setMessage(it)
             }
-        })
+        }
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {

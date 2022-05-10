@@ -131,6 +131,9 @@ class ProductsViewModel(app: Application) : AndroidViewModel(app) {
     val environment = MutableLiveData(Environment.STAGE)
     val useBrowser = MutableLiveData(false)
     val useBogusHostUrl = MutableLiveData(false)
+    
+    /// Force legacy checkout version, for easy downgrade and testing purposes
+    var useCheckoutVersion2 = MutableLiveData(false)
 
     val consumerType = MutableLiveData(ConsumerType.GUEST)
     val consumerPrefillEmail = MutableLiveData("")
@@ -350,7 +353,7 @@ class ProductsViewModel(app: Application) : AndroidViewModel(app) {
             amount = it.toLong()
             vatAmount = (amount / 5)
         }
-
+        
         return PaymentOrder(
             currency = checkNotNull(currency.value),
             disablePaymentMenu = checkNotNull(disablePaymentsMenu.value),
@@ -378,6 +381,10 @@ class ProductsViewModel(app: Application) : AndroidViewModel(app) {
                     .useBrowser(useBrowser.value ?: false)
                     .apply {
                         parsedStyle.value?.getOrNull()?.let(::style)
+                        // If using check-in we can't use V3, so if a consumer is added we must revert back to V2. One might also need to force-downgrade to V2 when testing.
+                        if (useCheckoutVersion2.value != true && paymentFragmentConsumer.value == null) {
+                            checkoutV3(true)
+                        }
                     }
                     .build()
                     .apply {

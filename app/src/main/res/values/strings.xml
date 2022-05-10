@@ -63,6 +63,7 @@
 
     <string name="env_stage">Stage</string>
     <string name="env_ext_integration">Ext. Integration</string>
+    <string name="env_ext_integration_java">Ext. Java Backend</string>
     <string name="env_pp_ext_integration">PaymentPages (EI)</string>
     <string name="env_prod">Prod</string>
 
