@@ -196,6 +196,9 @@ class CardPaymentTest {
         }
     }
 
+    /*
+    Java backend isn't working anymore, we should remove support for it.
+    
     @Test
     fun testJavaBackendNonScaPayment() {
         productsRecyclerView.waitForExists(localTimeout)
@@ -221,6 +224,7 @@ class CardPaymentTest {
             Assert.assertTrue(checkOutButton.click())
         }
     }
+    */
 
     /**
      * Test that we can select and change instruments in version 2. We don't need to do the actual payment.
