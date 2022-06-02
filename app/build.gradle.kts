@@ -49,7 +49,7 @@ dependencies {
     implementation(kotlin("reflect"))
 
     implementation("androidx.appcompat:appcompat:1.4.1")
-    implementation("androidx.core:core-ktx:1.7.0")
+    implementation("androidx.core:core-ktx:1.8.0")
 
     val coroutines_version = "1.6.2"
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version")
