@@ -228,7 +228,9 @@ class CardPaymentTest {
 
     /**
      * Test that we can select and change instruments in version 2. We don't need to do the actual payment.
-     */
+     * instruments for version2 has been disabled since it does not work 100% of the time, this problem 
+     * is rare but cannot be fixed in the SDK (only by recreating the paymentOrder and starting over). 
+     * If you need this feature, now is a good time to upgrade to version 3. 
     @Test
     fun testInstrumentsV2() {
 
@@ -239,7 +241,8 @@ class CardPaymentTest {
         }
         continueInstrumentTest()
     }
-
+     */
+    
     /**
      * Test that we can select and change instruments in version 3. We don't need to do the actual payment.
      */
