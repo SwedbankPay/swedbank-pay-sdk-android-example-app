@@ -51,7 +51,7 @@ dependencies {
     implementation("androidx.appcompat:appcompat:1.4.2")
     implementation("androidx.core:core-ktx:1.8.0")
 
-    val coroutines_version = "1.6.2"
+    val coroutines_version = "1.6.3"
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version")
     
