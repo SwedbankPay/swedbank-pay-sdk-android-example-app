@@ -10,12 +10,9 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.*
-import androidx.fragment.app.Fragment
-import com.google.android.material.internal.ContextUtils.getActivity
 import com.swedbankpay.exampleapp.BuildConfig
 import com.swedbankpay.exampleapp.MainActivity
 import com.swedbankpay.exampleapp.R
-import com.swedbankpay.exampleapp.products.productsViewModel
 import fi.qvik.pertti.swedbankpayexample.test.util.*
 import org.junit.Assert
 import org.junit.Before
@@ -25,7 +22,7 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 class CardPaymentTest {
     companion object {
-        const val localTimeout = 5_000L
+        const val localTimeout = 10_000L
         const val remoteTimeout = 30_000L
         
         const val noScaCardNumber1 = "4581097032723517"
@@ -265,12 +262,14 @@ class CardPaymentTest {
         cartAndSettingsRecyclerView.scrollIntoView(cogSettingsButton)
         Assert.assertTrue(cogSettingsButton.click())
 
-        cartAndSettingsRecyclerView.scrollIntoView(countrySwedenButton)
-        countrySwedenButton.click()
+        //cartAndSettingsRecyclerView.scrollIntoView(countrySwedenButton)
+        //countrySwedenButton.click()
         
         cartAndSettingsRecyclerView.scrollIntoView(instrumentDropDown)
         Assert.assertTrue(instrumentDropDown.click())
-        instrumentDropDownInput.text = "Invoice-PayExFinancingNo"
+        instrumentDropDownInput.text = "CreditCard"
+        //PayExFinancing has been removed, but this still shows that instruments exists and can be changed.
+        //instrumentDropDownInput.text = "Invoice-PayExFinancingNo"
 
         cartAndSettingsRecyclerView.scrollIntoView(checkOutButton)
         Assert.assertTrue(checkOutButton.click())
@@ -280,6 +279,7 @@ class CardPaymentTest {
         //now see that things exists, and change to "CreditCard"
         instrumentSpinner.waitForExists(localTimeout)
         
+        //spinner is also the drop-down box
         instrumentSpinner.click()
         creditCardOption.waitForExists(remoteTimeout)
         Assert.assertTrue(creditCardOption.click())
