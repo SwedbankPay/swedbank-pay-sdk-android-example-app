@@ -10,4 +10,8 @@
     <color name="remove_from_cart_button">#C42626</color>
 
     <color name="cart_background">#FFFFFF</color>
+
+    <color name="switch_enabled">#59C27A</color>
+    <color name="switch_disabled">#C0C0C0</color>
+    <color name="switch_thumb_tint">#EBEBEB</color>
 </resources>
