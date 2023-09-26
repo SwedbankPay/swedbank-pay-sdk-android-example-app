@@ -2,10 +2,24 @@ package com.swedbankpay.exampleapp.standaloneurlconfig
 
 import android.app.Application
 import android.content.Context
+import android.view.View
+import android.widget.LinearLayout
+import androidx.camera.mlkit.vision.MlKitAnalyzer
+import androidx.camera.view.CameraController.COORDINATE_SYSTEM_VIEW_REFERENCED
+import androidx.camera.view.LifecycleCameraController
+import androidx.camera.view.PreviewView
+import androidx.core.content.ContextCompat
 import androidx.core.content.edit
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
+import com.google.mlkit.vision.barcode.BarcodeScanner
+import com.google.mlkit.vision.barcode.BarcodeScannerOptions
+import com.google.mlkit.vision.barcode.BarcodeScanning
+import com.google.mlkit.vision.barcode.common.Barcode
 import com.swedbankpay.exampleapp.util.SwedbankPayConfig
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
 
 class StandaloneUrlConfigViewModel(application: Application): AndroidViewModel(application) {
     var viewPaymentUrl = MutableLiveData<String>()

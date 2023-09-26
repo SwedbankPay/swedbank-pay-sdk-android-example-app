@@ -22,7 +22,7 @@ class PayerOwnedTokensViewModel(app: Application) : AndroidViewModel(app) {
     private val _onDeletePaymentTokenPressed = MutableLiveData<Int?>()
     val onDeletePaymentTokenPressed: LiveData<Int?> get() = _onDeletePaymentTokenPressed
 
-    val updating = Transformations.map(updateJob) { it != null }
+    val updating = updateJob.map { it != null }
 
     val payerReference = MutableLiveData<String?>()
 
