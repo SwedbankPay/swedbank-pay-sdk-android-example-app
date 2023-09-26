@@ -61,60 +61,116 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
-                    <EditText
-                        android:id="@+id/view_payment_url"
+                    <LinearLayout
                         android:layout_width="match_parent"
-                        android:singleLine="true"
-                        android:layout_height="wrap_content"
-                        android:backgroundTint="#666666"
-                        android:layout_marginStart="16dp"
-                        android:layout_marginEnd="16dp"
-                        android:gravity="center_horizontal"
-                        android:textColorHint="#999999"
-                        android:text="@={viewModel.viewPaymentUrl}"
-                        android:hint="@string/standalone_url_config_view_payment_url_hint"/>
+                        android:layout_height="wrap_content">
 
-                    <EditText
-                        android:id="@+id/base_url"
-                        android:layout_width="match_parent"
-                        android:singleLine="true"
-                        android:layout_height="wrap_content"
-                        android:backgroundTint="#666666"
-                        android:layout_marginTop="10dp"
-                        android:layout_marginStart="16dp"
-                        android:layout_marginEnd="16dp"
-                        android:gravity="center_horizontal"
-                        android:textColorHint="#999999"
-                        android:text="@={viewModel.baseUrl}"
-                        android:hint="@string/standalone_url_config_base_url_hint"/>
+                        <EditText
+                            android:id="@+id/view_payment_url"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:singleLine="true"
+                            android:layout_height="wrap_content"
+                            android:backgroundTint="#666666"
+                            android:layout_marginStart="16dp"
+                            android:layout_marginEnd="16dp"
+                            android:gravity="center_horizontal"
+                            android:textColorHint="#999999"
+                            android:text="@={viewModel.viewPaymentUrl}"
+                            android:hint="@string/standalone_url_config_view_payment_url_hint"/>
 
-                    <EditText
-                        android:id="@+id/complete_url"
-                        android:layout_width="match_parent"
-                        android:singleLine="true"
-                        android:layout_height="wrap_content"
-                        android:backgroundTint="#666666"
-                        android:layout_marginTop="10dp"
-                        android:layout_marginStart="16dp"
-                        android:layout_marginEnd="16dp"
-                        android:gravity="center_horizontal"
-                        android:textColorHint="#999999"
-                        android:text="@={viewModel.completeUrl}"
-                        android:hint="@string/standalone_url_config_complete_url_hint"/>
+                        <ImageButton
+                            android:id="@+id/payment_url_scanner_button"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:background="@drawable/baseline_qr_code_scanner_24"
+                            android:layout_marginEnd="16dp" />
 
-                    <EditText
-                        android:id="@+id/cancel_url"
+                    </LinearLayout>
+
+                    <LinearLayout
                         android:layout_width="match_parent"
-                        android:singleLine="true"
                         android:layout_height="wrap_content"
-                        android:backgroundTint="#666666"
-                        android:layout_marginTop="10dp"
-                        android:layout_marginStart="16dp"
-                        android:layout_marginEnd="16dp"
-                        android:gravity="center_horizontal"
-                        android:textColorHint="#999999"
-                        android:text="@={viewModel.cancelUrl}"
-                        android:hint="@string/standalone_url_config_cancel_url_hint"/>
+                        android:layout_marginTop="20dp">
+
+                        <EditText
+                            android:id="@+id/base_url"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:singleLine="true"
+                            android:layout_height="wrap_content"
+                            android:backgroundTint="#666666"
+                            android:layout_marginStart="16dp"
+                            android:layout_marginEnd="16dp"
+                            android:gravity="center_horizontal"
+                            android:textColorHint="#999999"
+                            android:text="@={viewModel.baseUrl}"
+                            android:hint="@string/standalone_url_config_base_url_hint"/>
+
+                        <ImageButton
+                            android:id="@+id/base_url_scanner_button"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:background="@drawable/baseline_qr_code_scanner_24"
+                            android:layout_marginEnd="16dp" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp">
+
+                        <EditText
+                            android:id="@+id/complete_url"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:singleLine="true"
+                            android:layout_height="wrap_content"
+                            android:backgroundTint="#666666"
+                            android:layout_marginStart="16dp"
+                            android:layout_marginEnd="16dp"
+                            android:gravity="center_horizontal"
+                            android:textColorHint="#999999"
+                            android:text="@={viewModel.completeUrl}"
+                            android:hint="@string/standalone_url_config_complete_url_hint"/>
+
+                        <ImageButton
+                            android:id="@+id/complete_url_scanner_button"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:background="@drawable/baseline_qr_code_scanner_24"
+                            android:layout_marginEnd="16dp" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp">
+
+                        <EditText
+                            android:id="@+id/cancel_url"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:singleLine="true"
+                            android:layout_height="wrap_content"
+                            android:backgroundTint="#666666"
+                            android:layout_marginStart="16dp"
+                            android:layout_marginEnd="16dp"
+                            android:gravity="center_horizontal"
+                            android:textColorHint="#999999"
+                            android:text="@={viewModel.cancelUrl}"
+                            android:hint="@string/standalone_url_config_cancel_url_hint"/>
+
+                        <ImageButton
+                            android:id="@+id/cancel_url_scanner_button"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:background="@drawable/baseline_qr_code_scanner_24"
+                            android:layout_marginEnd="16dp" />
+
+                    </LinearLayout>
 
                     <LinearLayout
                         android:layout_marginTop="10dp"

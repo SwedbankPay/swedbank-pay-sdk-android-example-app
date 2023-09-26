@@ -16,6 +16,12 @@
     <string name="standalone_url_config_fragment_payment_cancelled">Payment cancelled</string>
     <string name="standalone_url_config_fragment_checkout_v3">Use CheckoutV3</string>
 
+
+    <!-- Barcode scanning and camera permission -->
+    <string name="camera_access_needed">Ge access till kameran för att tillåta scanning av QR</string>
+    <string name="camera_access_is_a_must">Du måste gå till inställningar och ge access till kameran för att tillåta scanning av QR</string>
+    <string name="scanner_no_url_found">Fel på url</string>
+
     <string name="items_title">Shoes</string>
     <string name="item_image">Item image</string>
     <string name="remove">Remove</string>

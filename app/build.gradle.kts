@@ -6,11 +6,11 @@ plugins {
 }
 
 android {
-    compileSdk = 33 
+    compileSdk = 34
     defaultConfig {
         applicationId = "com.swedbankpay.exampleapp"
         minSdk = 21
-        targetSdk = 31
+        targetSdk = 34
         versionCode = 1
         versionName = "1.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -56,7 +56,7 @@ dependencies {
     val coroutines_version = "1.7.1"
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version")
-    
+
     //val mobilesdk_version = "4.0.0-3-geaef9f7-SNAPSHOT"
     val mobilesdk_version = "4.1.1"
     implementation("com.swedbankpay.mobilesdk:mobilesdk:$mobilesdk_version")
@@ -69,6 +69,15 @@ dependencies {
     implementation("androidx.navigation:navigation-fragment-ktx:2.5.3")
     implementation("androidx.navigation:navigation-ui-ktx:2.5.3")
     implementation("androidx.recyclerview:recyclerview:1.2.1")
+
+    val camerax_version = "1.2.3"
+    implementation ("androidx.camera:camera-core:${camerax_version}")
+    implementation ("androidx.camera:camera-camera2:${camerax_version}")
+    implementation ("androidx.camera:camera-lifecycle:${camerax_version}")
+    implementation ("androidx.camera:camera-view:${camerax_version}")
+
+    implementation ("com.google.mlkit:barcode-scanning:17.2.0")
+    implementation("androidx.camera:camera-mlkit-vision:1.3.0-beta02")
 
     implementation("com.google.android.material:material:1.9.0")
 
