@@ -11,6 +11,7 @@ class SwedbankPayConfig(
     private val baseUrl: String,
     private val completeUrl: String,
     private val cancelUrl: String,
+    private val paymentUrl: String = "swedbankexample://payment/",
     private val isV3: Boolean
 ) : Configuration(), Parcelable {
 
@@ -33,7 +34,7 @@ class SwedbankPayConfig(
             webViewBaseUrl = baseUrl,
             completeUrl = completeUrl,
             cancelUrl = cancelUrl,
-            paymentUrl = null,
+            paymentUrl = paymentUrl,
             isV3 = isV3
         )
     }
