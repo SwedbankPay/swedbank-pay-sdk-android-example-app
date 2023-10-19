@@ -4,8 +4,12 @@ import android.Manifest
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.view.View.OnClickListener
+import android.view.View.OnFocusChangeListener
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.swedbankpay.exampleapp.R
@@ -13,6 +17,7 @@ import com.swedbankpay.exampleapp.databinding.FragmentStandaloneUrlConfigBinding
 import com.swedbankpay.exampleapp.standaloneurlconfig.camera.CameraActivity
 import com.swedbankpay.exampleapp.standaloneurlconfig.camera.CameraActivity.Companion.SCANNED_URL_KEY
 import com.swedbankpay.exampleapp.util.PermissionUtil
+import com.swedbankpay.exampleapp.util.ScanUrl
 import com.swedbankpay.mobilesdk.PaymentViewModel
 import com.swedbankpay.mobilesdk.paymentViewModel
 
@@ -20,14 +25,7 @@ class StandaloneUrlConfigFragment: Fragment(R.layout.fragment_standalone_url_con
     private lateinit var binding: FragmentStandaloneUrlConfigBinding
     private lateinit var viewModel: StandaloneUrlConfigViewModel
 
-    private var lastClickedBtn: String = "none"
-
-    companion object {
-        const val payment = "payment"
-        const val base = "base"
-        const val complete = "complete"
-        const val cancel = "cancel"
-    }
+    private var lastClickedBtn: ScanUrl = ScanUrl.Unknown
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -38,6 +36,8 @@ class StandaloneUrlConfigFragment: Fragment(R.layout.fragment_standalone_url_con
 
         binding.lifecycleOwner = this
         binding.viewModel = viewModel
+
+        viewModel.paymentUrlScheme.value = binding.paymentUrl.prefixText.toString()
 
         viewModel.swedbankPayConfiguration.observe(viewLifecycleOwner) { configuration ->
             val paymentFrag = SwedbankPayConfigFragment()
@@ -56,22 +56,69 @@ class StandaloneUrlConfigFragment: Fragment(R.layout.fragment_standalone_url_con
 
         observeStandaloneUrlPaymentProcess()
 
-        binding.paymentUrlScannerButton.setOnClickListener {
-            lastClickedBtn = payment
+        binding.checkoutUrlScannerButton.setOnClickListener {
+            lastClickedBtn = ScanUrl.Checkout
+            clearTextfieldsFocus()
             scanQR()
         }
         binding.baseUrlScannerButton.setOnClickListener {
-            lastClickedBtn = base
+            lastClickedBtn = ScanUrl.Base
+            clearTextfieldsFocus()
             scanQR()
         }
         binding.completeUrlScannerButton.setOnClickListener {
-            lastClickedBtn = complete
+            lastClickedBtn = ScanUrl.Complete
+            clearTextfieldsFocus()
             scanQR()
         }
         binding.cancelUrlScannerButton.setOnClickListener {
-            lastClickedBtn = cancel
+            lastClickedBtn = ScanUrl.Cancel
+            clearTextfieldsFocus()
             scanQR()
         }
+
+        binding.checkoutButton.setOnClickListener {
+            clearTextfieldsFocus()
+            viewModel.onCheckoutPressed()
+        }
+
+        binding.baseUrlTextfield.onFocusChangeListener = onFocusChangeListener
+        binding.completeUrlTextfield.onFocusChangeListener = onFocusChangeListener
+        binding.cancelUrlTextfield.onFocusChangeListener = onFocusChangeListener
+        binding.paymentUrlTextfield.onFocusChangeListener = onFocusChangeListener
+    }
+
+    private val onFocusChangeListener = OnFocusChangeListener { editTextView, hasFocus ->
+        if (!hasFocus) {
+            when (editTextView) {
+                binding.baseUrlTextfield -> {
+                    viewModel.saveUrl(binding.baseUrlTextfield.text.toString(), ScanUrl.Base)
+                }
+                binding.completeUrlTextfield -> {
+                    viewModel.saveUrl(binding.completeUrlTextfield.text.toString(), ScanUrl.Complete)
+                }
+                binding.cancelUrlTextfield -> {
+                    viewModel.saveUrl(binding.cancelUrlTextfield.text.toString(), ScanUrl.Cancel)
+                }
+                binding.paymentUrlTextfield -> {
+                    viewModel.saveUrl(binding.paymentUrlTextfield.text.toString(), ScanUrl.Payment)
+                }
+            }
+        }
+    }
+
+    private fun clearTextfieldsFocus() {
+        binding.viewCheckoutUrlTextfield.clearFocus()
+        binding.baseUrlTextfield.clearFocus()
+        binding.completeUrlTextfield.clearFocus()
+        binding.cancelUrlTextfield.clearFocus()
+        binding.paymentUrlTextfield.clearFocus()
+        hideKeyboard()
+    }
+
+    private fun hideKeyboard() {
+        val imm = context?.getSystemService<InputMethodManager>()
+        imm?.hideSoftInputFromWindow(view?.windowToken, 0)
     }
 
     private fun scanQR() {
@@ -87,11 +134,13 @@ class StandaloneUrlConfigFragment: Fragment(R.layout.fragment_standalone_url_con
         ActivityResultContracts.StartActivityForResult()
     ) {
         it.data?.extras?.getString(SCANNED_URL_KEY)?.let { passedUrl ->
+            viewModel.saveUrl(passedUrl, lastClickedBtn)
             when (lastClickedBtn) {
-                payment -> binding.viewPaymentUrl.setText(passedUrl)
-                base -> binding.baseUrl.setText(passedUrl)
-                complete -> binding.completeUrl.setText(passedUrl)
-                cancel -> binding.cancelUrl.setText(passedUrl)
+                ScanUrl.Checkout -> binding.viewCheckoutUrlTextfield.setText(passedUrl)
+                ScanUrl.Base -> binding.baseUrlTextfield.setText(passedUrl)
+                ScanUrl.Complete -> binding.completeUrlTextfield.setText(passedUrl)
+                ScanUrl.Cancel -> binding.cancelUrlTextfield.setText(passedUrl)
+                else -> {}
             }
         }
     }

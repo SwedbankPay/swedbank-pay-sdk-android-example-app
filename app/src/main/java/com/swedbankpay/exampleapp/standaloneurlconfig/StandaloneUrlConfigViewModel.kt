@@ -2,27 +2,14 @@ package com.swedbankpay.exampleapp.standaloneurlconfig
 
 import android.app.Application
 import android.content.Context
-import android.view.View
-import android.widget.LinearLayout
-import androidx.camera.mlkit.vision.MlKitAnalyzer
-import androidx.camera.view.CameraController.COORDINATE_SYSTEM_VIEW_REFERENCED
-import androidx.camera.view.LifecycleCameraController
-import androidx.camera.view.PreviewView
-import androidx.core.content.ContextCompat
 import androidx.core.content.edit
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
-import com.google.mlkit.vision.barcode.BarcodeScanner
-import com.google.mlkit.vision.barcode.BarcodeScannerOptions
-import com.google.mlkit.vision.barcode.BarcodeScanning
-import com.google.mlkit.vision.barcode.common.Barcode
+import com.swedbankpay.exampleapp.util.ScanUrl
 import com.swedbankpay.exampleapp.util.SwedbankPayConfig
-import java.util.concurrent.ExecutorService
-import java.util.concurrent.Executors
 
 class StandaloneUrlConfigViewModel(application: Application): AndroidViewModel(application) {
-    var viewPaymentUrl = MutableLiveData<String>()
+    var viewCheckoutUrl = MutableLiveData<String>()
 
     var baseUrl = MutableLiveData<String>()
 
@@ -32,14 +19,18 @@ class StandaloneUrlConfigViewModel(application: Application): AndroidViewModel(a
 
     var useCheckoutV3 = MutableLiveData<Boolean>()
 
+    var paymentUrlAuthorityAndPath = MutableLiveData<String>()
+    var paymentUrlScheme = MutableLiveData<String>()
+
     var swedbankPayConfiguration = MutableLiveData<SwedbankPayConfig>()
 
     init {
-        viewPaymentUrl.value = ""
+        viewCheckoutUrl.value = ""
         baseUrl.value = getLastUsedBaseUrl()
         completeUrl.value = getLastUsedCompleteUrl()
         cancelUrl.value = getLastUsedCancelUrl()
         useCheckoutV3.value = getLastUsedV3Selection()
+        paymentUrlAuthorityAndPath.value = getLastUsedPaymentUrlAuthorityAndPath()
     }
 
     fun onCheckoutPressed() {
@@ -48,14 +39,27 @@ class StandaloneUrlConfigViewModel(application: Application): AndroidViewModel(a
         cancelUrl.value?.let { saveLastUsedCancelUrl(it) }
         useCheckoutV3.value?.let {saveLastUsedV3Selection(it) }
 
-        swedbankPayConfiguration.value = viewPaymentUrl.value?.let {
+        val paymentUrl = "${paymentUrlScheme.value}${paymentUrlAuthorityAndPath.value}"
+
+        swedbankPayConfiguration.value = viewCheckoutUrl.value?.let {
             SwedbankPayConfig(
                 url = it,
                 baseUrl = baseUrl.value ?: "",
                 completeUrl = completeUrl.value ?: "",
                 cancelUrl = cancelUrl.value ?: "",
-                isV3 = useCheckoutV3.value ?: true
+                isV3 = useCheckoutV3.value ?: true,
+                paymentUrl = paymentUrl
             )
+        }
+    }
+
+    fun saveUrl(url: String, type: ScanUrl) {
+        when (type) {
+            ScanUrl.Base -> {saveLastUsedBaseUrl(url)}
+            ScanUrl.Complete -> {saveLastUsedCompleteUrl(url)}
+            ScanUrl.Cancel -> {saveLastUsedCancelUrl(url)}
+            ScanUrl.Payment -> {saveLastUsedPaymentUrlAuthorityAndPath(url)}
+            else -> {}
         }
     }
 
@@ -120,6 +124,22 @@ class StandaloneUrlConfigViewModel(application: Application): AndroidViewModel(a
             Context.MODE_PRIVATE
         )?.edit {
             putBoolean("V3_CONFIG", isChecked)
+        }
+    }
+
+    private fun getLastUsedPaymentUrlAuthorityAndPath(): String {
+        return getApplication<Application>().getSharedPreferences(
+            "StandaloneUrlConfig",
+            Context.MODE_PRIVATE
+        )?.getString("PAYMENT_URL_CONFIG", null) ?: ""
+    }
+
+    private fun saveLastUsedPaymentUrlAuthorityAndPath(url: String) {
+        getApplication<Application>().getSharedPreferences(
+            "StandaloneUrlConfig",
+            Context.MODE_PRIVATE
+        )?.edit {
+            putString("PAYMENT_URL_CONFIG", url)
         }
     }
 }
