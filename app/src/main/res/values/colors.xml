@@ -14,4 +14,10 @@
     <color name="switch_enabled">#59C27A</color>
     <color name="switch_disabled">#C0C0C0</color>
     <color name="switch_thumb_tint">#EBEBEB</color>
+    <color name="edit_text_box">#666666</color>
+
+    <color name="button_enabled">#000000</color>
+    <color name="button_disabled">#919191</color>
+    <color name="button_text_enabled">#FFFFFF</color>
+    <color name="button_text_disabled">#636363</color>
 </resources>
