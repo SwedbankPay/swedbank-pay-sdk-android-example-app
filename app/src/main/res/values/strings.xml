@@ -2,7 +2,28 @@
     <string name="app_name">Swedbank Pay Example</string>
 
     <string name="cart_button">Open shopping cart</string>
-    
+
+    <!--Select method fragment-->
+    <string name="select_method_backend_supported_flow">Backend supported flow (webshop)</string>
+    <string name="select_method_standalone_urls">Stand-alone URLs</string>
+
+    <!--Standalone URL config fragment-->
+    <string name="standalone_url_config_view_checkout_url_hint">View checkout URL</string>
+    <string name="standalone_url_config_base_url_hint">Base URL</string>
+    <string name="standalone_url_config_complete_url_hint">Complete URL</string>
+    <string name="standalone_url_config_cancel_url_hint">Cancel URL</string>
+    <string name="standalone_url_config_fragment_payment_completed">Payment completed</string>
+    <string name="standalone_url_config_fragment_payment_cancelled">Payment cancelled</string>
+    <string name="standalone_url_config_fragment_checkout_v3">Use CheckoutV3</string>
+    <string name="standalone_url_config_payment_url_hint">Payment URL</string>
+    <string name="standalone_url_config_payment_url_scheme">swedbankexample://</string>
+
+
+    <!-- Barcode scanning and camera permission -->
+    <string name="camera_access_needed">Ge access till kameran för att tillåta scanning av QR</string>
+    <string name="camera_access_is_a_must">Du måste gå till inställningar och ge access till kameran för att tillåta scanning av QR</string>
+    <string name="scanner_no_url_found">Fel på url</string>
+
     <string name="items_title">Shoes</string>
     <string name="item_image">Item image</string>
     <string name="remove">Remove</string>

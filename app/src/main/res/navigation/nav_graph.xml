@@ -1,7 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto" android:id="@+id/nav_graph"
-    app:startDestination="@id/productsFragment">
+    app:startDestination="@id/selectMethodFragment">
+
+    <fragment
+        android:id="@+id/selectMethodFragment"
+        android:name="com.swedbankpay.exampleapp.selectmethod.SelectMethodFragment"
+        android:label="SelectMethodFragment">
+        <action
+            android:id="@+id/action_selectMethodFragment_to_productsFragment"
+            app:destination="@id/productsFragment" />
+        <action
+            android:id="@+id/action_selectMethodFragment_to_standaloneUrlConfigFragment"
+            app:destination="@id/standaloneUrlConfigFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/standaloneUrlConfigFragment"
+        android:name="com.swedbankpay.exampleapp.standaloneurlconfig.StandaloneUrlConfigFragment"
+        android:label="StandaloneUrlConfigFragment"/>
 
     <fragment
         android:id="@+id/productsFragment"

@@ -2,14 +2,15 @@ plugins {
     id("com.android.application")
     kotlin("android")
     id("com.github.triplet.play") version "3.8.3"
+    id("kotlin-parcelize")
 }
 
 android {
-    compileSdk = 33 
+    compileSdk = 34
     defaultConfig {
         applicationId = "com.swedbankpay.exampleapp"
         minSdk = 21
-        targetSdk = 31
+        targetSdk = 34
         versionCode = 1
         versionName = "1.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -20,6 +21,7 @@ android {
     }
     buildFeatures {
         viewBinding = true
+        dataBinding = true
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
@@ -67,6 +69,15 @@ dependencies {
     implementation("androidx.navigation:navigation-fragment-ktx:2.5.3")
     implementation("androidx.navigation:navigation-ui-ktx:2.5.3")
     implementation("androidx.recyclerview:recyclerview:1.2.1")
+
+    val camerax_version = "1.2.3"
+    implementation ("androidx.camera:camera-core:${camerax_version}")
+    implementation ("androidx.camera:camera-camera2:${camerax_version}")
+    implementation ("androidx.camera:camera-lifecycle:${camerax_version}")
+    implementation ("androidx.camera:camera-view:${camerax_version}")
+
+    implementation ("com.google.mlkit:barcode-scanning:17.2.0")
+    implementation("androidx.camera:camera-mlkit-vision:1.3.0-beta02")
 
     implementation("com.google.android.material:material:1.9.0")
 

@@ -13,7 +13,6 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         savedInstanceState?.let(mainViewModel::resumeFromSavedState)
-        observePaymentProcess()
         observeErrorMessage()
     }
 
@@ -22,7 +21,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
         mainViewModel.saveState(outState)
     }
 
-    private fun observePaymentProcess() {
+    fun observePaymentProcess() {
         // N.B! The PaymentViewModel is observed at the Activity level here,
         // because the ProductsFragment will be in a stopped state when the
         // PaymentFragment is visible, and as such it would not receive any callbacks.
