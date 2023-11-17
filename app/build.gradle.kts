@@ -1,7 +1,7 @@
 plugins {
     id("com.android.application")
     kotlin("android")
-    id("com.github.triplet.play") version "3.8.4"
+    id("com.github.triplet.play") version "3.8.6"
 }
 
 android {
