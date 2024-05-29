@@ -17,12 +17,34 @@
     <string name="standalone_url_config_fragment_checkout_v3">Use CheckoutV3</string>
     <string name="standalone_url_config_payment_url_hint">Payment URL</string>
     <string name="standalone_url_config_payment_url_scheme">swedbankexample://</string>
+    <string name="standalone_url_session_url_hint">Session URL</string>
+
+    <!-- Alert dialog -->
+    <string name="option_ok">Ok</string>
+    <string name="option_retry">Retry</string>
+
+    <!-- Swish instrument -->
+    <string name="swish_using_this_device">Swish using this device</string>
+    <string name="swish_number_hint">Swish number</string>
+    <string name="open_swish_on_another_phone">Swish</string>
+    <string name="swish_with_prefill">Swish: %1$s</string>
+
+    <!-- Credit card instrument -->
+    <string name="credit_card_with_prefill">Credit Card: %1$s\n%2$s</string>
+
+    <!-- Error -->
+    <string name="payment_session_api_request_failed">Payment session api request failed</string>
+    <string name="invalid_url">Invalid Url\nPlease try again</string>
+    <string name="unknown_error">Unknown error\nPlease try again</string>
+    <string name="client_app_launch_failed">Could not launch client app</string>
+    <string name="payment_session_end_reached">Payment session end reached</string>
 
 
     <!-- Barcode scanning and camera permission -->
     <string name="camera_access_needed">Ge access till kameran för att tillåta scanning av QR</string>
     <string name="camera_access_is_a_must">Du måste gå till inställningar och ge access till kameran för att tillåta scanning av QR</string>
     <string name="scanner_no_url_found">Fel på url</string>
+    <string name="scanner_no_number_found">Fel på telefonnummer</string>
 
     <string name="items_title">Shoes</string>
     <string name="item_image">Item image</string>
@@ -34,6 +56,8 @@
     <string name="shipping">Shipping</string>
     <string name="total">Total (Click to change)</string>
     <string name="check_out">Checkout</string>
+    <string name="get_session">Get session</string>
+    <string name="abort_native_payment">Abort</string>
     <string name="open_settings">Open settings</string>
     <string name="close_settings">Close settings</string>
     <string name="currency">Currency</string>
@@ -111,4 +135,6 @@
 
     <string name="style_title">Style</string>
     <string name="style_error">Invalid style</string>
+
+
 </resources>

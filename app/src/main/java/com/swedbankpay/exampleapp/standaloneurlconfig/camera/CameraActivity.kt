@@ -54,7 +54,17 @@ class CameraActivity : AppCompatActivity(R.layout.activity_camera) {
                 }
                 when (barcodeResult.first().valueType) {
                     Barcode.TYPE_URL -> {
-                        scannedUrlReturn(barcodeResult.first().url?.url ?: getString(R.string.scanner_no_url_found))
+                        scannedBarcodeReturn(
+                            barcodeResult.first().url?.url
+                                ?: getString(R.string.scanner_no_url_found)
+                        )
+                    }
+
+                    Barcode.TYPE_TEXT -> {
+                        scannedBarcodeReturn(
+                            barcodeResult.first().rawValue
+                                ?: getString(R.string.scanner_no_number_found)
+                        )
                     }
                 }
             }
@@ -63,9 +73,9 @@ class CameraActivity : AppCompatActivity(R.layout.activity_camera) {
         previewView.controller = cameraController
     }
 
-    private fun scannedUrlReturn(url: String) {
+    private fun scannedBarcodeReturn(text: String) {
         val intent = Intent()
-        intent.putExtra(SCANNED_URL_KEY, url)
+        intent.putExtra(SCANNED_URL_KEY, text)
         setResult(RESULT_OK, intent)
         finish()
     }

@@ -1,39 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <variable
             name="viewModel"
-            type="com.swedbankpay.exampleapp.standaloneurlconfig.StandaloneUrlConfigViewModel"/>
+            type="com.swedbankpay.exampleapp.standaloneurlconfig.StandaloneUrlConfigViewModel" />
+
+        <import type="android.view.View" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/standaloneUrlConfigFrame"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/standaloneUrlConfigFrame">
+        android:layout_height="match_parent">
 
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
             <LinearLayout
-                android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:layout_constraintTop_toTopOf="parent"
+                android:orientation="vertical"
+                android:paddingBottom="32dp"
                 app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent">
+                app:layout_constraintTop_toTopOf="parent">
 
                 <LinearLayout
-                    android:layout_marginTop="20dp"
-                    android:orientation="vertical"
-                    android:gravity="center_horizontal"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical">
 
                     <ImageView
                         android:id="@+id/payment_result_image"
@@ -41,17 +44,17 @@
                         android:layout_height="100dp"
                         android:visibility="gone"
                         tools:src="@drawable/payment_success"
-                        tools:visibility="visible"/>
+                        tools:visibility="visible" />
 
                     <TextView
                         android:id="@+id/payment_result_text"
-                        android:layout_marginTop="20dp"
-                        android:textAlignment="center"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp"
+                        android:textAlignment="center"
                         android:visibility="gone"
-                        tools:visibility="visible"
-                        tools:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."/>
+                        tools:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."
+                        tools:visibility="visible" />
 
                 </LinearLayout>
 
@@ -234,40 +237,39 @@
                 </LinearLayout>
 
                 <TextView
-                    style="@style/tiny_white_text"
                     android:id="@+id/checkout_button"
+                    style="@style/tiny_white_text"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="bottom"
-                    android:layout_marginTop="10dp"
                     android:layout_marginStart="16dp"
+                    android:layout_marginTop="10dp"
                     android:layout_marginEnd="16dp"
                     android:layout_marginBottom="16dp"
                     android:background="@drawable/expanding_button_background"
                     android:backgroundTint="@{viewModel.viewCheckoutUrl.length() > 0 ? @color/button_enabled : @color/button_disabled}"
-                    android:textColor="@{viewModel.viewCheckoutUrl.length() > 0 ? @color/button_text_enabled : @color/button_text_disabled}"
+                    android:enabled="@{viewModel.viewCheckoutUrl.length() > 0}"
                     android:gravity="center"
                     android:text="@string/check_out"
-                    android:enabled="@{viewModel.viewCheckoutUrl.length() > 0}" />
+                    android:textColor="@{viewModel.viewCheckoutUrl.length() > 0 ? @color/button_text_enabled : @color/button_text_disabled}" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginVertical="16dp"
-                    android:paddingBottom="20dp">
+                    android:layout_marginTop="16dp">
 
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/payment_url"
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                        app:boxStrokeColor="@color/edit_text_box"
                         android:layout_width="0dp"
-                        android:layout_weight="1"
-                        android:singleLine="true"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="16dp"
                         android:layout_marginEnd="16dp"
-                        app:hintTextColor="@color/edit_text_box"
+                        android:layout_weight="1"
+                        android:singleLine="true"
+                        app:boxStrokeColor="@color/edit_text_box"
                         app:expandedHintEnabled="false"
+                        app:hintTextColor="@color/edit_text_box"
                         app:prefixText="@string/standalone_url_config_payment_url_scheme">
 
                         <com.google.android.material.textfield.TextInputEditText
@@ -280,6 +282,175 @@
                     </com.google.android.material.textfield.TextInputLayout>
 
                 </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:gravity="center">
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/session_url"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginEnd="16dp"
+                        android:layout_weight="1"
+                        android:singleLine="true"
+                        app:boxStrokeColor="@color/edit_text_box"
+                        app:hintTextColor="@color/edit_text_box">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/session_url_textfield"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="@string/standalone_url_session_url_hint"
+                            android:inputType="textUri"
+                            android:text="@={viewModel.sessionUrl}" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <ImageButton
+                        android:id="@+id/session_url_scanner_button"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginEnd="16dp"
+                        android:background="@drawable/baseline_qr_code_scanner_24" />
+
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/get_session_button"
+                    style="@style/tiny_white_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:background="@drawable/expanding_button_background"
+                    android:backgroundTint="@{viewModel.sessionUrl.length() > 0 &amp;&amp; !viewModel.nativePaymentSessionInitiated ? @color/button_enabled : @color/button_disabled}"
+                    android:enabled="@{viewModel.sessionUrl.length() > 0 &amp;&amp; !viewModel.nativePaymentSessionInitiated}"
+                    android:gravity="center"
+                    android:text="@string/get_session"
+                    android:textColor="@{viewModel.sessionUrl.length() > 0 &amp;&amp; !viewModel.nativePaymentSessionInitiated ? @color/button_text_enabled : @color/button_text_disabled}" />
+
+                <LinearLayout
+                    android:id="@+id/swish_instrument_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:orientation="vertical"
+                    android:visibility="@{viewModel.showSwish ? View.VISIBLE : View.GONE }">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:gravity="center">
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/swish_phone_number"
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            android:layout_marginEnd="16dp"
+                            android:layout_weight="1"
+                            android:singleLine="true"
+                            app:boxStrokeColor="@color/edit_text_box"
+                            app:hintTextColor="@color/edit_text_box">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/swish_phone_number_textfield"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:hint="@string/swish_number_hint"
+                                android:inputType="textUri"
+                                android:text="@={viewModel.swishPhoneNumber}" />
+
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <ImageButton
+                            android:id="@+id/swish_phone_number_scanner_button"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:layout_marginEnd="16dp"
+                            android:background="@drawable/baseline_qr_code_scanner_24" />
+
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/open_swish_on_another_phone_button"
+                        style="@style/tiny_white_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginEnd="16dp"
+                        android:background="@drawable/expanding_button_background"
+                        android:backgroundTint="@{viewModel.swishPhoneNumber.length() > 0 &amp;&amp; !viewModel.swishPaymentInitiated ? @color/button_enabled : @color/button_disabled}"
+                        android:enabled="@{viewModel.swishPhoneNumber.length() > 0 &amp;&amp; !viewModel.swishPaymentInitiated}"
+                        android:gravity="center"
+                        android:text="@string/open_swish_on_another_phone"
+                        android:textColor="@{viewModel.swishPhoneNumber.length() > 0 &amp;&amp; !viewModel.swishPaymentInitiated ? @color/button_text_enabled : @color/button_text_disabled}" />
+
+                    <TextView
+                        android:id="@+id/open_swish_on_this_phone_button"
+                        style="@style/tiny_white_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginEnd="16dp"
+                        android:background="@drawable/expanding_button_background"
+                        android:backgroundTint="@{!viewModel.swishPaymentInitiated ? @color/button_enabled : @color/button_disabled}"
+                        android:enabled="@{!viewModel.swishPaymentInitiated}"
+                        android:gravity="center"
+                        android:text="@string/swish_using_this_device"
+                        android:textColor="@{!viewModel.swishPaymentInitiated ? @color/button_text_enabled : @color/button_text_disabled}" />
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/swish_prefill_recycler_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/credit_card_instrument_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="@{viewModel.showCreditCard ? View.VISIBLE : View.GONE }">
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/credit_card_prefill_recycler_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/abort_native_payment_button"
+                    style="@style/tiny_white_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:background="@drawable/expanding_button_background"
+                    android:backgroundTint="@{!viewModel.abortPaymentInitiated ? @color/button_enabled : @color/button_disabled}"
+                    android:enabled="@{!viewModel.abortPaymentInitiated}"
+                    android:gravity="center"
+                    android:text="@string/abort_native_payment"
+                    android:textColor="@{!viewModel.abortPaymentInitiated ? @color/button_text_enabled : @color/button_text_disabled}" />
 
             </LinearLayout>
 

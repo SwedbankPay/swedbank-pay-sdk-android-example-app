@@ -5,10 +5,17 @@ import android.content.Context
 import androidx.core.content.edit
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.map
 import com.swedbankpay.exampleapp.util.ScanUrl
 import com.swedbankpay.exampleapp.util.SwedbankPayConfig
+import com.swedbankpay.mobilesdk.ViewPaymentOrderInfo
+import com.swedbankpay.mobilesdk.nativepayments.NativePayment
+import com.swedbankpay.mobilesdk.nativepayments.api.model.response.Instrument
+import com.swedbankpay.mobilesdk.nativepayments.exposedmodel.AvailableInstrument
+import com.swedbankpay.mobilesdk.nativepayments.exposedmodel.PaymentAttemptInstrument
 
-class StandaloneUrlConfigViewModel(application: Application): AndroidViewModel(application) {
+
+class StandaloneUrlConfigViewModel(application: Application) : AndroidViewModel(application) {
     var viewCheckoutUrl = MutableLiveData<String>()
 
     var baseUrl = MutableLiveData<String>()
@@ -24,6 +31,44 @@ class StandaloneUrlConfigViewModel(application: Application): AndroidViewModel(a
 
     var swedbankPayConfiguration = MutableLiveData<SwedbankPayConfig>()
 
+    // Native payments
+    var sessionUrl = MutableLiveData<String>()
+
+    var nativePaymentSessionInitiated = MutableLiveData(false)
+
+    private val availableInstrument = MutableLiveData<List<AvailableInstrument>>()
+
+    val abortPaymentInitiated = MutableLiveData(false)
+
+    // Swish
+    val showSwish = availableInstrument.map {
+        it.firstOrNull { instrument -> instrument is AvailableInstrument.Swish } != null
+    }
+
+    val showCreditCard = availableInstrument.map {
+        it.firstOrNull { instrument -> instrument is AvailableInstrument.CreditCard} != null
+    }
+
+    val swishPrefills = availableInstrument.map {
+        val swish = it.firstOrNull { instrument -> instrument is AvailableInstrument.Swish }
+        if (swish != null) {
+            (swish as AvailableInstrument.Swish).prefills
+        } else listOf()
+    }
+
+    val creditCardPrefills = availableInstrument.map {
+        val creditCard = it.firstOrNull { instrument -> instrument is AvailableInstrument.CreditCard }
+        if (creditCard != null) {
+            (creditCard as AvailableInstrument.CreditCard).prefills
+        } else listOf()
+    }
+
+    val swishPaymentInitiated = MutableLiveData(false)
+
+    var swishPhoneNumber = MutableLiveData<String?>()
+
+    private var nativePayment: NativePayment? = null
+
     init {
         viewCheckoutUrl.value = ""
         baseUrl.value = getLastUsedBaseUrl()
@@ -34,10 +79,7 @@ class StandaloneUrlConfigViewModel(application: Application): AndroidViewModel(a
     }
 
     fun onCheckoutPressed() {
-        baseUrl.value?.let { saveLastUsedBaseUrl(it) }
-        completeUrl.value?.let { saveLastUsedCompleteUrl(it) }
-        cancelUrl.value?.let { saveLastUsedCancelUrl(it) }
-        useCheckoutV3.value?.let {saveLastUsedV3Selection(it) }
+        saveUrls()
 
         val paymentUrl = "${paymentUrlScheme.value}${paymentUrlAuthorityAndPath.value}"
 
@@ -53,12 +95,78 @@ class StandaloneUrlConfigViewModel(application: Application): AndroidViewModel(a
         }
     }
 
+    fun onGetSessionPressed() {
+        nativePaymentSessionInitiated.value = true
+        saveUrls()
+
+        val paymentUrl = "${paymentUrlScheme.value}${paymentUrlAuthorityAndPath.value}"
+
+        nativePayment = NativePayment(
+            ViewPaymentOrderInfo(
+                webViewBaseUrl = baseUrl.value ?: "",
+                completeUrl = completeUrl.value ?: "",
+                cancelUrl = cancelUrl.value ?: "",
+                isV3 = useCheckoutV3.value ?: true,
+                paymentUrl = paymentUrl
+            )
+        )
+        nativePayment?.startPaymentSession(url = sessionUrl.value ?: "")
+    }
+
+    fun setAvailableInstruments(availableInstruments: List<AvailableInstrument>) {
+        availableInstrument.value = availableInstruments
+    }
+
+    fun startPaymentWith(instrument: PaymentAttemptInstrument) {
+        if (instrument is PaymentAttemptInstrument.Swish) {
+            swishPaymentInitiated.value = true
+        }
+        nativePayment?.makePaymentAttempt(with = instrument)
+    }
+
+    fun abortNativePayment() {
+        abortPaymentInitiated.value = true
+        nativePayment?.abortPaymentSession()
+    }
+
+    fun resetNativePayment() {
+        nativePaymentSessionInitiated.value = false
+        availableInstrument.value = listOf()
+        resetNativePaymentsInitiatedState()
+        abortPaymentInitiated.value = false
+        sessionUrl.value = ""
+        swishPhoneNumber.value = ""
+    }
+
+    fun resetNativePaymentsInitiatedState() {
+        swishPaymentInitiated.value = false
+    }
+
+    private fun saveUrls() {
+        baseUrl.value?.let { saveLastUsedBaseUrl(it) }
+        completeUrl.value?.let { saveLastUsedCompleteUrl(it) }
+        cancelUrl.value?.let { saveLastUsedCancelUrl(it) }
+        useCheckoutV3.value?.let { saveLastUsedV3Selection(it) }
+    }
+
     fun saveUrl(url: String, type: ScanUrl) {
         when (type) {
-            ScanUrl.Base -> {saveLastUsedBaseUrl(url)}
-            ScanUrl.Complete -> {saveLastUsedCompleteUrl(url)}
-            ScanUrl.Cancel -> {saveLastUsedCancelUrl(url)}
-            ScanUrl.Payment -> {saveLastUsedPaymentUrlAuthorityAndPath(url)}
+            ScanUrl.Base -> {
+                saveLastUsedBaseUrl(url)
+            }
+
+            ScanUrl.Complete -> {
+                saveLastUsedCompleteUrl(url)
+            }
+
+            ScanUrl.Cancel -> {
+                saveLastUsedCancelUrl(url)
+            }
+
+            ScanUrl.Payment -> {
+                saveLastUsedPaymentUrlAuthorityAndPath(url)
+            }
+
             else -> {}
         }
     }

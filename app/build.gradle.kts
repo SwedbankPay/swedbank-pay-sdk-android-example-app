@@ -18,6 +18,7 @@ android {
         buildConfigField("boolean", "ENABLE_PROD_DEMO",
             findProperty("enableProdDemo")?.toString().toBoolean().toString()
         )
+        manifestPlaceholders["swedbankPaymentUrlScheme"] = "swedbankexample"
     }
     buildFeatures {
         viewBinding = true
@@ -57,7 +58,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version")
 
-    //val mobilesdk_version = "4.0.0-3-geaef9f7-SNAPSHOT"
+    val mobilesdk_local_version = "4.1.1-66-g9b70f4e-dirty-SNAPSHOT"
     val mobilesdk_version = "4.1.1"
     implementation("com.swedbankpay.mobilesdk:mobilesdk:$mobilesdk_version")
     implementation("com.swedbankpay.mobilesdk:mobilesdk-merchantbackend:$mobilesdk_version")

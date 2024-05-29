@@ -11,8 +11,8 @@ class SwedbankPayConfig(
     private val baseUrl: String,
     private val completeUrl: String,
     private val cancelUrl: String,
-    private val paymentUrl: String = "swedbankexample://payment/",
-    private val isV3: Boolean
+    private val paymentUrl: String = "https://consid.mobi/payment/android",
+    private val isV3: Boolean,
 ) : Configuration(), Parcelable {
 
     override suspend fun postConsumers(
