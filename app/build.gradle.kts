@@ -31,6 +31,7 @@ android {
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_1_8.toString()
     }
+
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -58,7 +59,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version")
 
-    val mobilesdk_local_version = "4.1.1-66-g9b70f4e-dirty-SNAPSHOT"
+    val mobilesdk_local_version = "4.1.1-71-g1db8b2e-dirty-SNAPSHOT"
     val mobilesdk_version = "4.1.1"
     implementation("com.swedbankpay.mobilesdk:mobilesdk:$mobilesdk_version")
     implementation("com.swedbankpay.mobilesdk:mobilesdk-merchantbackend:$mobilesdk_version")

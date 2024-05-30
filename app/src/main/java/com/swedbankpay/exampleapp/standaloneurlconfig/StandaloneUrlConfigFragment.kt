@@ -354,6 +354,11 @@ class StandaloneUrlConfigFragment : Fragment(R.layout.fragment_standalone_url_co
                             viewModel.resetNativePayment()
                             setError(getString(R.string.payment_session_end_reached))
                         }
+
+                        NativePaymentProblem.InternalInconsistencyError -> {
+                            viewModel.resetNativePayment()
+                            setError(getString(R.string.payment_session_internal_inconsistency_error))
+                        }
                     }
                 }
 

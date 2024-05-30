@@ -10,7 +10,6 @@ import com.swedbankpay.exampleapp.util.ScanUrl
 import com.swedbankpay.exampleapp.util.SwedbankPayConfig
 import com.swedbankpay.mobilesdk.ViewPaymentOrderInfo
 import com.swedbankpay.mobilesdk.nativepayments.NativePayment
-import com.swedbankpay.mobilesdk.nativepayments.api.model.response.Instrument
 import com.swedbankpay.mobilesdk.nativepayments.exposedmodel.AvailableInstrument
 import com.swedbankpay.mobilesdk.nativepayments.exposedmodel.PaymentAttemptInstrument
 
@@ -110,7 +109,7 @@ class StandaloneUrlConfigViewModel(application: Application) : AndroidViewModel(
                 paymentUrl = paymentUrl
             )
         )
-        nativePayment?.startPaymentSession(url = sessionUrl.value ?: "")
+        nativePayment?.startPaymentSession(sessionURL = sessionUrl.value ?: "")
     }
 
     fun setAvailableInstruments(availableInstruments: List<AvailableInstrument>) {
@@ -121,7 +120,7 @@ class StandaloneUrlConfigViewModel(application: Application) : AndroidViewModel(
         if (instrument is PaymentAttemptInstrument.Swish) {
             swishPaymentInitiated.value = true
         }
-        nativePayment?.makePaymentAttempt(with = instrument)
+        nativePayment?.makePaymentAttempt(instrument = instrument)
     }
 
     fun abortNativePayment() {

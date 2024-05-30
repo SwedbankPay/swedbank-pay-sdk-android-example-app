@@ -38,6 +38,7 @@
     <string name="unknown_error">Unknown error\nPlease try again</string>
     <string name="client_app_launch_failed">Could not launch client app</string>
     <string name="payment_session_end_reached">Payment session end reached</string>
+    <string name="payment_session_internal_inconsistency_error">Internal inconsistency error</string>
 
 
     <!-- Barcode scanning and camera permission -->
