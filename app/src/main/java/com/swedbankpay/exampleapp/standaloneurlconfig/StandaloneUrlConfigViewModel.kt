@@ -8,7 +8,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.map
 import com.swedbankpay.exampleapp.util.ScanUrl
 import com.swedbankpay.exampleapp.util.SwedbankPayConfig
-import com.swedbankpay.mobilesdk.ViewPaymentOrderInfo
 import com.swedbankpay.mobilesdk.nativepayments.NativePayment
 import com.swedbankpay.mobilesdk.nativepayments.exposedmodel.AvailableInstrument
 import com.swedbankpay.mobilesdk.nativepayments.exposedmodel.PaymentAttemptInstrument
@@ -100,15 +99,15 @@ class StandaloneUrlConfigViewModel(application: Application) : AndroidViewModel(
 
         val paymentUrl = "${paymentUrlScheme.value}${paymentUrlAuthorityAndPath.value}"
 
-        nativePayment = NativePayment(
-            ViewPaymentOrderInfo(
-                webViewBaseUrl = baseUrl.value ?: "",
-                completeUrl = completeUrl.value ?: "",
-                cancelUrl = cancelUrl.value ?: "",
-                isV3 = useCheckoutV3.value ?: true,
-                paymentUrl = paymentUrl
-            )
+        val configuration = SwedbankPayConfig(
+            baseUrl = baseUrl.value ?: "",
+            completeUrl = completeUrl.value ?: "",
+            cancelUrl = cancelUrl.value ?: "",
+            isV3 = useCheckoutV3.value ?: true,
+            paymentUrl = paymentUrl
         )
+
+        nativePayment = NativePayment(configuration.orderInfo)
         nativePayment?.startPaymentSession(sessionURL = sessionUrl.value ?: "")
     }
 

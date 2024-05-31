@@ -7,13 +7,25 @@ import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 class SwedbankPayConfig(
-    private val url: String,
-    private val baseUrl: String,
-    private val completeUrl: String,
-    private val cancelUrl: String,
-    private val paymentUrl: String = "https://consid.mobi/payment/android",
-    private val isV3: Boolean,
+    val url: String? = null,
+    val baseUrl: String,
+    val completeUrl: String,
+    val cancelUrl: String,
+    val paymentUrl: String = "https://consid.mobi/payment/android",
+    val isV3: Boolean,
 ) : Configuration(), Parcelable {
+
+    val orderInfo: ViewPaymentOrderInfo
+        get() {
+            return ViewPaymentOrderInfo(
+                viewPaymentLink = url,
+                webViewBaseUrl = baseUrl,
+                completeUrl = completeUrl,
+                cancelUrl = cancelUrl,
+                paymentUrl = paymentUrl,
+                isV3 = isV3
+            )
+        }
 
     override suspend fun postConsumers(
         context: Context,
@@ -29,13 +41,6 @@ class SwedbankPayConfig(
         userData: Any?,
         consumerProfileRef: String?
     ): ViewPaymentOrderInfo {
-        return ViewPaymentOrderInfo(
-            viewPaymentLink = url,
-            webViewBaseUrl = baseUrl,
-            completeUrl = completeUrl,
-            cancelUrl = cancelUrl,
-            paymentUrl = paymentUrl,
-            isV3 = isV3
-        )
+        return orderInfo
     }
 }
