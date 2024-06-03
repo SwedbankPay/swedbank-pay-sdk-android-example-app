@@ -44,7 +44,7 @@ class StandaloneUrlConfigViewModel(application: Application) : AndroidViewModel(
     }
 
     val showCreditCard = availableInstrument.map {
-        it.firstOrNull { instrument -> instrument is AvailableInstrument.CreditCard} != null
+        it.firstOrNull { instrument -> instrument is AvailableInstrument.CreditCard } != null
     }
 
     val swishPrefills = availableInstrument.map {
@@ -55,7 +55,8 @@ class StandaloneUrlConfigViewModel(application: Application) : AndroidViewModel(
     }
 
     val creditCardPrefills = availableInstrument.map {
-        val creditCard = it.firstOrNull { instrument -> instrument is AvailableInstrument.CreditCard }
+        val creditCard =
+            it.firstOrNull { instrument -> instrument is AvailableInstrument.CreditCard }
         if (creditCard != null) {
             (creditCard as AvailableInstrument.CreditCard).prefills
         } else listOf()
@@ -127,7 +128,8 @@ class StandaloneUrlConfigViewModel(application: Application) : AndroidViewModel(
         nativePayment?.abortPaymentSession()
     }
 
-    fun resetNativePayment() {
+    fun resetPayment() {
+        viewCheckoutUrl.value = ""
         nativePaymentSessionInitiated.value = false
         availableInstrument.value = listOf()
         resetNativePaymentsInitiatedState()
