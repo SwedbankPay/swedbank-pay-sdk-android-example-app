@@ -3,7 +3,6 @@ package com.swedbankpay.exampleapp.standaloneurlconfig
 import android.Manifest
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.View.OnFocusChangeListener
 import android.view.inputmethod.InputMethodManager
@@ -292,12 +291,10 @@ class StandaloneUrlConfigFragment : Fragment(R.layout.fragment_standalone_url_co
                 }
 
                 is NativePaymentState.PaymentComplete -> {
-                    viewModel.resetNativePayment()
                     setSuccess()
                 }
 
                 is NativePaymentState.PaymentCanceled -> {
-                    viewModel.resetNativePayment()
                     setError("Payment was canceled")
                 }
 
@@ -312,7 +309,6 @@ class StandaloneUrlConfigFragment : Fragment(R.layout.fragment_standalone_url_co
                 is NativePaymentState.SdkProblemOccurred -> {
                     when (paymentState.problem) {
                         NativePaymentProblem.ClientAppLaunchFailed -> {
-                            viewModel.resetNativePayment()
                             setError(getString(R.string.client_app_launch_failed))
                         }
 
@@ -348,15 +344,14 @@ class StandaloneUrlConfigFragment : Fragment(R.layout.fragment_standalone_url_co
                                 }
                             }
 
+                            viewModel.resetNativePaymentsInitiatedState()
                         }
 
                         NativePaymentProblem.PaymentSessionEndReached -> {
-                            viewModel.resetNativePayment()
                             setError(getString(R.string.payment_session_end_reached))
                         }
 
                         NativePaymentProblem.InternalInconsistencyError -> {
-                            viewModel.resetNativePayment()
                             setError(getString(R.string.payment_session_internal_inconsistency_error))
                         }
                     }
@@ -385,20 +380,28 @@ class StandaloneUrlConfigFragment : Fragment(R.layout.fragment_standalone_url_co
     }
 
     private fun setSuccess() {
+        viewModel.resetPayment()
+
         binding.paymentResultImage.visibility = View.VISIBLE
         binding.paymentResultText.visibility = View.VISIBLE
 
         binding.paymentResultImage.setImageResource(R.drawable.payment_success)
         binding.paymentResultText.text =
             context?.getString(R.string.standalone_url_config_fragment_payment_completed)
+
+        binding.standaloneUrlConfigScrollView.scrollTo(0, 0)
     }
 
     private fun setError(message: String?) {
+        viewModel.resetPayment()
+
         binding.paymentResultImage.visibility = View.VISIBLE
         binding.paymentResultText.visibility = View.VISIBLE
 
         binding.paymentResultImage.setImageResource(R.drawable.payment_failure)
         binding.paymentResultText.text = message
+
+        binding.standaloneUrlConfigScrollView.scrollTo(0, 0)
     }
 
     private fun openAlertDialog(title: String, message: String) {

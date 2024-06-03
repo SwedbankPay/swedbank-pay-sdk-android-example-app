@@ -18,6 +18,7 @@
         android:layout_height="match_parent">
 
         <ScrollView
+            android:id="@+id/standaloneUrlConfigScrollView"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
@@ -450,7 +451,8 @@
                     android:enabled="@{!viewModel.abortPaymentInitiated}"
                     android:gravity="center"
                     android:text="@string/abort_native_payment"
-                    android:textColor="@{!viewModel.abortPaymentInitiated ? @color/button_text_enabled : @color/button_text_disabled}" />
+                    android:textColor="@{!viewModel.abortPaymentInitiated ? @color/button_text_enabled : @color/button_text_disabled}"
+                    android:visibility="@{viewModel.nativePaymentSessionInitiated ? View.VISIBLE : View.GONE}" />
 
             </LinearLayout>
 
