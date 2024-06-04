@@ -1,10 +1,12 @@
 package com.swedbankpay.exampleapp.standaloneurlconfig
 
 import android.Manifest
+import android.animation.ObjectAnimator
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.view.View.OnFocusChangeListener
+import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.activity.addCallback
@@ -285,6 +287,8 @@ class StandaloneUrlConfigFragment : Fragment(R.layout.fragment_standalone_url_co
 
     private fun observeStandaloneUrlNativePaymentProcess() {
         NativePayment.nativePaymentState.observe(viewLifecycleOwner) { paymentState ->
+            viewModel.stopNativePaymentsLoading()
+
             when (paymentState) {
                 is NativePaymentState.AvailableInstrumentsFetched -> {
                     viewModel.setAvailableInstruments(paymentState.availableInstruments)
@@ -295,13 +299,18 @@ class StandaloneUrlConfigFragment : Fragment(R.layout.fragment_standalone_url_co
                 }
 
                 is NativePaymentState.PaymentCanceled -> {
-                    setError("Payment was canceled")
+                    setError(getString(R.string.payment_was_canceled))
                 }
 
                 is NativePaymentState.SessionProblemOccurred -> {
                     openAlertDialog(
                         title = paymentState.problem.title ?: "",
-                        message = "${paymentState.problem.detail}\nPlease try again or try another payment instrument"
+                        message = getString(
+                            R.string.payment_session_problem_occurred_detail,
+                            paymentState.problem.status,
+                            paymentState.problem.detail,
+                            paymentState.problem.type
+                        )
                     )
                     viewModel.resetNativePaymentsInitiatedState()
                 }
@@ -309,7 +318,8 @@ class StandaloneUrlConfigFragment : Fragment(R.layout.fragment_standalone_url_co
                 is NativePaymentState.SdkProblemOccurred -> {
                     when (paymentState.problem) {
                         NativePaymentProblem.ClientAppLaunchFailed -> {
-                            setError(getString(R.string.client_app_launch_failed))
+                            openAlertDialog(getString(R.string.client_app_launch_failed), "")
+                            viewModel.resetNativePaymentsInitiatedState()
                         }
 
                         is NativePaymentProblem.PaymentSessionAPIRequestFailed -> {
@@ -322,7 +332,11 @@ class StandaloneUrlConfigFragment : Fragment(R.layout.fragment_standalone_url_co
                                 is SwedbankPayAPIError.Error -> {
                                     openAlertDialogWithRetryFunctionality(
                                         title = getString(R.string.payment_session_api_request_failed),
-                                        message = swedbankPayAPIError.message,
+                                        message = getString(
+                                            R.string.payment_session_api_request_failed_message,
+                                            swedbankPayAPIError.responseCode,
+                                            swedbankPayAPIError.message
+                                        ),
                                         retry = retry
                                     )
                                 }
@@ -366,10 +380,12 @@ class StandaloneUrlConfigFragment : Fragment(R.layout.fragment_standalone_url_co
     private fun observePrefills() {
         viewModel.swishPrefills.observe(viewLifecycleOwner) {
             swishPrefillAdapter?.submitList(it)
+            scroll(false)
         }
 
         viewModel.creditCardPrefills.observe(viewLifecycleOwner) {
             creditCardPrefillAdapter?.submitList(it)
+            scroll(false)
         }
 
     }
@@ -389,7 +405,7 @@ class StandaloneUrlConfigFragment : Fragment(R.layout.fragment_standalone_url_co
         binding.paymentResultText.text =
             context?.getString(R.string.standalone_url_config_fragment_payment_completed)
 
-        binding.standaloneUrlConfigScrollView.scrollTo(0, 0)
+        scroll(true)
     }
 
     private fun setError(message: String?) {
@@ -401,10 +417,10 @@ class StandaloneUrlConfigFragment : Fragment(R.layout.fragment_standalone_url_co
         binding.paymentResultImage.setImageResource(R.drawable.payment_failure)
         binding.paymentResultText.text = message
 
-        binding.standaloneUrlConfigScrollView.scrollTo(0, 0)
+        scroll(true)
     }
 
-    private fun openAlertDialog(title: String, message: String) {
+    private fun openAlertDialog(title: String, message: String?) {
         AlertDialog.Builder(requireContext())
             .setTitle(title)
             .setMessage(message)
@@ -425,6 +441,21 @@ class StandaloneUrlConfigFragment : Fragment(R.layout.fragment_standalone_url_co
                 retry.invoke()
             }
             .show()
+    }
+
+    private fun scroll(toTop: Boolean) {
+        binding.standaloneUrlConfigScrollView.post {
+            val animator = ObjectAnimator.ofInt(
+                binding.standaloneUrlConfigScrollView,
+                "scrollY",
+                if (toTop) 0 else binding.standaloneUrlConfigScrollView.bottom
+            )
+
+            animator.duration = 500
+            animator.interpolator = AccelerateDecelerateInterpolator()
+
+            animator.start()
+        }
     }
 
 }

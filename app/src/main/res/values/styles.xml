@@ -29,4 +29,8 @@
         <item name="android:textSize">12sp</item>
     </style>
 
+    <style name="standalone_url_section_title" parent="medium_text">
+        <item name="android:textStyle">bold</item>
+    </style>
+
 </resources>

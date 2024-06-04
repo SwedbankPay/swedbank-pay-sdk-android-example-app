@@ -16,6 +16,9 @@
     <color name="switch_thumb_tint">#EBEBEB</color>
     <color name="edit_text_box">#666666</color>
 
+    <color name="text_on_background">#000000</color>
+    <color name= "divider">#919191</color>
+
     <color name="button_enabled">#000000</color>
     <color name="button_disabled">#919191</color>
     <color name="button_text_enabled">#FFFFFF</color>
