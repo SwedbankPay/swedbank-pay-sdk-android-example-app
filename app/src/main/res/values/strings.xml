@@ -34,12 +34,14 @@
 
     <!-- Error -->
     <string name="payment_session_api_request_failed">Payment session api request failed</string>
+    <string name="payment_session_api_request_failed_message">%d: %s</string>
     <string name="invalid_url">Invalid Url\nPlease try again</string>
     <string name="unknown_error">Unknown error\nPlease try again</string>
-    <string name="client_app_launch_failed">Could not launch client app</string>
+    <string name="client_app_launch_failed">Client app launch failed</string>
     <string name="payment_session_end_reached">Payment session end reached</string>
     <string name="payment_session_internal_inconsistency_error">Internal inconsistency error</string>
-
+    <string name="payment_was_canceled">Payment was canceled</string>
+    <string name="payment_session_problem_occurred_detail">%d: %s\n\n%s</string>
 
     <!-- Barcode scanning and camera permission -->
     <string name="camera_access_needed">Ge access till kameran för att tillåta scanning av QR</string>
@@ -136,6 +138,10 @@
 
     <string name="style_title">Style</string>
     <string name="style_error">Invalid style</string>
+
+    <string name="native_payments">Native payments</string>
+    <string name="seamless_view">Seamless view</string>
+
 
 
 </resources>

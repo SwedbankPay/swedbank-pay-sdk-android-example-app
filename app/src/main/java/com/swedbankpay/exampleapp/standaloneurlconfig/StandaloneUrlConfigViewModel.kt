@@ -38,6 +38,8 @@ class StandaloneUrlConfigViewModel(application: Application) : AndroidViewModel(
 
     val abortPaymentInitiated = MutableLiveData(false)
 
+    val isNativePaymentsLoading = MutableLiveData(false)
+
     // Swish
     val showSwish = availableInstrument.map {
         it.firstOrNull { instrument -> instrument is AvailableInstrument.Swish } != null
@@ -95,6 +97,7 @@ class StandaloneUrlConfigViewModel(application: Application) : AndroidViewModel(
     }
 
     fun onGetSessionPressed() {
+        isNativePaymentsLoading.value = true
         nativePaymentSessionInitiated.value = true
         saveUrls()
 
@@ -108,7 +111,10 @@ class StandaloneUrlConfigViewModel(application: Application) : AndroidViewModel(
             paymentUrl = paymentUrl
         )
 
-        nativePayment = NativePayment(configuration.orderInfo)
+        if (nativePayment == null) {
+            nativePayment = NativePayment(configuration.orderInfo)
+        }
+
         nativePayment?.startPaymentSession(sessionURL = sessionUrl.value ?: "")
     }
 
@@ -117,6 +123,7 @@ class StandaloneUrlConfigViewModel(application: Application) : AndroidViewModel(
     }
 
     fun startPaymentWith(instrument: PaymentAttemptInstrument) {
+        isNativePaymentsLoading.value = true
         if (instrument is PaymentAttemptInstrument.Swish) {
             swishPaymentInitiated.value = true
         }
@@ -124,6 +131,7 @@ class StandaloneUrlConfigViewModel(application: Application) : AndroidViewModel(
     }
 
     fun abortNativePayment() {
+        isNativePaymentsLoading.value = true
         abortPaymentInitiated.value = true
         nativePayment?.abortPaymentSession()
     }
@@ -140,6 +148,10 @@ class StandaloneUrlConfigViewModel(application: Application) : AndroidViewModel(
 
     fun resetNativePaymentsInitiatedState() {
         swishPaymentInitiated.value = false
+    }
+
+    fun stopNativePaymentsLoading() {
+        isNativePaymentsLoading.value = false
     }
 
     private fun saveUrls() {
