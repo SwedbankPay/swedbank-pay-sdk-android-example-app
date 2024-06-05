@@ -111,9 +111,7 @@ class StandaloneUrlConfigViewModel(application: Application) : AndroidViewModel(
             paymentUrl = paymentUrl
         )
 
-        if (nativePayment == null) {
-            nativePayment = NativePayment(configuration.orderInfo)
-        }
+        nativePayment = NativePayment(configuration.orderInfo)
 
         nativePayment?.startPaymentSession(sessionURL = sessionUrl.value ?: "")
     }
