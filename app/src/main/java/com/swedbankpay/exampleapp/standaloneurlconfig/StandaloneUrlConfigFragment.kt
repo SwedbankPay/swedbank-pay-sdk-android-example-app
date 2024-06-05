@@ -98,7 +98,7 @@ class StandaloneUrlConfigFragment : Fragment(R.layout.fragment_standalone_url_co
         }
 
         creditCardPrefillAdapter = CreditCardPrefillAdapter { creditCardPrefill ->
-            //viewModel.startPaymentWith(PaymentAttemptInstrument.CreditCard())
+            viewModel.startPaymentWith(PaymentAttemptInstrument.CreditCard(creditCardPrefill))
         }
 
         binding.swishPrefillRecyclerView.adapter = swishPrefillAdapter

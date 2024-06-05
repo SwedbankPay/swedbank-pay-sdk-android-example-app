@@ -10,7 +10,9 @@ import com.swedbankpay.exampleapp.databinding.PrefillItemBinding
 import com.swedbankpay.mobilesdk.nativepayments.exposedmodel.CreditCardPrefill
 
 class CreditCardPrefillAdapter(private val onItemClicked: (CreditCardPrefill) -> Unit) :
-    ListAdapter<CreditCardPrefill, CreditCardPrefillAdapter.CreditCardPrefillViewHolder>(UserDiffCallBack()) {
+    ListAdapter<CreditCardPrefill, CreditCardPrefillAdapter.CreditCardPrefillViewHolder>(
+        UserDiffCallBack()
+    ) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CreditCardPrefillViewHolder {
         return CreditCardPrefillViewHolder(
@@ -27,7 +29,12 @@ class CreditCardPrefillAdapter(private val onItemClicked: (CreditCardPrefill) ->
 
         fun bind(prefill: CreditCardPrefill) {
             binding.prefillTextView.text =
-                binding.root.context.getString(R.string.credit_card_with_prefill, prefill.cardBrand, prefill.maskedPan)
+                binding.root.context.getString(
+                    R.string.credit_card_with_prefill,
+                    prefill.cardBrand,
+                    prefill.maskedPan,
+                    prefill.expiryString
+                )
 
             binding.prefillTextView.setOnClickListener {
                 onItemClicked.invoke(prefill)
@@ -36,10 +43,16 @@ class CreditCardPrefillAdapter(private val onItemClicked: (CreditCardPrefill) ->
     }
 
     private class UserDiffCallBack : DiffUtil.ItemCallback<CreditCardPrefill>() {
-        override fun areItemsTheSame(oldItem: CreditCardPrefill, newItem: CreditCardPrefill): Boolean =
+        override fun areItemsTheSame(
+            oldItem: CreditCardPrefill,
+            newItem: CreditCardPrefill
+        ): Boolean =
             oldItem == newItem
 
-        override fun areContentsTheSame(oldItem: CreditCardPrefill, newItem: CreditCardPrefill): Boolean =
+        override fun areContentsTheSame(
+            oldItem: CreditCardPrefill,
+            newItem: CreditCardPrefill
+        ): Boolean =
             oldItem == newItem
     }
 
