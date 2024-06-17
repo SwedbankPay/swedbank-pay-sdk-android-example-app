@@ -2,14 +2,20 @@ package com.swedbankpay.exampleapp.standaloneurlconfig.creditcardprefill
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.swedbankpay.exampleapp.R
 import com.swedbankpay.exampleapp.databinding.PrefillItemBinding
+import com.swedbankpay.exampleapp.standaloneurlconfig.StandaloneUrlConfigViewModel
 import com.swedbankpay.mobilesdk.nativepayments.exposedmodel.CreditCardPrefill
 
-class CreditCardPrefillAdapter(private val onItemClicked: (CreditCardPrefill) -> Unit) :
+class CreditCardPrefillAdapter(
+    private val viewModel: StandaloneUrlConfigViewModel,
+    private val lifecycleOwner: LifecycleOwner,
+    private val onItemClicked: (CreditCardPrefill) -> Unit
+) :
     ListAdapter<CreditCardPrefill, CreditCardPrefillAdapter.CreditCardPrefillViewHolder>(
         UserDiffCallBack()
     ) {
@@ -28,6 +34,8 @@ class CreditCardPrefillAdapter(private val onItemClicked: (CreditCardPrefill) ->
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(prefill: CreditCardPrefill) {
+            binding.lifecycleOwner = lifecycleOwner
+            binding.viewModel = viewModel
             binding.prefillTextView.text =
                 binding.root.context.getString(
                     R.string.credit_card_with_prefill,

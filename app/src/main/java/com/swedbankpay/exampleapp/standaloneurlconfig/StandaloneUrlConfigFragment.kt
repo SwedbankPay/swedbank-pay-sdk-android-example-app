@@ -97,8 +97,13 @@ class StandaloneUrlConfigFragment : Fragment(R.layout.fragment_standalone_url_co
             viewModel.startPaymentWith(PaymentAttemptInstrument.Swish(msisdn))
         }
 
-        creditCardPrefillAdapter = CreditCardPrefillAdapter { creditCardPrefill ->
-            viewModel.startPaymentWith(PaymentAttemptInstrument.CreditCard(creditCardPrefill))
+        creditCardPrefillAdapter = CreditCardPrefillAdapter(viewModel, this) { creditCardPrefill ->
+            viewModel.startPaymentWith(
+                PaymentAttemptInstrument.CreditCard(
+                    creditCardPrefill,
+                    context
+                )
+            )
         }
 
         binding.swishPrefillRecyclerView.adapter = swishPrefillAdapter
@@ -287,11 +292,17 @@ class StandaloneUrlConfigFragment : Fragment(R.layout.fragment_standalone_url_co
 
     private fun observeStandaloneUrlNativePaymentProcess() {
         NativePayment.nativePaymentState.observe(viewLifecycleOwner) { paymentState ->
-            viewModel.stopNativePaymentsLoading()
-
             when (paymentState) {
                 is NativePaymentState.AvailableInstrumentsFetched -> {
                     viewModel.setAvailableInstruments(paymentState.availableInstruments)
+                }
+
+                is NativePaymentState.LaunchWebView -> {
+                    binding.webViewContainer.addView(paymentState.webView)
+                }
+
+                is NativePaymentState.CloseWebView -> {
+                    binding.webViewContainer.removeAllViews()
                 }
 
                 is NativePaymentState.PaymentComplete -> {
