@@ -25,12 +25,12 @@ import com.swedbankpay.exampleapp.standaloneurlconfig.swishprefill.SwishPrefillA
 import com.swedbankpay.exampleapp.util.PermissionUtil
 import com.swedbankpay.exampleapp.util.ScanUrl
 import com.swedbankpay.mobilesdk.PaymentViewModel
-import com.swedbankpay.mobilesdk.nativepayments.NativePayment
-import com.swedbankpay.mobilesdk.nativepayments.NativePaymentState
-import com.swedbankpay.mobilesdk.nativepayments.api.model.SwedbankPayAPIError
-import com.swedbankpay.mobilesdk.nativepayments.exposedmodel.NativePaymentProblem
-import com.swedbankpay.mobilesdk.nativepayments.exposedmodel.PaymentAttemptInstrument
 import com.swedbankpay.mobilesdk.paymentViewModel
+import com.swedbankpay.mobilesdk.paymentsession.PaymentSession
+import com.swedbankpay.mobilesdk.paymentsession.PaymentSessionState
+import com.swedbankpay.mobilesdk.paymentsession.api.model.SwedbankPayAPIError
+import com.swedbankpay.mobilesdk.paymentsession.exposedmodel.PaymentAttemptInstrument
+import com.swedbankpay.mobilesdk.paymentsession.exposedmodel.PaymentSessionProblem
 
 class StandaloneUrlConfigFragment : Fragment(R.layout.fragment_standalone_url_config) {
     private lateinit var binding: FragmentStandaloneUrlConfigBinding
@@ -101,7 +101,7 @@ class StandaloneUrlConfigFragment : Fragment(R.layout.fragment_standalone_url_co
             viewModel.startPaymentWith(
                 PaymentAttemptInstrument.CreditCard(
                     creditCardPrefill,
-                    context
+                    requireContext()
                 )
             )
         }
@@ -291,29 +291,29 @@ class StandaloneUrlConfigFragment : Fragment(R.layout.fragment_standalone_url_co
     }
 
     private fun observeStandaloneUrlNativePaymentProcess() {
-        NativePayment.nativePaymentState.observe(viewLifecycleOwner) { paymentState ->
+        PaymentSession.paymentSessionState.observe(viewLifecycleOwner) { paymentState ->
             when (paymentState) {
-                is NativePaymentState.AvailableInstrumentsFetched -> {
+                is PaymentSessionState.PaymentSessionFetched -> {
                     viewModel.setAvailableInstruments(paymentState.availableInstruments)
                 }
 
-                is NativePaymentState.LaunchWebView -> {
+                is PaymentSessionState.Show3dSecure -> {
                     binding.webViewContainer.addView(paymentState.webView)
                 }
 
-                is NativePaymentState.CloseWebView -> {
+                is PaymentSessionState.Dismiss3dSecure -> {
                     binding.webViewContainer.removeAllViews()
                 }
 
-                is NativePaymentState.PaymentComplete -> {
+                is PaymentSessionState.PaymentComplete -> {
                     setSuccess()
                 }
 
-                is NativePaymentState.PaymentCanceled -> {
+                is PaymentSessionState.PaymentCanceled -> {
                     setError(getString(R.string.payment_was_canceled))
                 }
 
-                is NativePaymentState.SessionProblemOccurred -> {
+                is PaymentSessionState.SessionProblemOccurred -> {
                     openAlertDialog(
                         title = paymentState.problem.title ?: "",
                         message = getString(
@@ -326,18 +326,18 @@ class StandaloneUrlConfigFragment : Fragment(R.layout.fragment_standalone_url_co
                     viewModel.resetNativePaymentsInitiatedState()
                 }
 
-                is NativePaymentState.SdkProblemOccurred -> {
+                is PaymentSessionState.SdkProblemOccurred -> {
                     when (paymentState.problem) {
-                        NativePaymentProblem.ClientAppLaunchFailed -> {
+                        PaymentSessionProblem.ClientAppLaunchFailed -> {
                             openAlertDialog(getString(R.string.client_app_launch_failed), "")
                             viewModel.resetNativePaymentsInitiatedState()
                         }
 
-                        is NativePaymentProblem.PaymentSessionAPIRequestFailed -> {
+                        is PaymentSessionProblem.PaymentSessionAPIRequestFailed -> {
                             val swedbankPayAPIError =
-                                (paymentState.problem as NativePaymentProblem.PaymentSessionAPIRequestFailed).error
+                                (paymentState.problem as PaymentSessionProblem.PaymentSessionAPIRequestFailed).error
                             val retry =
-                                (paymentState.problem as NativePaymentProblem.PaymentSessionAPIRequestFailed).retry
+                                (paymentState.problem as PaymentSessionProblem.PaymentSessionAPIRequestFailed).retry
 
                             when (swedbankPayAPIError) {
                                 is SwedbankPayAPIError.Error -> {
@@ -372,11 +372,15 @@ class StandaloneUrlConfigFragment : Fragment(R.layout.fragment_standalone_url_co
                             viewModel.resetNativePaymentsInitiatedState()
                         }
 
-                        NativePaymentProblem.PaymentSessionEndReached -> {
+                        PaymentSessionProblem.PaymentSessionEndReached -> {
                             setError(getString(R.string.payment_session_end_reached))
                         }
 
-                        NativePaymentProblem.InternalInconsistencyError -> {
+                        PaymentSessionProblem.InternalInconsistencyError -> {
+                            setError(getString(R.string.payment_session_internal_inconsistency_error))
+                        }
+
+                        PaymentSessionProblem.AutomaticConfigurationFailed -> {
                             setError(getString(R.string.payment_session_internal_inconsistency_error))
                         }
                     }

@@ -40,6 +40,7 @@
     <string name="client_app_launch_failed">Client app launch failed</string>
     <string name="payment_session_end_reached">Payment session end reached</string>
     <string name="payment_session_internal_inconsistency_error">Internal inconsistency error</string>
+    <string name="payment_session_automatic_configuration_failed">Automatic configuration failed</string>
     <string name="payment_was_canceled">Payment was canceled</string>
     <string name="payment_session_problem_occurred_detail">%d: %s\n\n%s</string>
 

@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.swedbankpay.exampleapp.R
 import com.swedbankpay.exampleapp.databinding.PrefillItemBinding
 import com.swedbankpay.exampleapp.standaloneurlconfig.StandaloneUrlConfigViewModel
-import com.swedbankpay.mobilesdk.nativepayments.exposedmodel.CreditCardPrefill
+import com.swedbankpay.mobilesdk.paymentsession.exposedmodel.CreditCardPrefill
 
 class CreditCardPrefillAdapter(
     private val viewModel: StandaloneUrlConfigViewModel,

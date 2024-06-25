@@ -8,9 +8,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.map
 import com.swedbankpay.exampleapp.util.ScanUrl
 import com.swedbankpay.exampleapp.util.SwedbankPayConfig
-import com.swedbankpay.mobilesdk.nativepayments.NativePayment
-import com.swedbankpay.mobilesdk.nativepayments.exposedmodel.AvailableInstrument
-import com.swedbankpay.mobilesdk.nativepayments.exposedmodel.PaymentAttemptInstrument
+import com.swedbankpay.mobilesdk.paymentsession.PaymentSession
+import com.swedbankpay.mobilesdk.paymentsession.exposedmodel.AvailableInstrument
+import com.swedbankpay.mobilesdk.paymentsession.exposedmodel.PaymentAttemptInstrument
 
 
 class StandaloneUrlConfigViewModel(application: Application) : AndroidViewModel(application) {
@@ -68,7 +68,7 @@ class StandaloneUrlConfigViewModel(application: Application) : AndroidViewModel(
 
     var swishPhoneNumber = MutableLiveData<String?>()
 
-    private var nativePayment: NativePayment? = null
+    private var paymentSession: PaymentSession? = null
 
     init {
         viewCheckoutUrl.value = ""
@@ -104,6 +104,7 @@ class StandaloneUrlConfigViewModel(application: Application) : AndroidViewModel(
         val paymentUrl = "${paymentUrlScheme.value}${paymentUrlAuthorityAndPath.value}"
 
         val configuration = SwedbankPayConfig(
+            url = "",
             baseUrl = baseUrl.value ?: "",
             completeUrl = completeUrl.value ?: "",
             cancelUrl = cancelUrl.value ?: "",
@@ -112,9 +113,9 @@ class StandaloneUrlConfigViewModel(application: Application) : AndroidViewModel(
         )
 
 
-        nativePayment = NativePayment(configuration.orderInfo)
+        paymentSession = PaymentSession()
 
-        nativePayment?.startPaymentSession(sessionURL = sessionUrl.value ?: "")
+        paymentSession?.startPaymentSession(sessionURL = sessionUrl.value ?: "")
     }
 
     fun setAvailableInstruments(availableInstruments: List<AvailableInstrument>) {
@@ -125,13 +126,13 @@ class StandaloneUrlConfigViewModel(application: Application) : AndroidViewModel(
     fun startPaymentWith(instrument: PaymentAttemptInstrument) {
         isNativePaymentsLoading.value = true
         paymentInitiated.value = true
-        nativePayment?.makePaymentAttempt(instrument = instrument)
+        paymentSession?.makePaymentAttempt(instrument = instrument)
     }
 
     fun abortNativePayment() {
         isNativePaymentsLoading.value = true
         abortPaymentInitiated.value = true
-        nativePayment?.abortPaymentSession()
+        paymentSession?.abortPaymentSession()
     }
 
     fun resetPayment() {

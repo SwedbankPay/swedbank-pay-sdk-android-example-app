@@ -59,7 +59,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version")
 
-    val mobilesdk_local_version = "4.1.1-84-g669800e-dirty-SNAPSHOT"
+    val mobilesdk_local_version = "4.1.1-90-gd485928-dirty-SNAPSHOT"
     val mobilesdk_version = "4.2.0-rc.1"
     implementation("com.swedbankpay.mobilesdk:mobilesdk:$mobilesdk_local_version")
     implementation("com.swedbankpay.mobilesdk:mobilesdk-merchantbackend:$mobilesdk_local_version")
