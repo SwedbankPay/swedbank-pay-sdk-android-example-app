@@ -81,7 +81,7 @@ class StandaloneUrlConfigFragment : Fragment(R.layout.fragment_standalone_url_co
         }
 
         observeStandaloneUrlPaymentProcess()
-        observeStandaloneUrlNativePaymentProcess()
+        observeStandaloneUrlPaymentSessionState()
 
         createScannerButtonListeners()
         createButtonListeners()
@@ -290,7 +290,7 @@ class StandaloneUrlConfigFragment : Fragment(R.layout.fragment_standalone_url_co
         }
     }
 
-    private fun observeStandaloneUrlNativePaymentProcess() {
+    private fun observeStandaloneUrlPaymentSessionState() {
         PaymentSession.paymentSessionState.observe(viewLifecycleOwner) { paymentState ->
             when (paymentState) {
                 is PaymentSessionState.PaymentSessionFetched -> {
@@ -298,7 +298,7 @@ class StandaloneUrlConfigFragment : Fragment(R.layout.fragment_standalone_url_co
                 }
 
                 is PaymentSessionState.Show3dSecure -> {
-                    binding.webViewContainer.addView(paymentState.webView)
+                    binding.webViewContainer.addView(paymentState.view)
                 }
 
                 is PaymentSessionState.Dismiss3dSecure -> {
