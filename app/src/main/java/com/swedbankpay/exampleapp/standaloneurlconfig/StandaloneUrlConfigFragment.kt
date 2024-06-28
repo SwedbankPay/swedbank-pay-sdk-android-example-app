@@ -194,6 +194,11 @@ class StandaloneUrlConfigFragment : Fragment(R.layout.fragment_standalone_url_co
             viewModel.startPaymentWith(PaymentAttemptInstrument.Swish(viewModel.swishPhoneNumber.value))
         }
 
+        binding.getPaymentMenu.setOnClickListener {
+            clearTextfieldsFocus()
+            viewModel.getPaymentMenu()
+        }
+
         binding.abortNativePaymentButton.setOnClickListener {
             clearTextfieldsFocus()
             viewModel.abortNativePayment()
@@ -297,12 +302,22 @@ class StandaloneUrlConfigFragment : Fragment(R.layout.fragment_standalone_url_co
                     viewModel.setAvailableInstruments(paymentState.availableInstruments)
                 }
 
-                is PaymentSessionState.Show3dSecure -> {
-                    binding.webViewContainer.addView(paymentState.view)
+                is PaymentSessionState.Show3dSecureFragment -> {
+                    childFragmentManager.beginTransaction()
+                        .replace(R.id.fragmentContainer, paymentState.fragment)
+                        .addToBackStack(null)
+                        .commit()
                 }
 
-                is PaymentSessionState.Dismiss3dSecure -> {
-                    binding.webViewContainer.removeAllViews()
+                is PaymentSessionState.Dismiss3dSecureFragment -> {
+                    childFragmentManager.popBackStack()
+                }
+
+                is PaymentSessionState.PaymentFragmentCreated -> {
+                    childFragmentManager.beginTransaction()
+                        .replace(R.id.fragmentContainer, paymentState.fragment)
+                        .addToBackStack(null)
+                        .commit()
                 }
 
                 is PaymentSessionState.PaymentComplete -> {
@@ -382,6 +397,23 @@ class StandaloneUrlConfigFragment : Fragment(R.layout.fragment_standalone_url_co
 
                         PaymentSessionProblem.AutomaticConfigurationFailed -> {
                             setError(getString(R.string.payment_session_internal_inconsistency_error))
+                        }
+
+                        is PaymentSessionProblem.PaymentSession3DSecureFragmentLoadFailed -> {
+                            val error =
+                                (paymentState.problem as PaymentSessionProblem.PaymentSession3DSecureFragmentLoadFailed).error
+
+                            val retry =
+                                (paymentState.problem as PaymentSessionProblem.PaymentSession3DSecureFragmentLoadFailed).retry
+                            openAlertDialogWithRetryFunctionality(
+                                title = getString(R.string.payment_session_3d_secure_fragment_load_failed),
+                                message = getString(
+                                    R.string.payment_session_3d_secure_fragment_load_failed_message,
+                                    error.responseCode,
+                                    error.message
+                                ),
+                                retry = retry
+                            )
                         }
                     }
                 }

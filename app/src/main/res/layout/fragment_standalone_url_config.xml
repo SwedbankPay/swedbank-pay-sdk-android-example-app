@@ -513,6 +513,21 @@
                     </LinearLayout>
 
                     <TextView
+                        android:id="@+id/get_payment_menu"
+                        style="@style/tiny_white_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom"
+                        android:layout_marginTop="16dp"
+                        android:background="@drawable/expanding_button_background"
+                        android:backgroundTint="@{!viewModel.paymentInitiated ? @color/button_enabled : @color/button_disabled}"
+                        android:enabled="@{!viewModel.paymentInitiated}"
+                        android:gravity="center"
+                        android:text="@string/get_payment_menu"
+                        android:textColor="@{!viewModel.paymentInitiated ? @color/button_text_enabled : @color/button_text_disabled}"
+                        android:visibility="@{viewModel.nativePaymentSessionInitiated ? View.VISIBLE : View.GONE}" />
+
+                    <TextView
                         android:id="@+id/abort_native_payment_button"
                         style="@style/tiny_white_text"
                         android:layout_width="match_parent"
@@ -534,13 +549,13 @@
         </ScrollView>
 
         <FrameLayout
-            android:id="@+id/webViewContainer"
+            android:id="@+id/fragmentContainer"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
+            app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

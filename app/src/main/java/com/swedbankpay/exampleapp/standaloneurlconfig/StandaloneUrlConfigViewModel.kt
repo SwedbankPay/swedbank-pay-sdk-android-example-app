@@ -115,7 +115,7 @@ class StandaloneUrlConfigViewModel(application: Application) : AndroidViewModel(
 
         paymentSession = PaymentSession()
 
-        paymentSession?.startPaymentSession(sessionURL = sessionUrl.value ?: "")
+        paymentSession?.fetchPaymentSession(sessionURL = sessionUrl.value ?: "")
     }
 
     fun setAvailableInstruments(availableInstruments: List<AvailableInstrument>) {
@@ -127,6 +127,12 @@ class StandaloneUrlConfigViewModel(application: Application) : AndroidViewModel(
         isNativePaymentsLoading.value = true
         paymentInitiated.value = true
         paymentSession?.makePaymentAttempt(instrument = instrument)
+    }
+
+    fun getPaymentMenu() {
+        isNativePaymentsLoading.value = true
+        paymentInitiated.value = true
+        paymentSession?.createPaymentFragment()
     }
 
     fun abortNativePayment() {

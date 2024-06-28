@@ -32,9 +32,13 @@
     <!-- Credit card instrument -->
     <string name="credit_card_with_prefill">Credit Card: %1$s\n%2$s %3$s</string>
 
+    <string name="get_payment_menu">Get payment menu</string>
+
     <!-- Error -->
     <string name="payment_session_api_request_failed">Payment session api request failed</string>
     <string name="payment_session_api_request_failed_message">%d: %s</string>
+    <string name="payment_session_3d_secure_fragment_load_failed">Payment session 3d secure fragment load failed</string>
+    <string name="payment_session_3d_secure_fragment_load_failed_message">%d: %s</string>
     <string name="invalid_url">Invalid Url\nPlease try again</string>
     <string name="unknown_error">Unknown error\nPlease try again</string>
     <string name="client_app_launch_failed">Client app launch failed</string>
