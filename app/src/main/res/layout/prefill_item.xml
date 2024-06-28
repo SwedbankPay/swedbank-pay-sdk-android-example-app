@@ -18,10 +18,10 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:background="@drawable/expanding_button_background"
-        android:backgroundTint="@{viewModel.swishPaymentInitiated ? @color/button_disabled: @color/button_enabled }"
-        android:enabled="@{!viewModel.swishPaymentInitiated}"
+        android:backgroundTint="@{viewModel.paymentInitiated ? @color/button_disabled: @color/button_enabled }"
+        android:enabled="@{!viewModel.paymentInitiated}"
         android:gravity="center"
-        android:textColor="@{viewModel.swishPaymentInitiated ? @color/button_text_disabled : @color/button_text_enabled }" />
+        android:textColor="@{viewModel.paymentInitiated ? @color/button_text_disabled : @color/button_text_enabled }" />
 </layout>
 
 

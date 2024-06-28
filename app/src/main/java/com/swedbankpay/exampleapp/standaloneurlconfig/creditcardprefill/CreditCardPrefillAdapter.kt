@@ -2,15 +2,23 @@ package com.swedbankpay.exampleapp.standaloneurlconfig.creditcardprefill
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.swedbankpay.exampleapp.R
 import com.swedbankpay.exampleapp.databinding.PrefillItemBinding
-import com.swedbankpay.mobilesdk.nativepayments.exposedmodel.CreditCardPrefill
+import com.swedbankpay.exampleapp.standaloneurlconfig.StandaloneUrlConfigViewModel
+import com.swedbankpay.mobilesdk.paymentsession.exposedmodel.CreditCardPrefill
 
-class CreditCardPrefillAdapter(private val onItemClicked: (CreditCardPrefill) -> Unit) :
-    ListAdapter<CreditCardPrefill, CreditCardPrefillAdapter.CreditCardPrefillViewHolder>(UserDiffCallBack()) {
+class CreditCardPrefillAdapter(
+    private val viewModel: StandaloneUrlConfigViewModel,
+    private val lifecycleOwner: LifecycleOwner,
+    private val onItemClicked: (CreditCardPrefill) -> Unit
+) :
+    ListAdapter<CreditCardPrefill, CreditCardPrefillAdapter.CreditCardPrefillViewHolder>(
+        UserDiffCallBack()
+    ) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CreditCardPrefillViewHolder {
         return CreditCardPrefillViewHolder(
@@ -26,8 +34,15 @@ class CreditCardPrefillAdapter(private val onItemClicked: (CreditCardPrefill) ->
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(prefill: CreditCardPrefill) {
+            binding.lifecycleOwner = lifecycleOwner
+            binding.viewModel = viewModel
             binding.prefillTextView.text =
-                binding.root.context.getString(R.string.credit_card_with_prefill, prefill.cardBrand, prefill.maskedPan)
+                binding.root.context.getString(
+                    R.string.credit_card_with_prefill,
+                    prefill.cardBrand,
+                    prefill.maskedPan,
+                    prefill.expiryString
+                )
 
             binding.prefillTextView.setOnClickListener {
                 onItemClicked.invoke(prefill)
@@ -36,10 +51,16 @@ class CreditCardPrefillAdapter(private val onItemClicked: (CreditCardPrefill) ->
     }
 
     private class UserDiffCallBack : DiffUtil.ItemCallback<CreditCardPrefill>() {
-        override fun areItemsTheSame(oldItem: CreditCardPrefill, newItem: CreditCardPrefill): Boolean =
+        override fun areItemsTheSame(
+            oldItem: CreditCardPrefill,
+            newItem: CreditCardPrefill
+        ): Boolean =
             oldItem == newItem
 
-        override fun areContentsTheSame(oldItem: CreditCardPrefill, newItem: CreditCardPrefill): Boolean =
+        override fun areContentsTheSame(
+            oldItem: CreditCardPrefill,
+            newItem: CreditCardPrefill
+        ): Boolean =
             oldItem == newItem
     }
 

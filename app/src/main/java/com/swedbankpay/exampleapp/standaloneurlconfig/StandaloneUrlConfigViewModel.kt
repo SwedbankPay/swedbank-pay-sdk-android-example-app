@@ -8,9 +8,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.map
 import com.swedbankpay.exampleapp.util.ScanUrl
 import com.swedbankpay.exampleapp.util.SwedbankPayConfig
-import com.swedbankpay.mobilesdk.nativepayments.NativePayment
-import com.swedbankpay.mobilesdk.nativepayments.exposedmodel.AvailableInstrument
-import com.swedbankpay.mobilesdk.nativepayments.exposedmodel.PaymentAttemptInstrument
+import com.swedbankpay.mobilesdk.paymentsession.PaymentSession
+import com.swedbankpay.mobilesdk.paymentsession.exposedmodel.AvailableInstrument
+import com.swedbankpay.mobilesdk.paymentsession.exposedmodel.PaymentAttemptInstrument
 
 
 class StandaloneUrlConfigViewModel(application: Application) : AndroidViewModel(application) {
@@ -64,11 +64,11 @@ class StandaloneUrlConfigViewModel(application: Application) : AndroidViewModel(
         } else listOf()
     }
 
-    val swishPaymentInitiated = MutableLiveData(false)
+    val paymentInitiated = MutableLiveData(false)
 
     var swishPhoneNumber = MutableLiveData<String?>()
 
-    private var nativePayment: NativePayment? = null
+    private var paymentSession: PaymentSession? = null
 
     init {
         viewCheckoutUrl.value = ""
@@ -104,6 +104,7 @@ class StandaloneUrlConfigViewModel(application: Application) : AndroidViewModel(
         val paymentUrl = "${paymentUrlScheme.value}${paymentUrlAuthorityAndPath.value}"
 
         val configuration = SwedbankPayConfig(
+            url = "",
             baseUrl = baseUrl.value ?: "",
             completeUrl = completeUrl.value ?: "",
             cancelUrl = cancelUrl.value ?: "",
@@ -111,27 +112,33 @@ class StandaloneUrlConfigViewModel(application: Application) : AndroidViewModel(
             paymentUrl = paymentUrl
         )
 
-        nativePayment = NativePayment(configuration.orderInfo)
 
-        nativePayment?.startPaymentSession(sessionURL = sessionUrl.value ?: "")
+        paymentSession = PaymentSession()
+
+        paymentSession?.fetchPaymentSession(sessionURL = sessionUrl.value ?: "")
     }
 
     fun setAvailableInstruments(availableInstruments: List<AvailableInstrument>) {
+        stopNativePaymentsLoading()
         availableInstrument.value = availableInstruments
     }
 
     fun startPaymentWith(instrument: PaymentAttemptInstrument) {
         isNativePaymentsLoading.value = true
-        if (instrument is PaymentAttemptInstrument.Swish) {
-            swishPaymentInitiated.value = true
-        }
-        nativePayment?.makePaymentAttempt(instrument = instrument)
+        paymentInitiated.value = true
+        paymentSession?.makePaymentAttempt(instrument = instrument)
+    }
+
+    fun getPaymentMenu() {
+        isNativePaymentsLoading.value = true
+        paymentInitiated.value = true
+        paymentSession?.createPaymentFragment()
     }
 
     fun abortNativePayment() {
         isNativePaymentsLoading.value = true
         abortPaymentInitiated.value = true
-        nativePayment?.abortPaymentSession()
+        paymentSession?.abortPaymentSession()
     }
 
     fun resetPayment() {
@@ -145,10 +152,11 @@ class StandaloneUrlConfigViewModel(application: Application) : AndroidViewModel(
     }
 
     fun resetNativePaymentsInitiatedState() {
-        swishPaymentInitiated.value = false
+        paymentInitiated.value = false
+        stopNativePaymentsLoading()
     }
 
-    fun stopNativePaymentsLoading() {
+    private fun stopNativePaymentsLoading() {
         isNativePaymentsLoading.value = false
     }
 

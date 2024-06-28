@@ -7,7 +7,7 @@ import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 class SwedbankPayConfig(
-    val url: String? = null,
+    val url: String,
     val baseUrl: String,
     val completeUrl: String,
     val cancelUrl: String,
