@@ -320,11 +320,11 @@ class StandaloneUrlConfigFragment : Fragment(R.layout.fragment_standalone_url_co
                         .commit()
                 }
 
-                is PaymentSessionState.PaymentComplete -> {
+                is PaymentSessionState.PaymentSessionComplete -> {
                     setSuccess()
                 }
 
-                is PaymentSessionState.PaymentCanceled -> {
+                is PaymentSessionState.PaymentSessionCanceled -> {
                     setError(getString(R.string.payment_was_canceled))
                 }
 

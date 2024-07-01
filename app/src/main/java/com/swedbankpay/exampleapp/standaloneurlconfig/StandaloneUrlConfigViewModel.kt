@@ -98,7 +98,6 @@ class StandaloneUrlConfigViewModel(application: Application) : AndroidViewModel(
 
     fun onGetSessionPressed() {
         isNativePaymentsLoading.value = true
-        nativePaymentSessionInitiated.value = true
         saveUrls()
 
         val paymentUrl = "${paymentUrlScheme.value}${paymentUrlAuthorityAndPath.value}"
@@ -112,6 +111,9 @@ class StandaloneUrlConfigViewModel(application: Application) : AndroidViewModel(
             paymentUrl = paymentUrl
         )
 
+        // Payment session can be used with or without order info provided
+        // If not provided it will use automatic configuration
+        //paymentSession = PaymentSession(configuration.orderInfo)
 
         paymentSession = PaymentSession()
 
@@ -120,13 +122,14 @@ class StandaloneUrlConfigViewModel(application: Application) : AndroidViewModel(
 
     fun setAvailableInstruments(availableInstruments: List<AvailableInstrument>) {
         stopNativePaymentsLoading()
+        nativePaymentSessionInitiated.value = true
         availableInstrument.value = availableInstruments
     }
 
     fun startPaymentWith(instrument: PaymentAttemptInstrument) {
         isNativePaymentsLoading.value = true
         paymentInitiated.value = true
-        paymentSession?.makePaymentAttempt(instrument = instrument)
+        paymentSession?.makeNativePaymentAttempt(instrument = instrument)
     }
 
     fun getPaymentMenu() {
