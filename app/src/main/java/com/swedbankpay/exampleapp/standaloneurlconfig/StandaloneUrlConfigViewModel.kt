@@ -40,7 +40,6 @@ class StandaloneUrlConfigViewModel(application: Application) : AndroidViewModel(
 
     val isNativePaymentsLoading = MutableLiveData(false)
 
-    // Swish
     val showSwish = availableInstrument.map {
         it.firstOrNull { instrument -> instrument is AvailableInstrument.Swish } != null
     }
@@ -51,6 +50,10 @@ class StandaloneUrlConfigViewModel(application: Application) : AndroidViewModel(
 
     val showNewCreditCard = availableInstrument.map {
         it.firstOrNull { instrument -> instrument is AvailableInstrument.NewCreditCard } != null
+    }
+
+    val showGooglePay = availableInstrument.map {
+        it.firstOrNull { instrument -> instrument is AvailableInstrument.GooglePay } != null
     }
 
     val swishPrefills = availableInstrument.map {

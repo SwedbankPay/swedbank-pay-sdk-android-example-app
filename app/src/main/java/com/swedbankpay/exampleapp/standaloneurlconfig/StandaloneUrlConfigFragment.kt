@@ -201,14 +201,20 @@ class StandaloneUrlConfigFragment : Fragment(R.layout.fragment_standalone_url_co
             viewModel.startPaymentWith(PaymentAttemptInstrument.Swish(msisdn = viewModel.swishPhoneNumber.value))
         }
 
+
         binding.newCreditCardButton.setOnClickListener {
             clearTextfieldsFocus()
             viewModel.startPaymentWith(PaymentAttemptInstrument.NewCreditCard(enabledPaymentDetailsConsentCheckbox = true))
         }
 
-        binding.getPaymentMenu.setOnClickListener {
+        binding.getPaymentMenuButton.setOnClickListener {
             clearTextfieldsFocus()
             viewModel.getPaymentMenu()
+        }
+
+        binding.launchGooglePayButton.setOnClickListener {
+            clearTextfieldsFocus()
+            viewModel.startPaymentWith(PaymentAttemptInstrument.GooglePay(requireActivity()))
         }
 
         binding.abortNativePaymentButton.setOnClickListener {
