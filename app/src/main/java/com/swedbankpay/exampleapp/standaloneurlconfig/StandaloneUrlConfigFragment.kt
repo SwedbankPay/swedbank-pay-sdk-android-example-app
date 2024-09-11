@@ -15,6 +15,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.content.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.swedbankpay.exampleapp.R
 import com.swedbankpay.exampleapp.databinding.FragmentStandaloneUrlConfigBinding
@@ -31,6 +32,8 @@ import com.swedbankpay.mobilesdk.paymentsession.PaymentSessionState
 import com.swedbankpay.mobilesdk.paymentsession.api.model.SwedbankPayAPIError
 import com.swedbankpay.mobilesdk.paymentsession.exposedmodel.PaymentAttemptInstrument
 import com.swedbankpay.mobilesdk.paymentsession.exposedmodel.PaymentSessionProblem
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class StandaloneUrlConfigFragment : Fragment(R.layout.fragment_standalone_url_config) {
     private lateinit var binding: FragmentStandaloneUrlConfigBinding
@@ -412,6 +415,9 @@ class StandaloneUrlConfigFragment : Fragment(R.layout.fragment_standalone_url_co
                                     error.responseCode,
                                     error.message
                                 ),
+                                positiveButton = {
+                                    childFragmentManager.popBackStack()
+                                },
                                 retry = retry
                             )
                         }
@@ -452,7 +458,10 @@ class StandaloneUrlConfigFragment : Fragment(R.layout.fragment_standalone_url_co
         binding.paymentResultText.text =
             context?.getString(R.string.standalone_url_config_fragment_payment_completed)
 
-        scroll(true)
+        lifecycleScope.launch {
+            delay(500)
+            scroll(true)
+        }
     }
 
     private fun setError(message: String?) {
@@ -464,7 +473,10 @@ class StandaloneUrlConfigFragment : Fragment(R.layout.fragment_standalone_url_co
         binding.paymentResultImage.setImageResource(R.drawable.payment_failure)
         binding.paymentResultText.text = message
 
-        scroll(true)
+        lifecycleScope.launch {
+            delay(500)
+            scroll(true)
+        }
     }
 
     private fun openAlertDialog(title: String, message: String?) {
@@ -478,12 +490,15 @@ class StandaloneUrlConfigFragment : Fragment(R.layout.fragment_standalone_url_co
     private fun openAlertDialogWithRetryFunctionality(
         title: String? = null,
         message: String? = null,
+        positiveButton: (() -> Unit)? = null,
         retry: () -> Unit
     ) {
         AlertDialog.Builder(requireContext())
             .setTitle(title)
             .setMessage(message)
-            .setPositiveButton(getString(R.string.option_ok), null)
+            .setPositiveButton(getString(R.string.option_ok)) { _, _ ->
+                positiveButton?.invoke()
+            }
             .setNegativeButton(getString(R.string.option_retry)) { _, _ ->
                 retry.invoke()
             }
@@ -500,7 +515,6 @@ class StandaloneUrlConfigFragment : Fragment(R.layout.fragment_standalone_url_co
 
             animator.duration = 500
             animator.interpolator = AccelerateDecelerateInterpolator()
-
             animator.start()
         }
     }

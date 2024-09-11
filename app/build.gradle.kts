@@ -15,7 +15,8 @@ android {
         versionName = "1.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
-        buildConfigField("boolean", "ENABLE_PROD_DEMO",
+        buildConfigField(
+            "boolean", "ENABLE_PROD_DEMO",
             findProperty("enableProdDemo")?.toString().toBoolean().toString()
         )
         manifestPlaceholders["swedbankPaymentUrlScheme"] = "swedbankexample"
@@ -35,7 +36,10 @@ android {
     buildTypes {
         release {
             isMinifyEnabled = false
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
 
             System.getenv("UPLOAD_KEYSTORE_PATH")?.let { keystorePath ->
                 signingConfig = signingConfigs.create("release") {
@@ -59,8 +63,8 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version")
 
-    val mobilesdk_local_version = "4.1.1-99-g0a226b6-SNAPSHOT"
-    val mobilesdk_version = "5.0.0-rc.4"
+    val mobilesdk_local_version = "4.1.1-108-g66b9c91-SNAPSHOT"
+    val mobilesdk_version = "5.0.0-rc.6"
     implementation("com.swedbankpay.mobilesdk:mobilesdk:$mobilesdk_version")
     implementation("com.swedbankpay.mobilesdk:mobilesdk-merchantbackend:$mobilesdk_version")
 
@@ -73,12 +77,12 @@ dependencies {
     implementation("androidx.recyclerview:recyclerview:1.2.1")
 
     val camerax_version = "1.2.3"
-    implementation ("androidx.camera:camera-core:${camerax_version}")
-    implementation ("androidx.camera:camera-camera2:${camerax_version}")
-    implementation ("androidx.camera:camera-lifecycle:${camerax_version}")
-    implementation ("androidx.camera:camera-view:${camerax_version}")
+    implementation("androidx.camera:camera-core:${camerax_version}")
+    implementation("androidx.camera:camera-camera2:${camerax_version}")
+    implementation("androidx.camera:camera-lifecycle:${camerax_version}")
+    implementation("androidx.camera:camera-view:${camerax_version}")
 
-    implementation ("com.google.mlkit:barcode-scanning:17.2.0")
+    implementation("com.google.mlkit:barcode-scanning:17.2.0")
     implementation("androidx.camera:camera-mlkit-vision:1.3.0-beta02")
 
     implementation("com.google.android.material:material:1.9.0")
