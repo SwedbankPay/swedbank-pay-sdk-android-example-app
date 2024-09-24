@@ -32,6 +32,8 @@
     <!-- Credit card instrument -->
     <string name="credit_card_with_prefill">Credit Card: %1$s\n%2$s %3$s</string>
 
+    <string name="new_credit_card">New credit card</string>
+
     <string name="get_payment_menu">Get payment menu</string>
 
     <!-- Error -->

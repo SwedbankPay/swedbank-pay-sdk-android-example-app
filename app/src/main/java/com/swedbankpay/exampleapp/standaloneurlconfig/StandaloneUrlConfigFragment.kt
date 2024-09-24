@@ -49,7 +49,12 @@ class StandaloneUrlConfigFragment : Fragment(R.layout.fragment_standalone_url_co
 
         activity?.onBackPressedDispatcher?.addCallback(this) {
             hideResultImage()
-            findNavController().navigateUp()
+            if (childFragmentManager.backStackEntryCount > 0) {
+                childFragmentManager.popBackStack()
+                viewModel.resetNativePaymentsInitiatedState()
+            } else {
+                findNavController().navigateUp()
+            }
         }
     }
 
@@ -111,7 +116,6 @@ class StandaloneUrlConfigFragment : Fragment(R.layout.fragment_standalone_url_co
 
         binding.swishPrefillRecyclerView.adapter = swishPrefillAdapter
         binding.creditCardPrefillRecyclerView.adapter = creditCardPrefillAdapter
-
     }
 
     private val onFocusChangeListener = OnFocusChangeListener { editTextView, hasFocus ->
@@ -195,6 +199,11 @@ class StandaloneUrlConfigFragment : Fragment(R.layout.fragment_standalone_url_co
         binding.openSwishOnAnotherPhoneButton.setOnClickListener {
             clearTextfieldsFocus()
             viewModel.startPaymentWith(PaymentAttemptInstrument.Swish(viewModel.swishPhoneNumber.value))
+        }
+
+        binding.newCreditCardButton.setOnClickListener {
+            clearTextfieldsFocus()
+            viewModel.startPaymentWith(PaymentAttemptInstrument.NewCreditCard(showConsentAffirmation = true))
         }
 
         binding.getPaymentMenu.setOnClickListener {
@@ -318,7 +327,7 @@ class StandaloneUrlConfigFragment : Fragment(R.layout.fragment_standalone_url_co
 
                 is PaymentSessionState.PaymentFragmentCreated -> {
                     childFragmentManager.beginTransaction()
-                        .replace(R.id.fragmentContainer, paymentState.fragment)
+                        .add(R.id.fragmentContainer, paymentState.fragment)
                         .addToBackStack(null)
                         .commit()
                 }

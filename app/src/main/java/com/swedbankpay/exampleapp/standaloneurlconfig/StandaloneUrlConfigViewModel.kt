@@ -49,6 +49,10 @@ class StandaloneUrlConfigViewModel(application: Application) : AndroidViewModel(
         it.firstOrNull { instrument -> instrument is AvailableInstrument.CreditCard } != null
     }
 
+    val showNewCreditCard = availableInstrument.map {
+        it.firstOrNull { instrument -> instrument is AvailableInstrument.NewCreditCard } != null
+    }
+
     val swishPrefills = availableInstrument.map {
         val swish = it.firstOrNull { instrument -> instrument is AvailableInstrument.Swish }
         if (swish != null) {

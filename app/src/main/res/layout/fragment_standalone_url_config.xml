@@ -513,6 +513,22 @@
                     </LinearLayout>
 
                     <TextView
+                        android:id="@+id/new_credit_card_button"
+                        style="@style/tiny_white_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom"
+                        android:layout_marginTop="16dp"
+                        android:background="@drawable/expanding_button_background"
+                        android:backgroundTint="@{!viewModel.paymentInitiated ? @color/button_enabled : @color/button_disabled}"
+                        android:enabled="@{!viewModel.paymentInitiated}"
+                        android:gravity="center"
+                        android:text="@string/new_credit_card"
+                        android:textColor="@{!viewModel.paymentInitiated ? @color/button_text_enabled : @color/button_text_disabled}"
+                        android:visibility="@{viewModel.showNewCreditCard ? View.VISIBLE : View.GONE}" />
+
+
+                    <TextView
                         android:id="@+id/get_payment_menu"
                         style="@style/tiny_white_text"
                         android:layout_width="match_parent"
