@@ -15,7 +15,6 @@ buildscript {
 plugins {
     kotlin("android") version "1.8.21" apply false
 }
-
 allprojects {
     repositories {
         mavenLocal()
