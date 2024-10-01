@@ -314,18 +314,18 @@ class StandaloneUrlConfigFragment : Fragment(R.layout.fragment_standalone_url_co
                     viewModel.setAvailableInstruments(paymentState.availableInstruments)
                 }
 
-                is PaymentSessionState.Show3dSecureFragment -> {
+                is PaymentSessionState.Show3DSecureFragment -> {
                     childFragmentManager.beginTransaction()
                         .replace(R.id.fragmentContainer, paymentState.fragment)
                         .addToBackStack(null)
                         .commit()
                 }
 
-                is PaymentSessionState.Dismiss3dSecureFragment -> {
+                is PaymentSessionState.Dismiss3DSecureFragment -> {
                     childFragmentManager.popBackStack()
                 }
 
-                is PaymentSessionState.PaymentFragmentCreated -> {
+                is PaymentSessionState.ShowPaymentFragment -> {
                     childFragmentManager.beginTransaction()
                         .add(R.id.fragmentContainer, paymentState.fragment)
                         .addToBackStack(null)
