@@ -198,12 +198,12 @@ class StandaloneUrlConfigFragment : Fragment(R.layout.fragment_standalone_url_co
 
         binding.openSwishOnAnotherPhoneButton.setOnClickListener {
             clearTextfieldsFocus()
-            viewModel.startPaymentWith(PaymentAttemptInstrument.Swish(viewModel.swishPhoneNumber.value))
+            viewModel.startPaymentWith(PaymentAttemptInstrument.Swish(msisdn = viewModel.swishPhoneNumber.value))
         }
 
         binding.newCreditCardButton.setOnClickListener {
             clearTextfieldsFocus()
-            viewModel.startPaymentWith(PaymentAttemptInstrument.NewCreditCard(showConsentAffirmation = true))
+            viewModel.startPaymentWith(PaymentAttemptInstrument.NewCreditCard(enabledPaymentDetailsConsentCheckbox = true))
         }
 
         binding.getPaymentMenu.setOnClickListener {
