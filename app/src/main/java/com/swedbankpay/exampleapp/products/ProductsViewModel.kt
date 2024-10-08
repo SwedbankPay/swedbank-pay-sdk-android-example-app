@@ -403,7 +403,7 @@ class ProductsViewModel(app: Application) : AndroidViewModel(app) {
         // A MediatorLiveData only updates when it has an active observer
         return livePaymentFragmentArguments.run {
             if (!hasActiveObservers()) {
-                val observer = Observer<Any> {}
+                val observer = Observer<Any?> {}
                 observeForever(observer)
                 removeObserver(observer)
             }
