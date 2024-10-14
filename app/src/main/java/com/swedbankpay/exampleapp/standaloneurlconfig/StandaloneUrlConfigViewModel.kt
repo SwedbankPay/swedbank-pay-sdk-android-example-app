@@ -166,6 +166,10 @@ class StandaloneUrlConfigViewModel(application: Application) : AndroidViewModel(
         stopNativePaymentsLoading()
     }
 
+    fun resetAbortPaymentInitiatedState() {
+        abortPaymentInitiated.value = false
+    }
+
     private fun stopNativePaymentsLoading() {
         isNativePaymentsLoading.value = false
     }

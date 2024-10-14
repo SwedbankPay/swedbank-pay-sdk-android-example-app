@@ -357,6 +357,7 @@ class StandaloneUrlConfigFragment : Fragment(R.layout.fragment_standalone_url_co
                         )
                     )
                     viewModel.resetNativePaymentsInitiatedState()
+                    viewModel.resetAbortPaymentInitiatedState()
                 }
 
                 is PaymentSessionState.SdkProblemOccurred -> {
