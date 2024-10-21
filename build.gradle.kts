@@ -2,7 +2,7 @@
 
 buildscript {
     repositories {
-        mavenLocal()
+        //mavenLocal()
         google()
     }
     dependencies {
@@ -17,7 +17,7 @@ plugins {
 }
 allprojects {
     repositories {
-        mavenLocal()
+        //mavenLocal()
         google()
         mavenCentral()
         /* Uncomment to build against snapshots
