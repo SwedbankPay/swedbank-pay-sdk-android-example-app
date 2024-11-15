@@ -23,6 +23,7 @@ import com.swedbankpay.exampleapp.standaloneurlconfig.camera.CameraActivity
 import com.swedbankpay.exampleapp.standaloneurlconfig.camera.CameraActivity.Companion.SCANNED_URL_KEY
 import com.swedbankpay.exampleapp.standaloneurlconfig.creditcardprefill.CreditCardPrefillAdapter
 import com.swedbankpay.exampleapp.standaloneurlconfig.swishprefill.SwishPrefillAdapter
+import com.swedbankpay.exampleapp.standaloneurlconfig.webbasedinstrument.WebBasedInstrumentAdapter
 import com.swedbankpay.exampleapp.util.PermissionUtil
 import com.swedbankpay.exampleapp.util.ScanUrl
 import com.swedbankpay.mobilesdk.PaymentViewModel
@@ -43,6 +44,7 @@ class StandaloneUrlConfigFragment : Fragment(R.layout.fragment_standalone_url_co
 
     private var swishPrefillAdapter: SwishPrefillAdapter? = null
     private var creditCardPrefillAdapter: CreditCardPrefillAdapter? = null
+    private var webBasedInstrumentAdapter: WebBasedInstrumentAdapter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -94,7 +96,7 @@ class StandaloneUrlConfigFragment : Fragment(R.layout.fragment_standalone_url_co
         createScannerButtonListeners()
         createButtonListeners()
 
-        observePrefills()
+        observeInstrumentLists()
 
         binding.baseUrlTextfield.onFocusChangeListener = onFocusChangeListener
         binding.completeUrlTextfield.onFocusChangeListener = onFocusChangeListener
@@ -114,8 +116,14 @@ class StandaloneUrlConfigFragment : Fragment(R.layout.fragment_standalone_url_co
             )
         }
 
+        webBasedInstrumentAdapter =
+            WebBasedInstrumentAdapter(viewModel, this) { availableInstrument ->
+                viewModel.startWebBasedPaymentWith(availableInstrument)
+            }
+
         binding.swishPrefillRecyclerView.adapter = swishPrefillAdapter
         binding.creditCardPrefillRecyclerView.adapter = creditCardPrefillAdapter
+        binding.webBasedInstrumentRecyclerView.adapter = webBasedInstrumentAdapter
     }
 
     private val onFocusChangeListener = OnFocusChangeListener { editTextView, hasFocus ->
@@ -204,7 +212,16 @@ class StandaloneUrlConfigFragment : Fragment(R.layout.fragment_standalone_url_co
 
         binding.newCreditCardButton.setOnClickListener {
             clearTextfieldsFocus()
-            viewModel.startPaymentWith(PaymentAttemptInstrument.NewCreditCard(enabledPaymentDetailsConsentCheckbox = true))
+            viewModel.startPaymentWith(
+                PaymentAttemptInstrument.NewCreditCard(
+                    enabledPaymentDetailsConsentCheckbox = true
+                )
+            )
+        }
+
+        binding.getPaymentMenuRestrictedButton.setOnClickListener {
+            clearTextfieldsFocus()
+            viewModel.getPaymentMenuRestricted()
         }
 
         binding.getPaymentMenuButton.setOnClickListener {
@@ -446,7 +463,7 @@ class StandaloneUrlConfigFragment : Fragment(R.layout.fragment_standalone_url_co
         }
     }
 
-    private fun observePrefills() {
+    private fun observeInstrumentLists() {
         viewModel.swishPrefills.observe(viewLifecycleOwner) {
             swishPrefillAdapter?.submitList(it)
             scroll(false)
@@ -457,6 +474,10 @@ class StandaloneUrlConfigFragment : Fragment(R.layout.fragment_standalone_url_co
             scroll(false)
         }
 
+        viewModel.webBasedInstruments.observe(viewLifecycleOwner) { webBasedInstruments ->
+            webBasedInstrumentAdapter?.submitList(webBasedInstruments)
+            scroll(false)
+        }
     }
 
     private fun hideResultImage() {

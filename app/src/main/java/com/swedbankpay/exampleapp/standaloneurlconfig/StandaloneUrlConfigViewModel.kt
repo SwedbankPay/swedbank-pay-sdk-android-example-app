@@ -11,6 +11,7 @@ import com.swedbankpay.exampleapp.util.SwedbankPayConfig
 import com.swedbankpay.mobilesdk.paymentsession.PaymentSession
 import com.swedbankpay.mobilesdk.paymentsession.exposedmodel.AvailableInstrument
 import com.swedbankpay.mobilesdk.paymentsession.exposedmodel.PaymentAttemptInstrument
+import com.swedbankpay.mobilesdk.paymentsession.exposedmodel.SwedbankPayPaymentSessionSDKControllerMode
 
 
 class StandaloneUrlConfigViewModel(application: Application) : AndroidViewModel(application) {
@@ -34,42 +35,49 @@ class StandaloneUrlConfigViewModel(application: Application) : AndroidViewModel(
 
     var nativePaymentSessionInitiated = MutableLiveData(false)
 
-    private val availableInstrument = MutableLiveData<List<AvailableInstrument>>()
+    private val availableInstruments = MutableLiveData<List<AvailableInstrument>>()
 
     val abortPaymentInitiated = MutableLiveData(false)
 
     val isNativePaymentsLoading = MutableLiveData(false)
 
-    val showSwish = availableInstrument.map {
+    val showSwish = availableInstruments.map {
         it.firstOrNull { instrument -> instrument is AvailableInstrument.Swish } != null
     }
 
-    val showCreditCard = availableInstrument.map {
+    val showCreditCard = availableInstruments.map {
         it.firstOrNull { instrument -> instrument is AvailableInstrument.CreditCard } != null
     }
 
-    val showNewCreditCard = availableInstrument.map {
+    val showNewCreditCard = availableInstruments.map {
         it.firstOrNull { instrument -> instrument is AvailableInstrument.NewCreditCard } != null
     }
 
-    val showGooglePay = availableInstrument.map {
+    val showGooglePay = availableInstruments.map {
         it.firstOrNull { instrument -> instrument is AvailableInstrument.GooglePay } != null
     }
 
-    val swishPrefills = availableInstrument.map {
+    val swishPrefills = availableInstruments.map {
         val swish = it.firstOrNull { instrument -> instrument is AvailableInstrument.Swish }
         if (swish != null) {
             (swish as AvailableInstrument.Swish).prefills
         } else listOf()
     }
 
-    val creditCardPrefills = availableInstrument.map {
+    val creditCardPrefills = availableInstruments.map {
         val creditCard =
             it.firstOrNull { instrument -> instrument is AvailableInstrument.CreditCard }
         if (creditCard != null) {
             (creditCard as AvailableInstrument.CreditCard).prefills
         } else listOf()
     }
+
+    val webBasedInstruments =
+        availableInstruments.map { availableInstrument ->
+            availableInstrument.filterIsInstance<AvailableInstrument.WebBased>()
+        }
+
+    val showWebBasedInstruments = webBasedInstruments.map { it.isNotEmpty() }
 
     val paymentInitiated = MutableLiveData(false)
 
@@ -130,7 +138,7 @@ class StandaloneUrlConfigViewModel(application: Application) : AndroidViewModel(
     fun setAvailableInstruments(availableInstruments: List<AvailableInstrument>) {
         stopNativePaymentsLoading()
         nativePaymentSessionInitiated.value = true
-        availableInstrument.value = availableInstruments
+        this.availableInstruments.value = availableInstruments
     }
 
     fun startPaymentWith(instrument: PaymentAttemptInstrument) {
@@ -139,10 +147,32 @@ class StandaloneUrlConfigViewModel(application: Application) : AndroidViewModel(
         paymentSession?.makeNativePaymentAttempt(instrument = instrument)
     }
 
+    fun startWebBasedPaymentWith(instrument: AvailableInstrument) {
+        isNativePaymentsLoading.value = true
+        paymentInitiated.value = true
+        paymentSession?.createPaymentFragment(
+            SwedbankPayPaymentSessionSDKControllerMode.InstrumentMode(
+                instrument
+            )
+        )
+    }
+
+    fun getPaymentMenuRestricted() {
+        isNativePaymentsLoading.value = true
+        paymentInitiated.value = true
+        paymentSession?.createPaymentFragment(
+            SwedbankPayPaymentSessionSDKControllerMode.Menu(
+                restrictedToInstruments = webBasedInstruments.value
+            )
+        )
+    }
+
     fun getPaymentMenu() {
         isNativePaymentsLoading.value = true
         paymentInitiated.value = true
-        paymentSession?.createPaymentFragment()
+        paymentSession?.createPaymentFragment(
+            mode = SwedbankPayPaymentSessionSDKControllerMode.Menu(null)
+        )
     }
 
     fun abortNativePayment() {
@@ -154,7 +184,7 @@ class StandaloneUrlConfigViewModel(application: Application) : AndroidViewModel(
     fun resetPayment() {
         viewCheckoutUrl.value = ""
         nativePaymentSessionInitiated.value = false
-        availableInstrument.value = listOf()
+        availableInstruments.value = listOf()
         resetNativePaymentsInitiatedState()
         abortPaymentInitiated.value = false
         sessionUrl.value = ""

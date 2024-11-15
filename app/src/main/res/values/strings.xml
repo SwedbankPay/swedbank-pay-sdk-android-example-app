@@ -32,10 +32,14 @@
     <!-- Credit card instrument -->
     <string name="credit_card_with_prefill">Credit Card: %1$s\n%2$s %3$s</string>
 
+    <!-- Web based instrument -->
+    <string name="web_based_instrument">Web Based \n%1$s</string>
+
     <string name="launch_google_pay">Google Pay</string>
     <string name="new_credit_card">New credit card</string>
 
     <string name="get_payment_menu">Get payment menu</string>
+    <string name="get_payment_menu_restricted">Get payment menu\nRestricted to non native</string>
 
     <!-- Error -->
     <string name="payment_session_api_request_failed">Payment session api request failed</string>

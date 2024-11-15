@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.swedbankpay.exampleapp.R
-import com.swedbankpay.exampleapp.databinding.PrefillItemBinding
+import com.swedbankpay.exampleapp.databinding.DefaultListItemBinding
 import com.swedbankpay.exampleapp.standaloneurlconfig.StandaloneUrlConfigViewModel
 import com.swedbankpay.mobilesdk.paymentsession.exposedmodel.SwishPrefill
 
@@ -16,11 +16,11 @@ class SwishPrefillAdapter(
     private val lifecycleOwner: LifecycleOwner,
     private val onItemClicked: (String) -> Unit
 ) :
-    ListAdapter<SwishPrefill, SwishPrefillAdapter.SwishPrefillViewHolder>(UserDiffCallBack()) {
+    ListAdapter<SwishPrefill, SwishPrefillAdapter.SwishPrefillViewHolder>(SwishPrefillDiffCallBack()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SwishPrefillViewHolder {
         return SwishPrefillViewHolder(
-            PrefillItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            DefaultListItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         )
     }
 
@@ -28,22 +28,22 @@ class SwishPrefillAdapter(
         holder.bind(getItem(position))
     }
 
-    inner class SwishPrefillViewHolder(private val binding: PrefillItemBinding) :
+    inner class SwishPrefillViewHolder(private val binding: DefaultListItemBinding) :
         ViewHolder(binding.root) {
 
         fun bind(prefill: SwishPrefill) {
             binding.lifecycleOwner = lifecycleOwner
             binding.viewModel = viewModel
-            binding.prefillTextView.text =
+            binding.textView.text =
                 binding.root.context.getString(R.string.swish_with_prefill, prefill.msisdn)
 
-            binding.prefillTextView.setOnClickListener {
+            binding.textView.setOnClickListener {
                 onItemClicked.invoke(prefill.msisdn ?: "")
             }
         }
     }
 
-    private class UserDiffCallBack : DiffUtil.ItemCallback<SwishPrefill>() {
+    private class SwishPrefillDiffCallBack : DiffUtil.ItemCallback<SwishPrefill>() {
         override fun areItemsTheSame(oldItem: SwishPrefill, newItem: SwishPrefill): Boolean =
             oldItem == newItem
 

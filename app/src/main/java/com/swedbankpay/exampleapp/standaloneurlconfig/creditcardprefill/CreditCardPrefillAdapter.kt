@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.swedbankpay.exampleapp.R
-import com.swedbankpay.exampleapp.databinding.PrefillItemBinding
+import com.swedbankpay.exampleapp.databinding.DefaultListItemBinding
 import com.swedbankpay.exampleapp.standaloneurlconfig.StandaloneUrlConfigViewModel
 import com.swedbankpay.mobilesdk.paymentsession.exposedmodel.CreditCardPrefill
 
@@ -17,12 +17,12 @@ class CreditCardPrefillAdapter(
     private val onItemClicked: (CreditCardPrefill) -> Unit
 ) :
     ListAdapter<CreditCardPrefill, CreditCardPrefillAdapter.CreditCardPrefillViewHolder>(
-        UserDiffCallBack()
+        CreditCardDiffCallBack()
     ) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CreditCardPrefillViewHolder {
         return CreditCardPrefillViewHolder(
-            PrefillItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            DefaultListItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         )
     }
 
@@ -30,13 +30,13 @@ class CreditCardPrefillAdapter(
         holder.bind(getItem(position))
     }
 
-    inner class CreditCardPrefillViewHolder(private val binding: PrefillItemBinding) :
+    inner class CreditCardPrefillViewHolder(private val binding: DefaultListItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(prefill: CreditCardPrefill) {
             binding.lifecycleOwner = lifecycleOwner
             binding.viewModel = viewModel
-            binding.prefillTextView.text =
+            binding.textView.text =
                 binding.root.context.getString(
                     R.string.credit_card_with_prefill,
                     prefill.cardBrand,
@@ -44,13 +44,13 @@ class CreditCardPrefillAdapter(
                     prefill.expiryString
                 )
 
-            binding.prefillTextView.setOnClickListener {
+            binding.textView.setOnClickListener {
                 onItemClicked.invoke(prefill)
             }
         }
     }
 
-    private class UserDiffCallBack : DiffUtil.ItemCallback<CreditCardPrefill>() {
+    private class CreditCardDiffCallBack : DiffUtil.ItemCallback<CreditCardPrefill>() {
         override fun areItemsTheSame(
             oldItem: CreditCardPrefill,
             newItem: CreditCardPrefill

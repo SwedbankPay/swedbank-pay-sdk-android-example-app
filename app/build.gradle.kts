@@ -60,31 +60,31 @@ dependencies {
     implementation("androidx.appcompat:appcompat:1.7.0")
     implementation("androidx.core:core-ktx:1.13.1")
 
-    val coroutines_version = "1.7.3"
+    val coroutines_version = "1.9.0"
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version")
 
     val mobilesdk_local_version = "4.1.1-120-gb221595-dirty-SNAPSHOT"
-    val mobilesdk_version = "5.0.0-rc.9"
+    val mobilesdk_version = "5.0.0-rc.11"
     implementation("com.swedbankpay.mobilesdk:mobilesdk:$mobilesdk_version")
     implementation("com.swedbankpay.mobilesdk:mobilesdk-merchantbackend:$mobilesdk_version")
 
-    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
+    implementation("androidx.constraintlayout:constraintlayout:2.2.0")
     implementation("androidx.coordinatorlayout:coordinatorlayout:1.2.0")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.6")
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.8.6")
-    implementation("androidx.navigation:navigation-fragment-ktx:2.8.2")
-    implementation("androidx.navigation:navigation-ui-ktx:2.8.2")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.7")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.8.7")
+    implementation("androidx.navigation:navigation-fragment-ktx:2.8.4")
+    implementation("androidx.navigation:navigation-ui-ktx:2.8.4")
     implementation("androidx.recyclerview:recyclerview:1.3.2")
 
-    val camerax_version = "1.3.4"
+    val camerax_version = "1.4.0"
     implementation("androidx.camera:camera-core:${camerax_version}")
     implementation("androidx.camera:camera-camera2:${camerax_version}")
     implementation("androidx.camera:camera-lifecycle:${camerax_version}")
     implementation("androidx.camera:camera-view:${camerax_version}")
 
     implementation("com.google.mlkit:barcode-scanning:17.3.0")
-    implementation("androidx.camera:camera-mlkit-vision:1.3.0-beta02")
+    implementation("androidx.camera:camera-mlkit-vision:1.4.0")
 
     implementation("com.google.android.material:material:1.12.0")
 

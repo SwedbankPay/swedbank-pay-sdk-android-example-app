@@ -540,6 +540,22 @@
                         android:textColor="@{!viewModel.paymentInitiated ? @color/button_text_enabled : @color/button_text_disabled}"
                         android:visibility="@{viewModel.showGooglePay ? View.VISIBLE : View.GONE}" />
 
+                    <LinearLayout
+                        android:id="@+id/web_based_instrument_container"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:visibility="@{viewModel.showWebBasedInstruments ? View.VISIBLE : View.GONE }">
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/web_based_instrument_recycler_view"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+
+                    </LinearLayout>
+
                     <TextView
                         android:id="@+id/get_payment_menu_button"
                         style="@style/tiny_white_text"
@@ -552,6 +568,21 @@
                         android:enabled="@{!viewModel.paymentInitiated}"
                         android:gravity="center"
                         android:text="@string/get_payment_menu"
+                        android:textColor="@{!viewModel.paymentInitiated ? @color/button_text_enabled : @color/button_text_disabled}"
+                        android:visibility="@{viewModel.nativePaymentSessionInitiated ? View.VISIBLE : View.GONE}" />
+
+                    <TextView
+                        android:id="@+id/get_payment_menu_restricted_button"
+                        style="@style/tiny_white_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom"
+                        android:layout_marginTop="16dp"
+                        android:background="@drawable/expanding_button_background"
+                        android:backgroundTint="@{!viewModel.paymentInitiated ? @color/button_enabled : @color/button_disabled}"
+                        android:enabled="@{!viewModel.paymentInitiated}"
+                        android:gravity="center"
+                        android:text="@string/get_payment_menu_restricted"
                         android:textColor="@{!viewModel.paymentInitiated ? @color/button_text_enabled : @color/button_text_disabled}"
                         android:visibility="@{viewModel.nativePaymentSessionInitiated ? View.VISIBLE : View.GONE}" />
 
