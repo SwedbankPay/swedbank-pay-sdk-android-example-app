@@ -379,11 +379,6 @@ class StandaloneUrlConfigFragment : Fragment(R.layout.fragment_standalone_url_co
 
                 is PaymentSessionState.SdkProblemOccurred -> {
                     when (paymentState.problem) {
-                        PaymentSessionProblem.ClientAppLaunchFailed -> {
-                            openAlertDialog(getString(R.string.client_app_launch_failed), "")
-                            viewModel.resetNativePaymentsInitiatedState()
-                        }
-
                         is PaymentSessionProblem.PaymentSessionAPIRequestFailed -> {
                             val swedbankPayAPIError =
                                 (paymentState.problem as PaymentSessionProblem.PaymentSessionAPIRequestFailed).error

@@ -48,7 +48,6 @@
     <string name="payment_session_3d_secure_fragment_load_failed_message">%d: %s</string>
     <string name="invalid_url">Invalid Url\nPlease try again</string>
     <string name="unknown_error">Unknown error\nPlease try again</string>
-    <string name="client_app_launch_failed">Client app launch failed</string>
     <string name="payment_session_end_reached">Payment session end reached</string>
     <string name="payment_session_internal_inconsistency_error">Internal inconsistency error</string>
     <string name="payment_session_automatic_configuration_failed">Automatic configuration failed</string>
