@@ -13,7 +13,7 @@ buildscript {
 }
 
 plugins {
-    kotlin("android") version "1.8.21" apply false
+    kotlin("android") version "1.9.10" apply false
 }
 allprojects {
     repositories {
