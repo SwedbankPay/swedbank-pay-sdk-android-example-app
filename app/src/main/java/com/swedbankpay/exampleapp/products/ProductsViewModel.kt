@@ -46,7 +46,7 @@ class ProductsViewModel(app: Application) : AndroidViewModel(app) {
 
     val disablePaymentsMenu = MutableLiveData(false)
     val restrictedInstrumentsInput = MutableLiveData<String?>(null)
-    private val restrictedInstrumentsList: LiveData<List<String>?> = Transformations.map(restrictedInstrumentsInput) {
+    private val restrictedInstrumentsList: LiveData<List<String>?> = restrictedInstrumentsInput.map {
         it?.replace(" ", "")
             ?.split(",")
             ?.filter(String::isNotBlank)
@@ -90,7 +90,7 @@ class ProductsViewModel(app: Application) : AndroidViewModel(app) {
     val adjustedPrice = MutableLiveData<Int?>(null)
 
     private val shippingPrice = if (BuildConfig.ENABLE_PROD_DEMO) 0 else 120_00
-    val formattedShippingPrice = Transformations.map(currency) {
+    val formattedShippingPrice = currency.map {
         formatPrice(shippingPrice, it)
     }
     
@@ -119,7 +119,7 @@ class ProductsViewModel(app: Application) : AndroidViewModel(app) {
         addSource(totalPrice, observer)
     }
 
-    val itemPriceFormatter = Transformations.map(currency) {
+    val itemPriceFormatter = currency.map {
         { price: Int -> formatPrice(price, it) }
     }
 
@@ -403,7 +403,7 @@ class ProductsViewModel(app: Application) : AndroidViewModel(app) {
         // A MediatorLiveData only updates when it has an active observer
         return livePaymentFragmentArguments.run {
             if (!hasActiveObservers()) {
-                val observer = Observer<Any> {}
+                val observer = Observer<Any?> {}
                 observeForever(observer)
                 removeObserver(observer)
             }

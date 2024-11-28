@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <variable
+            name="viewModel"
+            type="com.swedbankpay.exampleapp.standaloneurlconfig.StandaloneUrlConfigViewModel" />
+
+    </data>
+
+    <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/text_view"
+        style="@style/tiny_white_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/expanding_button_background"
+        android:backgroundTint="@{viewModel.paymentInitiated ? @color/button_disabled: @color/button_enabled }"
+        android:enabled="@{!viewModel.paymentInitiated}"
+        android:gravity="center"
+        android:textColor="@{viewModel.paymentInitiated ? @color/button_text_disabled : @color/button_text_enabled }" />
+</layout>
+
+

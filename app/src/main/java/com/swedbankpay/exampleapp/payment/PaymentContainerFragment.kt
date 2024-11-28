@@ -10,6 +10,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import com.swedbankpay.exampleapp.MainActivity
 import com.swedbankpay.exampleapp.R
 import com.swedbankpay.exampleapp.databinding.FragmentPaymentBinding
 import com.swedbankpay.mobilesdk.PaymentViewModel
@@ -23,6 +24,8 @@ class PaymentContainerFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         val binding = FragmentPaymentBinding.inflate(inflater, container, false)
+
+        (activity as MainActivity).observePaymentProcess()
 
         val fm = childFragmentManager
         if (fm.findFragmentById(R.id.sdk_payment_fragment) == null) {
