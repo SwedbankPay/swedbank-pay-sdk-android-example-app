@@ -35,7 +35,8 @@
     <!-- Web based instrument -->
     <string name="web_based_instrument">Web Based \n%1$s</string>
 
-    <string name="launch_google_pay">Google Pay</string>
+    <string name="google_pay_title">Google Pay</string>
+    <string name="google_pay_readiness">Is ready to pay: %1$s\n…with existing payment methods: %2$s</string>
     <string name="new_credit_card">New credit card</string>
 
     <string name="get_payment_menu">Get payment menu</string>
@@ -152,7 +153,6 @@
 
     <string name="native_payments">Native payments</string>
     <string name="seamless_view">Seamless view</string>
-
 
 
 </resources>

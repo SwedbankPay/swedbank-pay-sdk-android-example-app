@@ -31,6 +31,7 @@ import com.swedbankpay.mobilesdk.paymentViewModel
 import com.swedbankpay.mobilesdk.paymentsession.PaymentSession
 import com.swedbankpay.mobilesdk.paymentsession.PaymentSessionState
 import com.swedbankpay.mobilesdk.paymentsession.api.model.SwedbankPayAPIError
+import com.swedbankpay.mobilesdk.paymentsession.exposedmodel.AvailableInstrument
 import com.swedbankpay.mobilesdk.paymentsession.exposedmodel.PaymentAttemptInstrument
 import com.swedbankpay.mobilesdk.paymentsession.exposedmodel.PaymentSessionProblem
 import kotlinx.coroutines.delay
@@ -334,7 +335,18 @@ class StandaloneUrlConfigFragment : Fragment(R.layout.fragment_standalone_url_co
         PaymentSession.paymentSessionState.observe(viewLifecycleOwner) { paymentState ->
             when (paymentState) {
                 is PaymentSessionState.PaymentSessionFetched -> {
+                    if(paymentState.availableInstruments.firstOrNull { it is AvailableInstrument.GooglePay } != null) {
+                        viewModel.fetchGooglePayPaymentReadiness(requireContext())
+                    }
                     viewModel.setAvailableInstruments(paymentState.availableInstruments)
+
+                }
+
+                is PaymentSessionState.GooglePayPaymentReadinessFetched -> {
+                    viewModel.setGooglePayPaymentReadiness(
+                        paymentState.isReadyToPay,
+                        paymentState.isReadyToPayWithExistingPaymentMethod
+                    )
                 }
 
                 is PaymentSessionState.Show3DSecureFragment -> {
