@@ -44,7 +44,7 @@
 
     <!-- Error -->
     <string name="payment_session_api_request_failed">Payment session api request failed</string>
-    <string name="payment_session_api_request_failed_message">%d: %s</string>
+    <string name="payment_session_api_request_failed_message">%s%s</string>
     <string name="payment_session_3d_secure_fragment_load_failed">Payment session 3d secure fragment load failed</string>
     <string name="payment_session_3d_secure_fragment_load_failed_message">%d: %s</string>
     <string name="invalid_url">Invalid Url\nPlease try again</string>
@@ -54,6 +54,7 @@
     <string name="payment_session_automatic_configuration_failed">Automatic configuration failed</string>
     <string name="payment_was_canceled">Payment was canceled</string>
     <string name="payment_session_problem_occurred_detail">%d: %s\n\n%s</string>
+    <string name="abort_payment_not_allowed">Abort payment currently not possible</string>
 
     <!-- Barcode scanning and camera permission -->
     <string name="camera_access_needed">Ge access till kameran för att tillåta scanning av QR</string>
