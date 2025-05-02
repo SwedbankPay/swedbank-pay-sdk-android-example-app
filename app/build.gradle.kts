@@ -1,3 +1,5 @@
+import org.gradle.kotlin.dsl.implementation
+
 plugins {
     id("com.android.application")
     kotlin("android")
@@ -64,8 +66,8 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version")
 
-    val mobilesdk_local_version = "4.1.1-169-g2fcb27a-dirty-SNAPSHOT"
-    val mobilesdk_version = "5.0.2-rc.2"
+    val mobilesdk_local_version = "4.1.1-181-g0c0cdb7-dirty-SNAPSHOT"
+    val mobilesdk_version = "5.0.2-rc.4"
     implementation("com.swedbankpay.mobilesdk:mobilesdk:$mobilesdk_version")
     implementation("com.swedbankpay.mobilesdk:mobilesdk-merchantbackend:$mobilesdk_version")
 
