@@ -2,6 +2,7 @@ package com.swedbankpay.exampleapp.standaloneurlconfig
 
 import android.Manifest
 import android.animation.ObjectAnimator
+import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
@@ -11,7 +12,6 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AlertDialog
 import androidx.core.content.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -31,6 +31,7 @@ import com.swedbankpay.mobilesdk.paymentViewModel
 import com.swedbankpay.mobilesdk.paymentsession.PaymentSession
 import com.swedbankpay.mobilesdk.paymentsession.PaymentSessionState
 import com.swedbankpay.mobilesdk.paymentsession.api.model.SwedbankPayAPIError
+import com.swedbankpay.mobilesdk.paymentsession.exposedmodel.AvailableInstrument
 import com.swedbankpay.mobilesdk.paymentsession.exposedmodel.PaymentAttemptInstrument
 import com.swedbankpay.mobilesdk.paymentsession.exposedmodel.PaymentSessionProblem
 import kotlinx.coroutines.delay
@@ -334,7 +335,18 @@ class StandaloneUrlConfigFragment : Fragment(R.layout.fragment_standalone_url_co
         PaymentSession.paymentSessionState.observe(viewLifecycleOwner) { paymentState ->
             when (paymentState) {
                 is PaymentSessionState.PaymentSessionFetched -> {
+                    if (paymentState.availableInstruments.firstOrNull { it is AvailableInstrument.GooglePay } != null) {
+                        viewModel.fetchGooglePayPaymentReadiness(requireContext())
+                    }
                     viewModel.setAvailableInstruments(paymentState.availableInstruments)
+
+                }
+
+                is PaymentSessionState.GooglePayPaymentReadinessFetched -> {
+                    viewModel.setGooglePayPaymentReadiness(
+                        paymentState.isReadyToPay,
+                        paymentState.isReadyToPayWithExistingPaymentMethod
+                    )
                 }
 
                 is PaymentSessionState.Show3DSecureFragment -> {
@@ -385,13 +397,14 @@ class StandaloneUrlConfigFragment : Fragment(R.layout.fragment_standalone_url_co
                             val retry =
                                 (paymentState.problem as PaymentSessionProblem.PaymentSessionAPIRequestFailed).retry
 
+
                             when (swedbankPayAPIError) {
                                 is SwedbankPayAPIError.Error -> {
                                     openAlertDialogWithRetryFunctionality(
                                         title = getString(R.string.payment_session_api_request_failed),
                                         message = getString(
                                             R.string.payment_session_api_request_failed_message,
-                                            swedbankPayAPIError.responseCode,
+                                            swedbankPayAPIError.responseCode.asResponseCodeString(),
                                             swedbankPayAPIError.message
                                         ),
                                         retry = retry
@@ -449,13 +462,18 @@ class StandaloneUrlConfigFragment : Fragment(R.layout.fragment_standalone_url_co
                                 retry = retry
                             )
                         }
+
+                        PaymentSessionProblem.AbortPaymentNotAllowed -> {
+                            openAlertDialog(null, getString(R.string.abort_payment_not_allowed))
+                            viewModel.resetAbortPaymentInitiatedState()
+                        }
                     }
                 }
 
                 else -> {}
             }
-
         }
+
     }
 
     private fun observeInstrumentLists() {
@@ -511,7 +529,7 @@ class StandaloneUrlConfigFragment : Fragment(R.layout.fragment_standalone_url_co
         }
     }
 
-    private fun openAlertDialog(title: String, message: String?) {
+    private fun openAlertDialog(title: String?, message: String?) {
         AlertDialog.Builder(requireContext())
             .setTitle(title)
             .setMessage(message)
@@ -551,4 +569,9 @@ class StandaloneUrlConfigFragment : Fragment(R.layout.fragment_standalone_url_co
         }
     }
 
+}
+
+private fun Int?.asResponseCodeString() = when {
+    this != null -> "${this}: "
+    else -> ""
 }
