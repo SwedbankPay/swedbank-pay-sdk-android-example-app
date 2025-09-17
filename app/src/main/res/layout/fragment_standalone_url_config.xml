@@ -524,6 +524,31 @@
                         android:textColor="@{!viewModel.paymentInitiated ? @color/button_text_enabled : @color/button_text_disabled}"
                         android:visibility="@{viewModel.showNewCreditCard ? View.VISIBLE : View.GONE}" />
 
+                    <LinearLayout
+                        android:id="@+id/google_pay_info"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16.dp"
+                        android:orientation="vertical"
+                        android:visibility="@{viewModel.showGooglePay ? View.VISIBLE : View.GONE}">
+
+                        <TextView
+                            android:id="@+id/google_pay_info_title"
+                            style="@style/dark_text"
+                            android:textStyle="bold"
+                            android:textAlignment="center"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/google_pay_title" />
+
+                        <TextView
+                            android:id="@+id/google_pay_readiness"
+                            style="@style/dark_text"
+                            android:textAlignment="center"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text='@{String.format(@string/google_pay_readiness, viewModel.isReadyToPay ?? "", viewModel.isReadyToPayWithExistingPaymentMethod ?? "")}' />
+                    </LinearLayout>
 
                     <TextView
                         android:id="@+id/launch_google_pay_button"
@@ -536,7 +561,7 @@
                         android:backgroundTint="@{!viewModel.paymentInitiated ? @color/button_enabled : @color/button_disabled}"
                         android:enabled="@{!viewModel.paymentInitiated}"
                         android:gravity="center"
-                        android:text="@string/launch_google_pay"
+                        android:text="@string/google_pay_title"
                         android:textColor="@{!viewModel.paymentInitiated ? @color/button_text_enabled : @color/button_text_disabled}"
                         android:visibility="@{viewModel.showGooglePay ? View.VISIBLE : View.GONE}" />
 

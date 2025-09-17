@@ -57,6 +57,10 @@ class StandaloneUrlConfigViewModel(application: Application) : AndroidViewModel(
         it.firstOrNull { instrument -> instrument is AvailableInstrument.GooglePay } != null
     }
 
+    val isReadyToPay : MutableLiveData<Boolean?> = MutableLiveData(null)
+
+    val isReadyToPayWithExistingPaymentMethod : MutableLiveData<Boolean?> = MutableLiveData(null)
+
     val swishPrefills = availableInstruments.map {
         val swish = it.firstOrNull { instrument -> instrument is AvailableInstrument.Swish }
         if (swish != null) {
@@ -141,6 +145,18 @@ class StandaloneUrlConfigViewModel(application: Application) : AndroidViewModel(
         this.availableInstruments.value = availableInstruments
     }
 
+    fun fetchGooglePayPaymentReadiness(context: Context) {
+        paymentSession?.fetchGooglePayPaymentReadiness(context)
+    }
+
+    fun setGooglePayPaymentReadiness(
+        isReadyToPay: Boolean,
+        isReadyToPayWithExistingPaymentMethod: Boolean
+    ) {
+        this.isReadyToPay.value = isReadyToPay
+        this.isReadyToPayWithExistingPaymentMethod.value = isReadyToPayWithExistingPaymentMethod
+    }
+
     fun startPaymentWith(instrument: PaymentAttemptInstrument) {
         isNativePaymentsLoading.value = true
         paymentInitiated.value = true
@@ -189,6 +205,8 @@ class StandaloneUrlConfigViewModel(application: Application) : AndroidViewModel(
         abortPaymentInitiated.value = false
         sessionUrl.value = ""
         swishPhoneNumber.value = ""
+        this.isReadyToPay.value = null
+        this.isReadyToPayWithExistingPaymentMethod.value = null
     }
 
     fun resetNativePaymentsInitiatedState() {
